@@ -430,32 +430,51 @@ export default function HomePage() {
       </section>
 
       {/* Featured Services */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Featured Services</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">Our most popular and highly rated services</p>
-          </div>
-
+        <section className="py-12">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-semibold text-center text-gray-800 mb-8">Featured Services</h2>
           <Tabs defaultValue="ladies" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 mb-8">
-              <TabsTrigger value="ladies">Ladies</TabsTrigger>
-              <TabsTrigger value="gents">Gents</TabsTrigger>
+            <TabsList className="justify-center">
+              <TabsTrigger value="ladies">Ladies Salon</TabsTrigger>
+              <TabsTrigger value="gents">Gents Salon</TabsTrigger>
               <TabsTrigger value="auto">Automotive</TabsTrigger>
             </TabsList>
-
             <TabsContent value="ladies" className="mt-0">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {[
-                  { name: "Hair Styling", price: "$45", rating: 4.9 },
-                  { name: "Manicure & Pedicure", price: "$35", rating: 4.8 },
-                  { name: "Facial Treatment", price: "$60", rating: 4.7 },
-                  { name: "Full Body Massage", price: "$80", rating: 4.9 },
+                  {
+                    name: "Hair Styling",
+                    price: "$45",
+                    rating: 4.9,
+                    image:
+                      "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?q=80&w=1000&auto=format&fit=crop",
+                  },
+                  {
+                    name: "Manicure & Pedicure",
+                    price: "$35",
+                    rating: 4.8,
+                    image:
+                      "https://images.unsplash.com/photo-1519014816548-bf5fe059798b?q=80&w=1000&auto=format&fit=crop",
+                  },
+                  {
+                    name: "Facial Treatment",
+                    price: "$60",
+                    rating: 4.7,
+                    image:
+                      "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?q=80&w=1000&auto=format&fit=crop",
+                  },
+                  {
+                    name: "Full Body Massage",
+                    price: "$80",
+                    rating: 4.9,
+                    image:
+                      "https://images.unsplash.com/photo-1600334129128-685c5582fd35?q=80&w=1000&auto=format&fit=crop",
+                  },
                 ].map((service, index) => (
                   <Card key={index} className="hover:shadow-md transition-shadow">
                     <div className="h-40 bg-gray-200 relative">
                       <Image
-                        src={`/placeholder.svg?height=160&width=300&text=${service.name}`}
+                        src={service.image || "/placeholder.svg"}
                         alt={service.name}
                         fill
                         className="object-cover"
@@ -480,19 +499,42 @@ export default function HomePage() {
                 ))}
               </div>
             </TabsContent>
-
             <TabsContent value="gents" className="mt-0">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {[
-                  { name: "Haircut & Styling", price: "$30", rating: 4.8 },
-                  { name: "Beard Trim", price: "$15", rating: 4.9 },
-                  { name: "Hair Color", price: "$45", rating: 4.7 },
-                  { name: "Face Massage", price: "$40", rating: 4.8 },
+                  {
+                    name: "Haircut & Styling",
+                    price: "$30",
+                    rating: 4.8,
+                    image:
+                      "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?q=80&w=1000&auto=format&fit=crop",
+                  },
+                  {
+                    name: "Beard Trim",
+                    price: "$15",
+                    rating: 4.9,
+                    image:
+                      "https://images.unsplash.com/photo-1621605815971-fbc98d665033?q=80&w=1000&auto=format&fit=crop",
+                  },
+                  {
+                    name: "Hair Color",
+                    price: "$45",
+                    rating: 4.7,
+                    image:
+                      "https://images.unsplash.com/photo-1634302086887-13b5585a8883?q=80&w=1000&auto=format&fit=crop",
+                  },
+                  {
+                    name: "Face Massage",
+                    price: "$40",
+                    rating: 4.8,
+                    image:
+                      "https://images.unsplash.com/photo-1598970434795-0c54fe7c0648?q=80&w=1000&auto=format&fit=crop",
+                  },
                 ].map((service, index) => (
                   <Card key={index} className="hover:shadow-md transition-shadow">
                     <div className="h-40 bg-gray-200 relative">
                       <Image
-                        src={`/placeholder.svg?height=160&width=300&text=${service.name}`}
+                        src={service.image || "/placeholder.svg"}
                         alt={service.name}
                         fill
                         className="object-cover"
@@ -517,19 +559,42 @@ export default function HomePage() {
                 ))}
               </div>
             </TabsContent>
-
             <TabsContent value="auto" className="mt-0">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {[
-                  { name: "Car Wash", price: "$25", rating: 4.7 },
-                  { name: "Oil Change", price: "$40", rating: 4.8 },
-                  { name: "Interior Cleaning", price: "$35", rating: 4.9 },
-                  { name: "Tire Service", price: "$50", rating: 4.7 },
+                  {
+                    name: "Car Wash",
+                    price: "$25",
+                    rating: 4.7,
+                    image:
+                      "https://images.unsplash.com/photo-1520340356584-f9917d1eea6f?q=80&w=1000&auto=format&fit=crop",
+                  },
+                  {
+                    name: "Oil Change",
+                    price: "$40",
+                    rating: 4.8,
+                    image:
+                      "https://images.unsplash.com/photo-1487754180451-c456f719a1fc?q=80&w=1000&auto=format&fit=crop",
+                  },
+                  {
+                    name: "Interior Cleaning",
+                    price: "$35",
+                    rating: 4.9,
+                    image:
+                      "https://images.unsplash.com/photo-1601362840469-51e4d8d58785?q=80&w=1000&auto=format&fit=crop",
+                  },
+                  {
+                    name: "Tire Service",
+                    price: "$50",
+                    rating: 4.7,
+                    image:
+                      "https://images.unsplash.com/photo-1580273916550-e323be2ae537?q=80&w=1000&auto=format&fit=crop",
+                  },
                 ].map((service, index) => (
                   <Card key={index} className="hover:shadow-md transition-shadow">
                     <div className="h-40 bg-gray-200 relative">
                       <Image
-                        src={`/placeholder.svg?height=160&width=300&text=${service.name}`}
+                        src={service.image || "/placeholder.svg"}
                         alt={service.name}
                         fill
                         className="object-cover"
@@ -555,7 +620,6 @@ export default function HomePage() {
               </div>
             </TabsContent>
           </Tabs>
-
           <div className="text-center mt-10">
             <Button className="bg-rose-600 hover:bg-rose-700">
               View All Services
@@ -564,6 +628,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
 
       {/* How It Works */}
       <section className="py-16 bg-white">
