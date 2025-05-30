@@ -376,12 +376,9 @@ export default function HomePage() {
                 <span className="mr-2">🎯</span>
                 Book Your Service
               </Button>
-              <Button
-                variant="outline"
-                className="border-2 border-white/30 text-white hover:bg-white/10 backdrop-blur-sm h-14 px-8 text-lg font-semibold rounded-full transition-all duration-300"
-              >
-                <span className="mr-2">▶️</span>
-                Watch Demo
+              <Button className="bg-white/20 backdrop-blur-sm border-2 border-white/40 text-white hover:bg-white/30 hover:border-white/60 h-14 px-8 text-lg font-semibold rounded-full transition-all duration-300">
+                <span className="mr-2">🔍</span>
+                Browse Services
               </Button>
             </div>
 
@@ -950,7 +947,7 @@ export default function HomePage() {
             </div>
             <div className="hidden md:block relative h-80">
               <Image
-                src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=1000&auto=format&fit=crop"
+                src="https://images.unsplash.com/photo-1551650975-87deedd944c3?q=80&w=1000&auto=format&fit=crop"
                 alt="Lipslay Mobile App"
                 fill
                 className="object-contain"
