@@ -12,4 +12,4 @@ For now project is live at:
 
 **[https://vercel.com/ashrafsaqibs-projects/v0-lipslay-com-homepage-revise](https://vercel.com/ashrafsaqibs-projects/v0-lipslay-com-homepage-revise)**
 
-Once it matures, it will replace ccurrent Lipslay.com 
+Once it matures, it will replace ccurrent Lipslay.com

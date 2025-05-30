@@ -618,33 +618,75 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {staffMembers.map((staff, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow overflow-hidden">
-                <div className="h-64 bg-gray-200 relative">
-                  <Image src={staff.image || "/placeholder.svg"} alt={staff.name} fill className="object-cover" />
-                </div>
-                <CardContent className="p-6 text-center">
-                  <h3 className="text-xl font-semibold text-gray-800 mb-1">{staff.name}</h3>
-                  <p className="text-rose-600 font-medium mb-2">{staff.role}</p>
-                  <div className="flex items-center justify-center mb-3">
-                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 mr-1" />
-                    <span className="text-sm font-medium">{staff.rating}</span>
-                    <span className="text-gray-500 text-sm ml-2">• {staff.experience}</span>
-                  </div>
-                  <div className="flex flex-wrap justify-center gap-1 mb-4">
-                    {staff.specialties.map((specialty, idx) => (
-                      <span key={idx} className="px-2 py-1 bg-rose-100 text-rose-700 text-xs rounded-full">
-                        {specialty}
-                      </span>
-                    ))}
-                  </div>
-                  <Button variant="outline" className="text-rose-600 border-rose-600 hover:bg-rose-50 w-full">
-                    Book with {staff.name.split(" ")[0]}
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+          {/* Carousel Container */}
+          <div className="relative">
+            {/* Left Arrow */}
+            <button
+              onClick={() => {
+                const container = document.getElementById("staff-carousel")
+                if (container) {
+                  container.scrollBy({ left: -320, behavior: "smooth" })
+                }
+              }}
+              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-3 hover:bg-gray-50 transition-colors border"
+              aria-label="Previous staff"
+            >
+              <ChevronLeft className="w-6 h-6 text-gray-600" />
+            </button>
+
+            {/* Right Arrow */}
+            <button
+              onClick={() => {
+                const container = document.getElementById("staff-carousel")
+                if (container) {
+                  container.scrollBy({ left: 320, behavior: "smooth" })
+                }
+              }}
+              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-3 hover:bg-gray-50 transition-colors border"
+              aria-label="Next staff"
+            >
+              <ChevronRight className="w-6 h-6 text-gray-600" />
+            </button>
+
+            {/* Scrolling Container */}
+            <div className="mx-12">
+              <div
+                id="staff-carousel"
+                className="flex overflow-x-auto scrollbar-hide gap-6 pb-4 scroll-smooth"
+                style={{
+                  scrollbarWidth: "none",
+                  msOverflowStyle: "none",
+                  WebkitScrollbar: { display: "none" },
+                }}
+              >
+                {staffMembers.map((staff, index) => (
+                  <Card key={index} className="flex-shrink-0 w-80 hover:shadow-lg transition-shadow overflow-hidden">
+                    <div className="h-64 bg-gray-200 relative">
+                      <Image src={staff.image || "/placeholder.svg"} alt={staff.name} fill className="object-cover" />
+                    </div>
+                    <CardContent className="p-6 text-center">
+                      <h3 className="text-xl font-semibold text-gray-800 mb-1">{staff.name}</h3>
+                      <p className="text-rose-600 font-medium mb-2">{staff.role}</p>
+                      <div className="flex items-center justify-center mb-3">
+                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 mr-1" />
+                        <span className="text-sm font-medium">{staff.rating}</span>
+                        <span className="text-gray-500 text-sm ml-2">• {staff.experience}</span>
+                      </div>
+                      <div className="flex flex-wrap justify-center gap-1 mb-4">
+                        {staff.specialties.map((specialty, idx) => (
+                          <span key={idx} className="px-2 py-1 bg-rose-100 text-rose-700 text-xs rounded-full">
+                            {specialty}
+                          </span>
+                        ))}
+                      </div>
+                      <Button variant="outline" className="text-rose-600 border-rose-600 hover:bg-rose-50 w-full">
+                        Book with {staff.name.split(" ")[0]}
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
           </div>
 
           <div className="text-center mt-10">
@@ -655,7 +697,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
       {/* Testimonials */}
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
