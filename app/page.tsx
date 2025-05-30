@@ -51,61 +51,61 @@ export default function HomePage() {
     {
       title: "Ladies Salon",
       description: "Professional beauty and wellness services for women",
-      image: "/placeholder.svg?height=200&width=400&text=Ladies+Salon",
+      image: "https://images.unsplash.com/photo-1560066984-138dadb4c035?q=80&w=1000&auto=format&fit=crop",
       popular: true,
     },
     {
       title: "Gents Salon",
       description: "Professional grooming services for men",
-      image: "/placeholder.svg?height=200&width=400&text=Gents+Salon",
+      image: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=1000&auto=format&fit=crop",
       popular: true,
     },
     {
       title: "Automotive",
       description: "Car care and maintenance services",
-      image: "/placeholder.svg?height=200&width=400&text=Automotive",
+      image: "https://images.unsplash.com/photo-1520340356584-f9917d1eea6f?q=80&w=1000&auto=format&fit=crop",
       popular: true,
     },
     {
       title: "Spa & Wellness",
       description: "Relaxing spa treatments and wellness services",
-      image: "/placeholder.svg?height=200&width=400&text=Spa+Wellness",
+      image: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?q=80&w=1000&auto=format&fit=crop",
       popular: false,
     },
     {
       title: "Wholesale Services",
       description: "Bulk services for businesses and events",
-      image: "/placeholder.svg?height=200&width=400&text=Wholesale",
+      image: "https://images.unsplash.com/photo-1556740738-b6a63e27c4df?q=80&w=1000&auto=format&fit=crop",
       popular: false,
     },
     {
       title: "Education & Training",
       description: "Professional courses and certification programs",
-      image: "/placeholder.svg?height=200&width=400&text=Education",
+      image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=1000&auto=format&fit=crop",
       popular: false,
     },
     {
       title: "Home Cleaning",
       description: "Professional house cleaning and maintenance",
-      image: "/placeholder.svg?height=200&width=400&text=Home+Cleaning",
+      image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=1000&auto=format&fit=crop",
       popular: false,
     },
     {
       title: "Pet Grooming",
       description: "Professional grooming services for your pets",
-      image: "/placeholder.svg?height=200&width=400&text=Pet+Grooming",
+      image: "https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?q=80&w=1000&auto=format&fit=crop",
       popular: false,
     },
     {
       title: "Event Services",
       description: "Complete event planning and styling services",
-      image: "/placeholder.svg?height=200&width=400&text=Event+Services",
+      image: "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?q=80&w=1000&auto=format&fit=crop",
       popular: false,
     },
     {
       title: "Personal Training",
       description: "Fitness coaching and personal training sessions",
-      image: "/placeholder.svg?height=200&width=400&text=Personal+Training",
+      image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=1000&auto=format&fit=crop",
       popular: false,
     },
   ]
@@ -117,7 +117,7 @@ export default function HomePage() {
       experience: "8+ years",
       rating: 4.9,
       specialties: ["Hair Color", "Bridal Styling", "Cuts"],
-      image: "/placeholder.svg?height=300&width=300&text=Sarah+Martinez",
+      image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1000&auto=format&fit=crop",
     },
     {
       name: "Michael Chen",
@@ -125,7 +125,7 @@ export default function HomePage() {
       experience: "10+ years",
       rating: 4.8,
       specialties: ["Classic Cuts", "Beard Styling", "Hot Towel Shave"],
-      image: "/placeholder.svg?height=300&width=300&text=Michael+Chen",
+      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=1000&auto=format&fit=crop",
     },
     {
       name: "Emily Rodriguez",
@@ -133,7 +133,7 @@ export default function HomePage() {
       experience: "6+ years",
       rating: 4.9,
       specialties: ["Facials", "Makeup", "Skincare"],
-      image: "/placeholder.svg?height=300&width=300&text=Emily+Rodriguez",
+      image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1000&auto=format&fit=crop",
     },
     {
       name: "David Thompson",
@@ -141,7 +141,7 @@ export default function HomePage() {
       experience: "12+ years",
       rating: 4.7,
       specialties: ["Paint Protection", "Interior Detailing", "Ceramic Coating"],
-      image: "/placeholder.svg?height=300&width=300&text=David+Thompson",
+      image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=1000&auto=format&fit=crop",
     },
   ]
 
@@ -313,27 +313,103 @@ export default function HomePage() {
       </header>
 
       {/* Hero Section */}
-      <section className="relative h-[500px] bg-gradient-to-r from-rose-500 to-rose-700">
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        {/* Background Image with Overlay */}
         <div className="absolute inset-0">
           <Image
-            src="/placeholder.svg?height=500&width=1200"
-            alt="Beauty salon services"
+            src="https://images.unsplash.com/photo-1560066984-138dadb4c035?q=80&w=2070&auto=format&fit=crop"
+            alt="Professional beauty salon services"
             fill
-            className="object-cover opacity-30"
+            className="object-cover"
+            priority
           />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent"></div>
         </div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
-          <div className="text-center w-full">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Best In the Town Services</h2>
-            <p className="text-xl text-white/90 max-w-2xl mx-auto mb-8">
-              Get Your Desired service at Your Door, easy to schedule and just few clicks away.
+
+        {/* Floating Elements */}
+        <div className="absolute top-20 left-10 w-20 h-20 bg-rose-500/20 rounded-full blur-xl animate-pulse"></div>
+        <div className="absolute bottom-32 right-16 w-32 h-32 bg-purple-500/20 rounded-full blur-xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/3 right-1/4 w-16 h-16 bg-blue-500/20 rounded-full blur-xl animate-pulse delay-500"></div>
+
+        {/* Content */}
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="max-w-4xl mx-auto">
+            {/* Badge */}
+            <div className="inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white text-sm font-medium mb-8">
+              <span className="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></span>
+              Available 24/7 • Book Now
+            </div>
+
+            {/* Main Heading */}
+            <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
+              Beauty & Wellness
+              <span className="block bg-gradient-to-r from-rose-400 to-pink-400 bg-clip-text text-transparent">
+                At Your Doorstep
+              </span>
+            </h1>
+
+            {/* Subtitle */}
+            <p className="text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed">
+              Experience premium salon services, automotive care, and wellness treatments delivered right to your home.
+              Professional quality, unmatched convenience.
             </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4 max-w-md mx-auto">
-              <Button className="bg-white text-rose-600 hover:bg-gray-100 h-12 px-6 text-lg">Book Now</Button>
-              <Button className="bg-rose-600 hover:bg-rose-700 text-white border-2 border-white h-12 px-6 text-lg transition-all duration-300">
-                Explore Services
+
+            {/* Stats */}
+            <div className="flex flex-wrap justify-center gap-8 mb-10">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-white">50K+</div>
+                <div className="text-white/70 text-sm">Happy Customers</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-white">500+</div>
+                <div className="text-white/70 text-sm">Expert Professionals</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-white">4.9★</div>
+                <div className="text-white/70 text-sm">Average Rating</div>
+              </div>
+            </div>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row justify-center gap-4 mb-12">
+              <Button className="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white border-0 h-14 px-8 text-lg font-semibold rounded-full shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
+                <span className="mr-2">🎯</span>
+                Book Your Service
+              </Button>
+              <Button
+                variant="outline"
+                className="border-2 border-white/30 text-white hover:bg-white/10 backdrop-blur-sm h-14 px-8 text-lg font-semibold rounded-full transition-all duration-300"
+              >
+                <span className="mr-2">▶️</span>
+                Watch Demo
               </Button>
             </div>
+
+            {/* Service Categories Preview */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
+              {[
+                { icon: "💇‍♀️", name: "Hair & Beauty" },
+                { icon: "🧔‍♂️", name: "Men's Grooming" },
+                { icon: "🚗", name: "Auto Care" },
+                { icon: "💆‍♀️", name: "Spa & Wellness" },
+              ].map((service, index) => (
+                <div
+                  key={index}
+                  className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 text-center hover:bg-white/20 transition-all duration-300 cursor-pointer"
+                >
+                  <div className="text-2xl mb-2">{service.icon}</div>
+                  <div className="text-white text-sm font-medium">{service.name}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white/70 animate-bounce">
+          <div className="flex flex-col items-center">
+            <span className="text-sm mb-2">Scroll to explore</span>
+            <ChevronDown className="w-6 h-6" />
           </div>
         </div>
       </section>
@@ -430,7 +506,7 @@ export default function HomePage() {
       </section>
 
       {/* Featured Services */}
-        <section className="py-12">
+      <section className="py-12">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-semibold text-center text-gray-800 mb-8">Featured Services</h2>
           <Tabs defaultValue="ladies" className="w-full">
@@ -629,7 +705,6 @@ export default function HomePage() {
         </div>
       </section>
 
-
       {/* How It Works */}
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -777,24 +852,34 @@ export default function HomePage() {
                 service: "Ladies Salon",
                 comment:
                   "The service was excellent! The stylist was professional and did an amazing job with my hair. Will definitely book again.",
+                image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1000&auto=format&fit=crop",
               },
               {
                 name: "Michael Brown",
                 service: "Gents Salon",
                 comment:
                   "Very convenient service. The barber arrived on time and gave me one of the best haircuts I've had. Highly recommended!",
+                image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format&fit=crop",
               },
               {
                 name: "Emily Davis",
                 service: "Automotive",
                 comment:
                   "I was skeptical about mobile car service, but they did a thorough job cleaning my car. It looks brand new now!",
+                image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1000&auto=format&fit=crop",
               },
             ].map((testimonial, index) => (
               <Card key={index} className="hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex items-center mb-4">
-                    <div className="w-12 h-12 bg-gray-200 rounded-full mr-4"></div>
+                    <div className="w-12 h-12 bg-gray-200 rounded-full mr-4 relative overflow-hidden">
+                      <Image
+                        src={testimonial.image || "/placeholder.svg"}
+                        alt={testimonial.name}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
                     <div>
                       <h4 className="font-semibold">{testimonial.name}</h4>
                       <p className="text-sm text-gray-500">{testimonial.service}</p>
@@ -865,7 +950,7 @@ export default function HomePage() {
             </div>
             <div className="hidden md:block relative h-80">
               <Image
-                src="/placeholder.svg?height=400&width=300&text=App+Screenshot"
+                src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=1000&auto=format&fit=crop"
                 alt="Lipslay Mobile App"
                 fill
                 className="object-contain"
