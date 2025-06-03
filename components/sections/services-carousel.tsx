@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ServiceCard } from "@/components/ui/service-card"
@@ -109,10 +110,12 @@ export function ServicesCarousel() {
         </div>
 
         <div className="text-center mt-10">
-          <Button className="bg-rose-600 hover:bg-rose-700">
-            View All Services
-            <ChevronRight className="ml-2 h-4 w-4" />
-          </Button>
+          <Link href="/services">
+            <Button className="bg-rose-600 hover:bg-rose-700">
+              View All Services
+              <ChevronRight className="ml-2 h-4 w-4" />
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

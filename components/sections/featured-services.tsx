@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image"
+import Link from "next/link"
 import { Star, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -26,6 +27,8 @@ export function FeaturedServices() {
                   rating: 4.9,
                   image:
                     "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?q=80&w=1000&auto=format&fit=crop",
+                  slug: "hair-styling-cut",
+                  category: "ladies-salon",
                 },
                 {
                   name: "Manicure & Pedicure",
@@ -33,6 +36,8 @@ export function FeaturedServices() {
                   rating: 4.8,
                   image:
                     "https://images.unsplash.com/photo-1519014816548-bf5fe059798b?q=80&w=1000&auto=format&fit=crop",
+                  slug: "manicure-pedicure",
+                  category: "ladies-salon",
                 },
                 {
                   name: "Facial Treatment",
@@ -40,6 +45,8 @@ export function FeaturedServices() {
                   rating: 4.7,
                   image:
                     "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?q=80&w=1000&auto=format&fit=crop",
+                  slug: "facial-treatment",
+                  category: "ladies-salon",
                 },
                 {
                   name: "Full Body Massage",
@@ -47,28 +54,37 @@ export function FeaturedServices() {
                   rating: 4.9,
                   image:
                     "https://images.unsplash.com/photo-1600334129128-685c5582fd35?q=80&w=1000&auto=format&fit=crop",
+                  slug: "full-body-massage",
+                  category: "ladies-salon",
                 },
               ].map((service, index) => (
-                <Card key={index} className="hover:shadow-md transition-shadow">
-                  <div className="h-40 bg-gray-200 relative">
-                    <Image src={service.image || "/placeholder.svg"} alt={service.name} fill className="object-cover" />
-                  </div>
-                  <CardContent className="p-4">
-                    <div className="flex justify-between items-start mb-2">
-                      <h4 className="font-medium">{service.name}</h4>
-                      <div className="flex items-center">
-                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 mr-1" />
-                        <span className="text-sm">{service.rating}</span>
+                <Link href={`/services/${service.category}/${service.slug}`} key={index}>
+                  <Card className="hover:shadow-md transition-shadow cursor-pointer">
+                    <div className="h-40 bg-gray-200 relative">
+                      <Image
+                        src={service.image || "/placeholder.svg"}
+                        alt={service.name}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                    <CardContent className="p-4">
+                      <div className="flex justify-between items-start mb-2">
+                        <h4 className="font-medium">{service.name}</h4>
+                        <div className="flex items-center">
+                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 mr-1" />
+                          <span className="text-sm">{service.rating}</span>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="font-semibold text-rose-600">{service.price}</span>
-                      <Button size="sm" className="bg-rose-600 hover:bg-rose-700">
-                        Book
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
+                      <div className="flex justify-between items-center">
+                        <span className="font-semibold text-rose-600">{service.price}</span>
+                        <Button size="sm" className="bg-rose-600 hover:bg-rose-700" onClick={(e) => e.preventDefault()}>
+                          Book
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
               ))}
             </div>
           </TabsContent>
@@ -81,6 +97,8 @@ export function FeaturedServices() {
                   rating: 4.8,
                   image:
                     "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?q=80&w=1000&auto=format&fit=crop",
+                  slug: "haircut-styling",
+                  category: "gents-salon",
                 },
                 {
                   name: "Beard Trim",
@@ -88,6 +106,8 @@ export function FeaturedServices() {
                   rating: 4.9,
                   image:
                     "https://images.unsplash.com/photo-1621605815971-fbc98d665033?q=80&w=1000&auto=format&fit=crop",
+                  slug: "beard-trim-shave",
+                  category: "gents-salon",
                 },
                 {
                   name: "Hair Color",
@@ -95,6 +115,8 @@ export function FeaturedServices() {
                   rating: 4.7,
                   image:
                     "https://images.unsplash.com/photo-1634302086887-13b5585a8883?q=80&w=1000&auto=format&fit=crop",
+                  slug: "hair-color",
+                  category: "gents-salon",
                 },
                 {
                   name: "Face Massage",
@@ -102,28 +124,37 @@ export function FeaturedServices() {
                   rating: 4.8,
                   image:
                     "https://images.unsplash.com/photo-1598970434795-0c54fe7c0648?q=80&w=1000&auto=format&fit=crop",
+                  slug: "face-massage",
+                  category: "gents-salon",
                 },
               ].map((service, index) => (
-                <Card key={index} className="hover:shadow-md transition-shadow">
-                  <div className="h-40 bg-gray-200 relative">
-                    <Image src={service.image || "/placeholder.svg"} alt={service.name} fill className="object-cover" />
-                  </div>
-                  <CardContent className="p-4">
-                    <div className="flex justify-between items-start mb-2">
-                      <h4 className="font-medium">{service.name}</h4>
-                      <div className="flex items-center">
-                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 mr-1" />
-                        <span className="text-sm">{service.rating}</span>
+                <Link href={`/services/${service.category}/${service.slug}`} key={index}>
+                  <Card className="hover:shadow-md transition-shadow cursor-pointer">
+                    <div className="h-40 bg-gray-200 relative">
+                      <Image
+                        src={service.image || "/placeholder.svg"}
+                        alt={service.name}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                    <CardContent className="p-4">
+                      <div className="flex justify-between items-start mb-2">
+                        <h4 className="font-medium">{service.name}</h4>
+                        <div className="flex items-center">
+                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 mr-1" />
+                          <span className="text-sm">{service.rating}</span>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="font-semibold text-rose-600">{service.price}</span>
-                      <Button size="sm" className="bg-rose-600 hover:bg-rose-700">
-                        Book
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
+                      <div className="flex justify-between items-center">
+                        <span className="font-semibold text-rose-600">{service.price}</span>
+                        <Button size="sm" className="bg-rose-600 hover:bg-rose-700" onClick={(e) => e.preventDefault()}>
+                          Book
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
               ))}
             </div>
           </TabsContent>
@@ -136,6 +167,8 @@ export function FeaturedServices() {
                   rating: 4.7,
                   image:
                     "https://images.unsplash.com/photo-1520340356584-f9917d1eea6f?q=80&w=1000&auto=format&fit=crop",
+                  slug: "car-wash-detailing",
+                  category: "automotive",
                 },
                 {
                   name: "Oil Change",
@@ -143,6 +176,8 @@ export function FeaturedServices() {
                   rating: 4.8,
                   image:
                     "https://images.unsplash.com/photo-1487754180451-c456f719a1fc?q=80&w=1000&auto=format&fit=crop",
+                  slug: "oil-change",
+                  category: "automotive",
                 },
                 {
                   name: "Interior Cleaning",
@@ -150,6 +185,8 @@ export function FeaturedServices() {
                   rating: 4.9,
                   image:
                     "https://images.unsplash.com/photo-1601362840469-51e4d8d58785?q=80&w=1000&auto=format&fit=crop",
+                  slug: "interior-cleaning",
+                  category: "automotive",
                 },
                 {
                   name: "Tire Service",
@@ -157,37 +194,48 @@ export function FeaturedServices() {
                   rating: 4.7,
                   image:
                     "https://images.unsplash.com/photo-1580273916550-e323be2ae537?q=80&w=1000&auto=format&fit=crop",
+                  slug: "tire-service",
+                  category: "automotive",
                 },
               ].map((service, index) => (
-                <Card key={index} className="hover:shadow-md transition-shadow">
-                  <div className="h-40 bg-gray-200 relative">
-                    <Image src={service.image || "/placeholder.svg"} alt={service.name} fill className="object-cover" />
-                  </div>
-                  <CardContent className="p-4">
-                    <div className="flex justify-between items-start mb-2">
-                      <h4 className="font-medium">{service.name}</h4>
-                      <div className="flex items-center">
-                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 mr-1" />
-                        <span className="text-sm">{service.rating}</span>
+                <Link href={`/services/${service.category}/${service.slug}`} key={index}>
+                  <Card className="hover:shadow-md transition-shadow cursor-pointer">
+                    <div className="h-40 bg-gray-200 relative">
+                      <Image
+                        src={service.image || "/placeholder.svg"}
+                        alt={service.name}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                    <CardContent className="p-4">
+                      <div className="flex justify-between items-start mb-2">
+                        <h4 className="font-medium">{service.name}</h4>
+                        <div className="flex items-center">
+                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 mr-1" />
+                          <span className="text-sm">{service.rating}</span>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="font-semibold text-rose-600">{service.price}</span>
-                      <Button size="sm" className="bg-rose-600 hover:bg-rose-700">
-                        Book
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
+                      <div className="flex justify-between items-center">
+                        <span className="font-semibold text-rose-600">{service.price}</span>
+                        <Button size="sm" className="bg-rose-600 hover:bg-rose-700" onClick={(e) => e.preventDefault()}>
+                          Book
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
               ))}
             </div>
           </TabsContent>
         </Tabs>
         <div className="text-center mt-10">
-          <Button className="bg-rose-600 hover:bg-rose-700">
-            View All Services
-            <ChevronRight className="ml-2 h-4 w-4" />
-          </Button>
+          <Link href="/services">
+            <Button className="bg-rose-600 hover:bg-rose-700">
+              View All Services
+              <ChevronRight className="ml-2 h-4 w-4" />
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

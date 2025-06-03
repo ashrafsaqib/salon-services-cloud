@@ -11,33 +11,42 @@ export function Header() {
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false)
 
   const servicesMenu = {
-    "Ladies Salon": [
-      "Hair Styling & Cut",
-      "Hair Color & Highlights",
-      "Facial Treatments",
-      "Manicure & Pedicure",
-      "Eyebrow & Threading",
-      "Makeup Services",
-      "Body Massage",
-      "Bridal Packages",
-    ],
-    "Gents Salon": [
-      "Haircut & Styling",
-      "Beard Trim & Shave",
-      "Hair Color",
-      "Face Massage",
-      "Hair Treatment",
-      "Grooming Packages",
-    ],
-    Automotive: [
-      "Car Wash & Detailing",
-      "Interior Cleaning",
-      "Oil Change",
-      "Tire Services",
-      "Engine Cleaning",
-      "Paint Protection",
-      "Maintenance Packages",
-    ],
+    "Ladies Salon": {
+      category: "ladies-salon",
+      services: [
+        { name: "Hair Styling & Cut", slug: "hair-styling-cut" },
+        { name: "Hair Color & Highlights", slug: "hair-color-highlights" },
+        { name: "Facial Treatments", slug: "facial-treatment" },
+        { name: "Manicure & Pedicure", slug: "manicure-pedicure" },
+        { name: "Eyebrow & Threading", slug: "eyebrow-threading" },
+        { name: "Makeup Services", slug: "makeup-services" },
+        { name: "Body Massage", slug: "body-massage" },
+        { name: "Bridal Packages", slug: "bridal-packages" },
+      ],
+    },
+    "Gents Salon": {
+      category: "gents-salon",
+      services: [
+        { name: "Haircut & Styling", slug: "haircut-styling" },
+        { name: "Beard Trim & Shave", slug: "beard-trim-shave" },
+        { name: "Hair Color", slug: "hair-color" },
+        { name: "Face Massage", slug: "face-massage" },
+        { name: "Hair Treatment", slug: "hair-treatment" },
+        { name: "Grooming Packages", slug: "grooming-packages" },
+      ],
+    },
+    Automotive: {
+      category: "automotive",
+      services: [
+        { name: "Car Wash & Detailing", slug: "car-wash-detailing" },
+        { name: "Interior Cleaning", slug: "interior-cleaning" },
+        { name: "Oil Change", slug: "oil-change" },
+        { name: "Tire Services", slug: "tire-services" },
+        { name: "Engine Cleaning", slug: "engine-cleaning" },
+        { name: "Paint Protection", slug: "paint-protection" },
+        { name: "Maintenance Packages", slug: "maintenance-packages" },
+      ],
+    },
   }
 
   return (
@@ -65,17 +74,21 @@ export function Header() {
               {isServicesMenuOpen && (
                 <div className="absolute top-full left-0 w-[600px] bg-white shadow-lg border rounded-lg mt-1 p-6 z-50">
                   <div className="grid grid-cols-3 gap-6">
-                    {Object.entries(servicesMenu).map(([category, services]) => (
-                      <div key={category}>
-                        <h3 className="font-semibold text-rose-600 mb-3 text-sm uppercase tracking-wide">{category}</h3>
+                    {Object.entries(servicesMenu).map(([categoryName, categoryData]) => (
+                      <div key={categoryName}>
+                        <Link href={`/services/${categoryData.category}`}>
+                          <h3 className="font-semibold text-rose-600 mb-3 text-sm uppercase tracking-wide hover:text-rose-700 cursor-pointer">
+                            {categoryName}
+                          </h3>
+                        </Link>
                         <ul className="space-y-2">
-                          {services.map((service, index) => (
+                          {categoryData.services.map((service, index) => (
                             <li key={index}>
                               <Link
-                                href={`/services/${category.toLowerCase().replace(/\s+/g, "-")}/${service.toLowerCase().replace(/\s+/g, "-")}`}
+                                href={`/services/${categoryData.category}/${service.slug}`}
                                 className="text-gray-600 hover:text-rose-600 text-sm block py-1 transition-colors"
                               >
-                                {service}
+                                {service.name}
                               </Link>
                             </li>
                           ))}

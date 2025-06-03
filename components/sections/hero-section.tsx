@@ -1,4 +1,5 @@
 import Image from "next/image"
+import Link from "next/link"
 import { ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
@@ -63,31 +64,34 @@ export function HeroSection() {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row justify-center gap-4 mb-12">
-            <Button className="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white border-0 h-14 px-8 text-lg font-semibold rounded-full shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
-              <span className="mr-2">🎯</span>
-              Book Your Service
-            </Button>
-            <Button className="bg-white/20 backdrop-blur-sm border-2 border-white/40 text-white hover:bg-white/30 hover:border-white/60 h-14 px-8 text-lg font-semibold rounded-full transition-all duration-300">
-              <span className="mr-2">🔍</span>
-              Browse Services
-            </Button>
+            <Link href="/services/ladies-salon">
+              <Button className="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white border-0 h-14 px-8 text-lg font-semibold rounded-full shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
+                <span className="mr-2">🎯</span>
+                Book Your Service
+              </Button>
+            </Link>
+            <Link href="/services">
+              <Button className="bg-white/20 backdrop-blur-sm border-2 border-white/40 text-white hover:bg-white/30 hover:border-white/60 h-14 px-8 text-lg font-semibold rounded-full transition-all duration-300">
+                <span className="mr-2">🔍</span>
+                Browse Services
+              </Button>
+            </Link>
           </div>
 
           {/* Service Categories Preview */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
             {[
-              { icon: "💇‍♀️", name: "Hair & Beauty" },
-              { icon: "🧔‍♂️", name: "Men's Grooming" },
-              { icon: "🚗", name: "Auto Care" },
-              { icon: "💆‍♀️", name: "Spa & Wellness" },
+              { icon: "💇‍♀️", name: "Hair & Beauty", href: "/services/ladies-salon" },
+              { icon: "🧔‍♂️", name: "Men's Grooming", href: "/services/gents-salon" },
+              { icon: "🚗", name: "Auto Care", href: "/services/automotive" },
+              { icon: "💆‍♀️", name: "Spa & Wellness", href: "/services/spa-wellness" },
             ].map((service, index) => (
-              <div
-                key={index}
-                className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 text-center hover:bg-white/20 transition-all duration-300 cursor-pointer"
-              >
-                <div className="text-2xl mb-2">{service.icon}</div>
-                <div className="text-white text-sm font-medium">{service.name}</div>
-              </div>
+              <Link href={service.href} key={index}>
+                <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 text-center hover:bg-white/20 transition-all duration-300 cursor-pointer">
+                  <div className="text-2xl mb-2">{service.icon}</div>
+                  <div className="text-white text-sm font-medium">{service.name}</div>
+                </div>
+              </Link>
             ))}
           </div>
         </div>
