@@ -173,44 +173,52 @@ export function SearchBar({ placeholder = "Search for services...", className = 
               </div>
               <div className="divide-y divide-gray-100">
                 {results.map((service) => (
-                  <Link
-                    key={service.id}
-                    href={`/services/${service.categorySlug}/${service.serviceSlug}`}
-                    onClick={handleResultClick}
-                    className="block hover:bg-gray-50 transition-colors"
-                  >
+                  <div key={service.id} className="block hover:bg-gray-50 transition-colors">
                     <div className="p-4 flex items-center space-x-4">
-                      <div className="relative h-16 w-16 rounded-lg overflow-hidden flex-shrink-0">
-                        <Image
-                          src={service.image || "/placeholder.svg"}
-                          alt={service.name}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-lg font-semibold text-gray-900 truncate">{service.name}</h3>
-                        <p className="text-sm text-gray-500 mb-1">{service.category}</p>
-                        <p className="text-sm text-gray-600 line-clamp-2">{service.description}</p>
-                        <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
-                          <div className="flex items-center">
-                            <Clock className="h-3 w-3 mr-1" />
-                            {service.duration}
-                          </div>
-                          <div className="flex items-center">
-                            <MapPin className="h-3 w-3 mr-1" />
-                            At your location
+                      <Link
+                        href={`/services/${service.categorySlug}/${service.serviceSlug}`}
+                        onClick={handleResultClick}
+                        className="flex items-center space-x-4 flex-1 min-w-0"
+                      >
+                        <div className="relative h-16 w-16 rounded-lg overflow-hidden flex-shrink-0">
+                          <Image
+                            src={service.image || "/placeholder.svg"}
+                            alt={service.name}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-lg font-semibold text-gray-900 truncate">{service.name}</h3>
+                          <p className="text-sm text-gray-500 mb-1">{service.category}</p>
+                          <p className="text-sm text-gray-600 line-clamp-2">{service.description}</p>
+                          <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
+                            <div className="flex items-center">
+                              <Clock className="h-3 w-3 mr-1" />
+                              {service.duration}
+                            </div>
+                            <div className="flex items-center">
+                              <MapPin className="h-3 w-3 mr-1" />
+                              At your location
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-lg font-bold text-rose-600">{service.price}</div>
-                        <Button size="sm" className="mt-2 bg-rose-600 hover:bg-rose-700">
+                      </Link>
+                      <div className="text-right flex-shrink-0">
+                        <div className="text-lg font-bold text-rose-600 mb-2">{service.price}</div>
+                        <Button
+                          size="sm"
+                          className="bg-rose-600 hover:bg-rose-700"
+                          onClick={() => {
+                            handleResultClick()
+                            router.push(`/book?service=${service.id}&category=${service.categorySlug}`)
+                          }}
+                        >
                           Book
                         </Button>
                       </div>
                     </div>
-                  </Link>
+                  </div>
                 ))}
               </div>
               <div className="p-4 border-t border-gray-100 bg-gray-50">

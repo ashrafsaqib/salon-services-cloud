@@ -22,6 +22,7 @@ export function FeaturedServices() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {[
                 {
+                  id: 1,
                   name: "Hair Styling",
                   price: "$45",
                   rating: 4.9,
@@ -31,6 +32,7 @@ export function FeaturedServices() {
                   category: "ladies-salon",
                 },
                 {
+                  id: 3,
                   name: "Manicure & Pedicure",
                   price: "$35",
                   rating: 4.8,
@@ -40,6 +42,7 @@ export function FeaturedServices() {
                   category: "ladies-salon",
                 },
                 {
+                  id: 3,
                   name: "Facial Treatment",
                   price: "$60",
                   rating: 4.7,
@@ -49,6 +52,7 @@ export function FeaturedServices() {
                   category: "ladies-salon",
                 },
                 {
+                  id: 10,
                   name: "Full Body Massage",
                   price: "$80",
                   rating: 4.9,
@@ -58,8 +62,8 @@ export function FeaturedServices() {
                   category: "ladies-salon",
                 },
               ].map((service, index) => (
-                <Link href={`/services/${service.category}/${service.slug}`} key={index}>
-                  <Card className="hover:shadow-md transition-shadow cursor-pointer">
+                <Card key={index} className="hover:shadow-md transition-shadow cursor-pointer">
+                  <Link href={`/services/${service.category}/${service.slug}`}>
                     <div className="h-40 bg-gray-200 relative">
                       <Image
                         src={service.image || "/placeholder.svg"}
@@ -68,7 +72,9 @@ export function FeaturedServices() {
                         className="object-cover"
                       />
                     </div>
-                    <CardContent className="p-4">
+                  </Link>
+                  <CardContent className="p-4">
+                    <Link href={`/services/${service.category}/${service.slug}`}>
                       <div className="flex justify-between items-start mb-2">
                         <h4 className="font-medium">{service.name}</h4>
                         <div className="flex items-center">
@@ -76,15 +82,21 @@ export function FeaturedServices() {
                           <span className="text-sm">{service.rating}</span>
                         </div>
                       </div>
-                      <div className="flex justify-between items-center">
-                        <span className="font-semibold text-rose-600">{service.price}</span>
-                        <Button size="sm" className="bg-rose-600 hover:bg-rose-700" onClick={(e) => e.preventDefault()}>
-                          Book
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
+                    </Link>
+                    <div className="flex justify-between items-center">
+                      <span className="font-semibold text-rose-600">{service.price}</span>
+                      <Button
+                        size="sm"
+                        className="bg-rose-600 hover:bg-rose-700"
+                        onClick={() =>
+                          (window.location.href = `/book?service=${service.id}&category=${service.category}`)
+                        }
+                      >
+                        Book
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
               ))}
             </div>
           </TabsContent>
@@ -92,6 +104,7 @@ export function FeaturedServices() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {[
                 {
+                  id: 5,
                   name: "Haircut & Styling",
                   price: "$30",
                   rating: 4.8,
@@ -101,6 +114,7 @@ export function FeaturedServices() {
                   category: "gents-salon",
                 },
                 {
+                  id: 6,
                   name: "Beard Trim",
                   price: "$15",
                   rating: 4.9,
@@ -110,6 +124,7 @@ export function FeaturedServices() {
                   category: "gents-salon",
                 },
                 {
+                  id: 11,
                   name: "Hair Color",
                   price: "$45",
                   rating: 4.7,
@@ -119,6 +134,7 @@ export function FeaturedServices() {
                   category: "gents-salon",
                 },
                 {
+                  id: 12,
                   name: "Face Massage",
                   price: "$40",
                   rating: 4.8,
@@ -128,8 +144,8 @@ export function FeaturedServices() {
                   category: "gents-salon",
                 },
               ].map((service, index) => (
-                <Link href={`/services/${service.category}/${service.slug}`} key={index}>
-                  <Card className="hover:shadow-md transition-shadow cursor-pointer">
+                <Card key={index} className="hover:shadow-md transition-shadow cursor-pointer">
+                  <Link href={`/services/${service.category}/${service.slug}`}>
                     <div className="h-40 bg-gray-200 relative">
                       <Image
                         src={service.image || "/placeholder.svg"}
@@ -138,7 +154,9 @@ export function FeaturedServices() {
                         className="object-cover"
                       />
                     </div>
-                    <CardContent className="p-4">
+                  </Link>
+                  <CardContent className="p-4">
+                    <Link href={`/services/${service.category}/${service.slug}`}>
                       <div className="flex justify-between items-start mb-2">
                         <h4 className="font-medium">{service.name}</h4>
                         <div className="flex items-center">
@@ -146,15 +164,21 @@ export function FeaturedServices() {
                           <span className="text-sm">{service.rating}</span>
                         </div>
                       </div>
-                      <div className="flex justify-between items-center">
-                        <span className="font-semibold text-rose-600">{service.price}</span>
-                        <Button size="sm" className="bg-rose-600 hover:bg-rose-700" onClick={(e) => e.preventDefault()}>
-                          Book
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
+                    </Link>
+                    <div className="flex justify-between items-center">
+                      <span className="font-semibold text-rose-600">{service.price}</span>
+                      <Button
+                        size="sm"
+                        className="bg-rose-600 hover:bg-rose-700"
+                        onClick={() =>
+                          (window.location.href = `/book?service=${service.id}&category=${service.category}`)
+                        }
+                      >
+                        Book
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
               ))}
             </div>
           </TabsContent>
@@ -162,6 +186,7 @@ export function FeaturedServices() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {[
                 {
+                  id: 7,
                   name: "Car Wash",
                   price: "$25",
                   rating: 4.7,
@@ -171,6 +196,7 @@ export function FeaturedServices() {
                   category: "automotive",
                 },
                 {
+                  id: 8,
                   name: "Oil Change",
                   price: "$40",
                   rating: 4.8,
@@ -180,6 +206,7 @@ export function FeaturedServices() {
                   category: "automotive",
                 },
                 {
+                  id: 9,
                   name: "Interior Cleaning",
                   price: "$35",
                   rating: 4.9,
@@ -189,6 +216,7 @@ export function FeaturedServices() {
                   category: "automotive",
                 },
                 {
+                  id: 13,
                   name: "Tire Service",
                   price: "$50",
                   rating: 4.7,
@@ -198,8 +226,8 @@ export function FeaturedServices() {
                   category: "automotive",
                 },
               ].map((service, index) => (
-                <Link href={`/services/${service.category}/${service.slug}`} key={index}>
-                  <Card className="hover:shadow-md transition-shadow cursor-pointer">
+                <Card key={index} className="hover:shadow-md transition-shadow cursor-pointer">
+                  <Link href={`/services/${service.category}/${service.slug}`}>
                     <div className="h-40 bg-gray-200 relative">
                       <Image
                         src={service.image || "/placeholder.svg"}
@@ -208,7 +236,9 @@ export function FeaturedServices() {
                         className="object-cover"
                       />
                     </div>
-                    <CardContent className="p-4">
+                  </Link>
+                  <CardContent className="p-4">
+                    <Link href={`/services/${service.category}/${service.slug}`}>
                       <div className="flex justify-between items-start mb-2">
                         <h4 className="font-medium">{service.name}</h4>
                         <div className="flex items-center">
@@ -216,15 +246,21 @@ export function FeaturedServices() {
                           <span className="text-sm">{service.rating}</span>
                         </div>
                       </div>
-                      <div className="flex justify-between items-center">
-                        <span className="font-semibold text-rose-600">{service.price}</span>
-                        <Button size="sm" className="bg-rose-600 hover:bg-rose-700" onClick={(e) => e.preventDefault()}>
-                          Book
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
+                    </Link>
+                    <div className="flex justify-between items-center">
+                      <span className="font-semibold text-rose-600">{service.price}</span>
+                      <Button
+                        size="sm"
+                        className="bg-rose-600 hover:bg-rose-700"
+                        onClick={() =>
+                          (window.location.href = `/book?service=${service.id}&category=${service.category}`)
+                        }
+                      >
+                        Book
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
               ))}
             </div>
           </TabsContent>
