@@ -155,9 +155,14 @@ export function Header() {
             <Link href="/faq" className="text-gray-600 hover:text-gray-900">
               FAQs
             </Link>
-            <Link href="/reviews" className="text-gray-600 hover:text-gray-900">
-              Reviews
+
+            {/* Book Button - Replaced Reviews */}
+            <Link href="/book">
+              <Button className="bg-rose-600 hover:bg-rose-700 text-white px-6 py-2 rounded-full font-medium transition-colors">
+                Book Now
+              </Button>
             </Link>
+
             <Link href="/contact" className="text-gray-600 hover:text-gray-900">
               Contact
             </Link>

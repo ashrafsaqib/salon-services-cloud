@@ -70,7 +70,7 @@ export function HeroSection() {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row justify-center gap-4 mb-12">
-            <Link href="/services/ladies-salon">
+            <Link href="/book">
               <Button className="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white border-0 h-14 px-8 text-lg font-semibold rounded-full shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
                 <span className="mr-2">🎯</span>
                 Book Your Service
