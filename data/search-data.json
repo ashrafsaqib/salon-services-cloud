@@ -1,0 +1,124 @@
+{
+  "services": [
+    {
+      "id": 1,
+      "name": "Hair Styling & Cut",
+      "category": "Ladies Salon",
+      "categorySlug": "ladies-salon",
+      "serviceSlug": "hair-styling-cut",
+      "price": "$45",
+      "duration": "60 min",
+      "description": "Professional hair cutting and styling services",
+      "image": "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?q=80&w=1000&auto=format&fit=crop",
+      "keywords": ["hair", "cut", "styling", "ladies", "women", "salon"]
+    },
+    {
+      "id": 2,
+      "name": "Hair Color & Highlights",
+      "category": "Ladies Salon",
+      "categorySlug": "ladies-salon",
+      "serviceSlug": "hair-color-highlights",
+      "price": "$85",
+      "duration": "120 min",
+      "description": "Expert hair coloring and highlighting services",
+      "image": "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=1000&auto=format&fit=crop",
+      "keywords": ["hair", "color", "highlights", "dye", "ladies", "women", "salon"]
+    },
+    {
+      "id": 3,
+      "name": "Facial Treatment",
+      "category": "Ladies Salon",
+      "categorySlug": "ladies-salon",
+      "serviceSlug": "facial-treatment",
+      "price": "$60",
+      "duration": "75 min",
+      "description": "Rejuvenating facial treatments for all skin types",
+      "image": "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?q=80&w=1000&auto=format&fit=crop",
+      "keywords": ["facial", "skincare", "treatment", "beauty", "ladies", "women"]
+    },
+    {
+      "id": 4,
+      "name": "Manicure & Pedicure",
+      "category": "Ladies Salon",
+      "categorySlug": "ladies-salon",
+      "serviceSlug": "manicure-pedicure",
+      "price": "$35",
+      "duration": "45 min",
+      "description": "Complete nail care and beautification",
+      "image": "https://images.unsplash.com/photo-1519014816548-bf5fe059798b?q=80&w=1000&auto=format&fit=crop",
+      "keywords": ["nails", "manicure", "pedicure", "nail care", "ladies", "women"]
+    },
+    {
+      "id": 5,
+      "name": "Haircut & Styling",
+      "category": "Gents Salon",
+      "categorySlug": "gents-salon",
+      "serviceSlug": "haircut-styling",
+      "price": "$30",
+      "duration": "45 min",
+      "description": "Modern and classic haircuts with styling",
+      "image": "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?q=80&w=1000&auto=format&fit=crop",
+      "keywords": ["haircut", "styling", "men", "gents", "barber", "salon"]
+    },
+    {
+      "id": 6,
+      "name": "Beard Trim & Shave",
+      "category": "Gents Salon",
+      "categorySlug": "gents-salon",
+      "serviceSlug": "beard-trim-shave",
+      "price": "$25",
+      "duration": "30 min",
+      "description": "Professional beard trimming and clean shave",
+      "image": "https://images.unsplash.com/photo-1621605815971-fbc98d665033?q=80&w=1000&auto=format&fit=crop",
+      "keywords": ["beard", "trim", "shave", "men", "gents", "barber"]
+    },
+    {
+      "id": 7,
+      "name": "Car Wash & Detailing",
+      "category": "Automotive",
+      "categorySlug": "automotive",
+      "serviceSlug": "car-wash-detailing",
+      "price": "$45",
+      "duration": "90 min",
+      "description": "Complete exterior and interior car cleaning",
+      "image": "https://images.unsplash.com/photo-1520340356584-f9917d1eea6f?q=80&w=1000&auto=format&fit=crop",
+      "keywords": ["car", "wash", "detailing", "cleaning", "automotive", "vehicle"]
+    },
+    {
+      "id": 8,
+      "name": "Oil Change",
+      "category": "Automotive",
+      "categorySlug": "automotive",
+      "serviceSlug": "oil-change",
+      "price": "$40",
+      "duration": "30 min",
+      "description": "Professional oil change service",
+      "image": "https://images.unsplash.com/photo-1487754180451-c456f719a1fc?q=80&w=1000&auto=format&fit=crop",
+      "keywords": ["oil", "change", "maintenance", "automotive", "car", "vehicle"]
+    },
+    {
+      "id": 9,
+      "name": "Interior Cleaning",
+      "category": "Automotive",
+      "categorySlug": "automotive",
+      "serviceSlug": "interior-cleaning",
+      "price": "$35",
+      "duration": "60 min",
+      "description": "Deep interior cleaning and sanitization",
+      "image": "https://images.unsplash.com/photo-1601362840469-51e4d8d58785?q=80&w=1000&auto=format&fit=crop",
+      "keywords": ["interior", "cleaning", "car", "automotive", "sanitization"]
+    },
+    {
+      "id": 10,
+      "name": "Makeup Services",
+      "category": "Ladies Salon",
+      "categorySlug": "ladies-salon",
+      "serviceSlug": "makeup-services",
+      "price": "$50",
+      "duration": "45 min",
+      "description": "Professional makeup application for any occasion",
+      "image": "https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?q=80&w=1000&auto=format&fit=crop",
+      "keywords": ["makeup", "cosmetics", "beauty", "ladies", "women", "occasion"]
+    }
+  ]
+}

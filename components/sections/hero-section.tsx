@@ -2,6 +2,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { SearchBar } from "@/components/ui/search-bar"
 
 export function HeroSection() {
   return (
@@ -45,6 +46,11 @@ export function HeroSection() {
             Experience premium salon services, automotive care, and wellness treatments delivered right to your home.
             Professional quality, unmatched convenience.
           </p>
+
+          {/* Search Bar */}
+          <div className="mb-8">
+            <SearchBar placeholder="Search for haircuts, facials, car wash, and more..." className="max-w-2xl" />
+          </div>
 
           {/* Stats */}
           <div className="flex flex-wrap justify-center gap-8 mb-10">
