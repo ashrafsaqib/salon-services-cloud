@@ -14,7 +14,6 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { useDebounce } from "@/hooks/use-debounce"
-import searchData from "@/data/search-data.json"
 
 interface Service {
   id: number
@@ -52,6 +51,15 @@ const sortOptions = [
   { name: "Duration: Long to Short", value: "duration-desc" },
 ]
 
+// Fetch services from API
+const searchServices = async (searchQuery: string): Promise<Service[]> => {
+  if (!searchQuery.trim()) return []
+  const res = await fetch(`http://localhost:4000/api/search?q=${encodeURIComponent(searchQuery.trim())}`)
+  if (!res.ok) throw new Error("Failed to fetch search results")
+  const data = await res.json()
+  return data.services || []
+}
+
 export default function SearchPage() {
   const searchParams = useSearchParams()
   const initialQuery = searchParams.get("q") || ""
@@ -62,41 +70,22 @@ export default function SearchPage() {
   const [sortBy, setSortBy] = useState("relevance")
   const [showFilters, setShowFilters] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [allResults, setAllResults] = useState<Service[]>([])
 
   const debouncedQuery = useDebounce(query, 300)
-
-  // Mock search function
-  const searchServices = async (searchQuery: string): Promise<Service[]> => {
-    setIsLoading(true)
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 300))
-
-    let results = searchData.services as Service[]
-
-    // Filter by search query
-    if (searchQuery.trim()) {
-      const lowercaseQuery = searchQuery.toLowerCase()
-      results = results.filter((service) => {
-        return (
-          service.name.toLowerCase().includes(lowercaseQuery) ||
-          service.category.toLowerCase().includes(lowercaseQuery) ||
-          service.description.toLowerCase().includes(lowercaseQuery) ||
-          service.keywords.some((keyword) => keyword.toLowerCase().includes(lowercaseQuery))
-        )
-      })
-    }
-
-    setIsLoading(false)
-    return results
-  }
-
-  const [allResults, setAllResults] = useState<Service[]>([])
 
   // Fetch results when query changes
   useEffect(() => {
     const fetchResults = async () => {
-      const results = await searchServices(debouncedQuery)
-      setAllResults(results)
+      setIsLoading(true)
+      try {
+        const results = await searchServices(debouncedQuery)
+        setAllResults(results)
+      } catch (error) {
+        setAllResults([])
+      } finally {
+        setIsLoading(false)
+      }
     }
     fetchResults()
   }, [debouncedQuery])
@@ -412,7 +401,11 @@ export default function SearchPage() {
                         <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
                           <div className="h-48 bg-gray-200 relative">
                             <Image
-                              src={service.image || "/placeholder.svg"}
+                              src={
+                                service.image
+                                  ? service.image
+                                  : "/placeholder.svg"
+                              }
                               alt={service.name}
                               fill
                               className="object-cover"

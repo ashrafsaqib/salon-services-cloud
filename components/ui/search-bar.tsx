@@ -10,7 +10,6 @@ import { Search, Clock, MapPin, X } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useDebounce } from "@/hooks/use-debounce"
-import searchData from "@/data/search-data.json"
 
 interface Service {
   id: number
@@ -44,23 +43,11 @@ export function SearchBar({ placeholder = "Search for services...", className = 
 
   // Mock API call function (replace with real API later)
   const searchServices = async (searchQuery: string): Promise<Service[]> => {
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 200))
-
     if (!searchQuery.trim()) return []
-
-    const lowercaseQuery = searchQuery.toLowerCase()
-
-    return searchData.services
-      .filter((service: Service) => {
-        return (
-          service.name.toLowerCase().includes(lowercaseQuery) ||
-          service.category.toLowerCase().includes(lowercaseQuery) ||
-          service.description.toLowerCase().includes(lowercaseQuery) ||
-          service.keywords.some((keyword) => keyword.toLowerCase().includes(lowercaseQuery))
-        )
-      })
-      .slice(0, 6) // Limit to 6 results
+    const res = await fetch(`http://localhost:4000/api/search?q=${encodeURIComponent(searchQuery.trim())}`)
+    if (!res.ok) throw new Error("Failed to fetch search results")
+    const data = await res.json()
+    return data.services || []
   }
 
   // Effect to handle search when debounced query changes
