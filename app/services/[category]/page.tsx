@@ -1,3 +1,6 @@
+"use client"
+
+import { use, useEffect, useState } from "react"
 import { notFound } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
@@ -8,109 +11,72 @@ import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 
 interface ServicePageProps {
-  params: {
+  params: Promise<{
     category: string
-  }
+  }>
 }
 
-const serviceCategories = {
-  "ladies-salon": {
-    title: "Ladies Salon Services",
-    description: "Professional beauty and wellness services for women",
-    image: "https://images.unsplash.com/photo-1560066984-138dadb4c035?q=80&w=2070&auto=format&fit=crop",
-    services: [
-      {
-        name: "Hair Styling & Cut",
-        price: "$45",
-        duration: "60 min",
-        rating: 4.9,
-        description: "Professional hair cutting and styling services",
-        image: "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?q=80&w=1000&auto=format&fit=crop",
-        features: ["Consultation included", "Premium products", "Style guarantee"],
-        slug: "hair-styling-cut",
-      },
-      {
-        name: "Hair Color & Highlights",
-        price: "$85",
-        duration: "120 min",
-        rating: 4.8,
-        description: "Expert hair coloring and highlighting services",
-        image: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=1000&auto=format&fit=crop",
-        features: ["Color consultation", "Premium color products", "Touch-up guarantee"],
-        slug: "hair-color-highlights",
-      },
-      {
-        name: "Facial Treatment",
-        price: "$60",
-        duration: "75 min",
-        rating: 4.7,
-        description: "Rejuvenating facial treatments for all skin types",
-        image: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?q=80&w=1000&auto=format&fit=crop",
-        features: ["Skin analysis", "Customized treatment", "Aftercare advice"],
-        slug: "facial-treatment",
-      },
-      {
-        name: "Manicure & Pedicure",
-        price: "$35",
-        duration: "45 min",
-        rating: 4.8,
-        description: "Complete nail care and beautification",
-        image: "https://images.unsplash.com/photo-1519014816548-bf5fe059798b?q=80&w=1000&auto=format&fit=crop",
-        features: ["Nail shaping", "Cuticle care", "Polish application"],
-        slug: "manicure-pedicure",
-      },
-    ],
-  },
-  "gents-salon": {
-    title: "Gents Salon Services",
-    description: "Professional grooming services for men",
-    image: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=2070&auto=format&fit=crop",
-    services: [
-      {
-        name: "Haircut & Styling",
-        price: "$30",
-        duration: "45 min",
-        rating: 4.8,
-        description: "Modern and classic haircuts with styling",
-        image: "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?q=80&w=1000&auto=format&fit=crop",
-        features: ["Style consultation", "Wash included", "Styling products"],
-        slug: "haircut-styling",
-      },
-      {
-        name: "Beard Trim & Shave",
-        price: "$25",
-        duration: "30 min",
-        rating: 4.9,
-        description: "Professional beard trimming and clean shave",
-        image: "https://images.unsplash.com/photo-1621605815971-fbc98d665033?q=80&w=1000&auto=format&fit=crop",
-        features: ["Hot towel treatment", "Precision trimming", "Aftershave care"],
-        slug: "beard-trim-shave",
-      },
-    ],
-  },
-  automotive: {
-    title: "Automotive Services",
-    description: "Professional car care and maintenance services",
-    image: "https://images.unsplash.com/photo-1520340356584-f9917d1eea6f?q=80&w=2070&auto=format&fit=crop",
-    services: [
-      {
-        name: "Car Wash & Detailing",
-        price: "$45",
-        duration: "90 min",
-        rating: 4.7,
-        description: "Complete exterior and interior car cleaning",
-        image: "https://images.unsplash.com/photo-1520340356584-f9917d1eea6f?q=80&w=1000&auto=format&fit=crop",
-        features: ["Exterior wash", "Interior cleaning", "Wax protection"],
-        slug: "car-wash-detailing",
-      },
-    ],
-  },
+interface Subcategory {
+  title: string
+  description: string
+  image: string
+  popular: boolean
+  slug: string
+}
+
+interface Service {
+  name: string
+  price: string
+  duration: string
+  rating: number
+  description: string
+  image: string
+  features: string[]
+  slug: string
+}
+
+interface CategoryData {
+  title: string
+  description: string
+  image: string
+  subcategories?: Subcategory[]
+  services: Service[]
 }
 
 export default function ServiceCategoryPage({ params }: ServicePageProps) {
-  const category = serviceCategories[params.category as keyof typeof serviceCategories]
+  const { category } = use(params)
+  const [categoryData, setCategoryData] = useState<CategoryData | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
 
-  if (!category) {
+  useEffect(() => {
+    const fetchCategory = async () => {
+      setLoading(true)
+      setError(false)
+      try {
+        const res = await fetch(`http://localhost:4000/api/category?category=${encodeURIComponent(category)}`)
+        if (!res.ok) throw new Error("Category not found")
+        const data = await res.json()
+        if (!data) throw new Error("No data")
+        setCategoryData(data)
+      } catch (err) {
+        setError(true)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchCategory()
+  }, [category])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <span className="text-gray-500 text-lg">Loading category...</span>
+      </div>
+    )
+  }
+
+  if (error || !categoryData) {
     notFound()
   }
 
@@ -121,25 +87,76 @@ export default function ServiceCategoryPage({ params }: ServicePageProps) {
       {/* Hero Section */}
       <section className="relative h-96 flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
-          <Image src={category.image || "/placeholder.svg"} alt={category.title} fill className="object-cover" />
+          <Image src={categoryData.image || "/placeholder.svg"} alt={categoryData.title} fill className="object-cover" />
           <div className="absolute inset-0 bg-black/50"></div>
         </div>
 
         <div className="relative z-10 text-center text-white">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4">{category.title}</h1>
-          <p className="text-xl md:text-2xl max-w-2xl mx-auto">{category.description}</p>
+          <h1 className="text-4xl md:text-6xl font-bold mb-4">{categoryData.title}</h1>
+          <p className="text-xl md:text-2xl max-w-2xl mx-auto">{categoryData.description}</p>
         </div>
       </section>
+
+      {/* Subcategories */}
+      {categoryData.subcategories && categoryData.subcategories.length > 0 && (
+        <section className="py-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-2xl font-semibold mb-6 text-gray-800">Subcategories</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {categoryData.subcategories.map((subcat, idx) => (
+                <Link href={`/services/${subcat.slug}`} key={subcat.slug}>
+                  <Card className="hover:shadow-lg transition-shadow h-full">
+                    <div className="h-32 bg-gray-200 relative">
+                      <Image
+                        src={
+                          subcat.image
+                            ? subcat.image.startsWith("http")
+                              ? subcat.image
+                              : subcat.image
+                            : "/placeholder.svg"
+                        }
+                        alt={subcat.title}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                    <CardContent className="p-4">
+                      <h3 className="text-lg font-semibold text-gray-800 mb-1">{subcat.title}</h3>
+                      <p className="text-gray-600 text-sm">{subcat.description}</p>
+                      {subcat.popular && (
+                        <span className="inline-block mt-2 px-2 py-1 text-xs bg-rose-100 text-rose-700 rounded-full">
+                          Popular
+                        </span>
+                      )}
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Services Grid */}
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {category.services.map((service, index) => (
-              <Link href={`/services/${params.category}/${service.slug}`} key={index}>
+            {categoryData.services.map((service, index) => (
+              <Link href={`/services/${category}/${service.slug}`} key={index}>
                 <Card className="hover:shadow-lg transition-shadow h-full">
                   <div className="h-48 bg-gray-200 relative">
-                    <Image src={service.image || "/placeholder.svg"} alt={service.name} fill className="object-cover" />
+                    <Image
+                      src={
+                        service.image
+                          ? service.image.startsWith("http")
+                            ? service.image
+                            : service.image
+                          : "/placeholder.svg"
+                      }
+                      alt={service.name}
+                      fill
+                      className="object-cover"
+                    />
                   </div>
                   <CardContent className="p-6">
                     <div className="flex justify-between items-start mb-2">
