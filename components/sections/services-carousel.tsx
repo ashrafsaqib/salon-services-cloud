@@ -5,52 +5,19 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ServiceCard } from "@/components/ui/service-card"
 
-const allServices = [
-  {
-    title: "Ladies Salon",
-    description: "Professional beauty and wellness services for women",
-    image: "https://images.unsplash.com/photo-1560066984-138dadb4c035?q=80&w=1000&auto=format&fit=crop",
-    popular: true,
-    href: "/services/ladies-salon",
-  },
-  {
-    title: "Gents Salon",
-    description: "Professional grooming services for men",
-    image: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=1000&auto=format&fit=crop",
-    popular: true,
-    href: "/services/gents-salon",
-  },
-  {
-    title: "Automotive",
-    description: "Car care and maintenance services",
-    image: "https://images.unsplash.com/photo-1520340356584-f9917d1eea6f?q=80&w=1000&auto=format&fit=crop",
-    popular: true,
-    href: "/services/automotive",
-  },
-  {
-    title: "Spa & Wellness",
-    description: "Relaxing spa treatments and wellness services",
-    image: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?q=80&w=1000&auto=format&fit=crop",
-    popular: false,
-    href: "/services/spa-wellness",
-  },
-  {
-    title: "Wholesale Services",
-    description: "Bulk services for businesses and events",
-    image: "https://images.unsplash.com/photo-1556740738-b6a63e27c4df?q=80&w=1000&auto=format&fit=crop",
-    popular: false,
-    href: "/services/wholesale",
-  },
-  {
-    title: "Education & Training",
-    description: "Professional courses and certification programs",
-    image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=1000&auto=format&fit=crop",
-    popular: false,
-    href: "/services/education",
-  },
-]
+type Service = {
+  title: string
+  description: string
+  image: string
+  popular?: boolean
+  href: string
+}
 
-export function ServicesCarousel() {
+interface ServicesCarouselProps {
+  services: Service[]
+}
+
+export function ServicesCarousel({ services }: ServicesCarouselProps) {
   return (
     <section className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -102,7 +69,7 @@ export function ServicesCarousel() {
                 WebkitScrollbar: { display: "none" },
               }}
             >
-              {allServices.map((service, index) => (
+              {services.map((service, index) => (
                 <ServiceCard key={index} {...service} />
               ))}
             </div>

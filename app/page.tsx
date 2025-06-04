@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { HeroSection } from "@/components/sections/hero-section"
 import { ServicesCarousel } from "@/components/sections/services-carousel"
 import { FeaturedServices } from "@/components/sections/featured-services"
@@ -13,18 +14,36 @@ import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 
 export default function HomePage() {
+  const [data, setData] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetch("http://localhost:4000/api/home")
+      .then(res => res.json())
+      .then(setData)
+      .finally(() => setLoading(false))
+  }, [])
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>
+  }
+
+  if (!data) {
+    return <div className="min-h-screen flex items-center justify-center text-red-500">Failed to load data.</div>
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
       <HeroSection />
-      <ServicesCarousel />
-      <FeaturedServices />
+      <ServicesCarousel services={data.servicesCarousel} />
+      <FeaturedServices featured={data.featuredServices} />
       <HowItWorks />
-      <StaffCarousel />
-      <Testimonials />
-      <AppPromotion />
-      <FAQSection />
-      <Newsletter />
+      <StaffCarousel staff={data.staffMembers} />
+      <Testimonials testimonials={data.testimonials} />
+      <AppPromotion promotion={data.appPromotion} />
+      <FAQSection faqs={data.faqs} />
+      <Newsletter newsletter={data.newsletter} />
       <Footer />
     </div>
   )
