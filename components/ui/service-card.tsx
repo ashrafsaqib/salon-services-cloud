@@ -29,9 +29,6 @@ export function ServiceCard({ title, description, image, popular, href }: Servic
         <CardContent className="p-6 text-center">
           <h3 className="text-xl font-semibold text-gray-800 mb-2">{title}</h3>
           <p className="text-gray-600 mb-4 text-sm">{description}</p>
-          <Button variant="outline" className="text-rose-600 border-rose-600 hover:bg-rose-50 w-full">
-            View Services
-          </Button>
         </CardContent>
       </Link>
     </Card>

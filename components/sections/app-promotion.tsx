@@ -52,14 +52,14 @@ export function AppPromotion() {
               </Button>
             </div>
           </div>
-          <div className="hidden md:block relative h-80">
+            <div className="hidden md:block relative h-80">
             <Image
-              src="https://images.unsplash.com/photo-1551650975-87deedd944c3?q=80&w=1000&auto=format&fit=crop"
-              alt="Lipslay Mobile App"
+              src="/appstore.png"
+              alt="App Store Preview"
               fill
               className="object-contain"
             />
-          </div>
+            </div>
         </div>
       </div>
     </section>
