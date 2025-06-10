@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { StaffCard } from "@/components/ui/staff-card"
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
 interface ServiceDetailPageProps {
   params: Promise<{
@@ -31,7 +32,7 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
       setError(false)
       try {
         const res = await fetch(
-          `http://localhost:4000/api/service?query=${encodeURIComponent(`${service}`)}`
+          `${API_BASE_URL}/api/service?query=${encodeURIComponent(`${service}`)}`
         )
         if (!res.ok) throw new Error("Service not found")
         const data = await res.json()

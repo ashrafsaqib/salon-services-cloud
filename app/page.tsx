@@ -13,12 +13,14 @@ import { Newsletter } from "@/components/sections/newsletter"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
+
 export default function HomePage() {
   const [data, setData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch("http://localhost:4000/api/home")
+    fetch(`${API_BASE_URL}/api/home`)
       .then(res => res.json())
       .then(setData)
       .finally(() => setLoading(false))

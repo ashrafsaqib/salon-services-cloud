@@ -6,6 +6,7 @@ import Link from "next/link"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { Card, CardContent } from "@/components/ui/card"
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
 interface Category {
   slug: string
@@ -19,7 +20,7 @@ export default function ServicesPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch("http://localhost:4000/api/categories")
+    fetch("${API_BASE_URL}/api/categories")
       .then(res => res.json())
       .then(setCategories)
       .finally(() => setLoading(false))

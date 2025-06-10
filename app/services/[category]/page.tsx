@@ -54,7 +54,7 @@ export default function ServiceCategoryPage({ params }: ServicePageProps) {
       setLoading(true)
       setError(false)
       try {
-        const res = await fetch(`http://localhost:4000/api/category?category=${encodeURIComponent(category)}`)
+        const res = await fetch(`${API_BASE_URL}/api/category?category=${encodeURIComponent(category)}`)
         if (!res.ok) throw new Error("Category not found")
         const data = await res.json()
         if (!data) throw new Error("No data")

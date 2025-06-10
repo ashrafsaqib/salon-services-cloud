@@ -14,6 +14,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { useDebounce } from "@/hooks/use-debounce"
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
 interface Service {
   id: number
@@ -54,7 +55,7 @@ const sortOptions = [
 // Fetch services from API
 const searchServices = async (searchQuery: string): Promise<Service[]> => {
   if (!searchQuery.trim()) return []
-  const res = await fetch(`http://localhost:4000/api/search?q=${encodeURIComponent(searchQuery.trim())}`)
+  const res = await fetch(`${API_BASE_URL}/api/search?q=${encodeURIComponent(searchQuery.trim())}`)
   if (!res.ok) throw new Error("Failed to fetch search results")
   const data = await res.json()
   return data.services || []
