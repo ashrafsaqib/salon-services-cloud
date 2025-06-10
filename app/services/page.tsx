@@ -20,7 +20,7 @@ export default function ServicesPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch("${API_BASE_URL}/api/categories")
+    fetch(`${API_BASE_URL}/api/categories`)
       .then(res => res.json())
       .then(setCategories)
       .finally(() => setLoading(false))
