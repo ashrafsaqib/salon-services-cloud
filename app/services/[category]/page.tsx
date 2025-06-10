@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
 interface ServicePageProps {
   params: Promise<{
