@@ -4,42 +4,20 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { StaffCard } from "@/components/ui/staff-card"
 
-const staffMembers = [
-  {
-    name: "Sarah Martinez",
-    role: "Senior Hair Stylist",
-    experience: "8+ years",
-    rating: 4.9,
-    specialties: ["Hair Color", "Bridal Styling", "Cuts"],
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1000&auto=format&fit=crop",
-  },
-  {
-    name: "Michael Chen",
-    role: "Master Barber",
-    experience: "10+ years",
-    rating: 4.8,
-    specialties: ["Classic Cuts", "Beard Styling", "Hot Towel Shave"],
-    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=1000&auto=format&fit=crop",
-  },
-  {
-    name: "Emily Rodriguez",
-    role: "Beauty Specialist",
-    experience: "6+ years",
-    rating: 4.9,
-    specialties: ["Facials", "Makeup", "Skincare"],
-    image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1000&auto=format&fit=crop",
-  },
-  {
-    name: "David Thompson",
-    role: "Auto Detailing Expert",
-    experience: "12+ years",
-    rating: 4.7,
-    specialties: ["Paint Protection", "Interior Detailing", "Ceramic Coating"],
-    image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=1000&auto=format&fit=crop",
-  },
-]
+interface StaffMember {
+  name: string
+  role: string
+  experience: string
+  rating: number
+  specialties: string[]
+  image: string
+}
 
-export function StaffCarousel() {
+interface StaffCarouselProps {
+  staff: StaffMember[]
+}
+
+export function StaffCarousel({ staff }: StaffCarouselProps) {
   return (
     <section className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -91,8 +69,8 @@ export function StaffCarousel() {
                 WebkitScrollbar: { display: "none" },
               }}
             >
-              {staffMembers.map((staff, index) => (
-                <StaffCard key={index} {...staff} />
+              {staff.map((staffMember, index) => (
+                <StaffCard key={index} {...staffMember} />
               ))}
             </div>
           </div>
