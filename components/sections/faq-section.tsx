@@ -6,40 +6,16 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 
-const faqs = [
-  {
-    question: "How do I book a service?",
-    answer:
-      "You can book a service through our website by selecting your desired service, choosing your location, and picking a convenient time slot. You can also download our mobile app for easier booking on the go.",
-  },
-  {
-    question: "What areas do you serve?",
-    answer:
-      "We currently serve major metropolitan areas and surrounding suburbs. You can check if we serve your area by entering your address during the booking process or contacting our customer service team.",
-  },
-  {
-    question: "How far in advance should I book?",
-    answer:
-      "We recommend booking at least 24-48 hours in advance to ensure availability. However, we also offer same-day bookings based on staff availability in your area.",
-  },
-  {
-    question: "What if I need to cancel or reschedule?",
-    answer:
-      "You can cancel or reschedule your appointment up to 4 hours before the scheduled time without any charges. Cancellations within 4 hours may incur a small fee.",
-  },
-  {
-    question: "Are your staff members licensed and insured?",
-    answer:
-      "Yes, all our professionals are fully licensed, insured, and background-checked. We ensure they meet the highest standards of safety and professionalism.",
-  },
-  {
-    question: "What payment methods do you accept?",
-    answer:
-      "We accept all major credit cards, debit cards, and digital payment methods including Apple Pay, Google Pay, and PayPal. Payment is processed securely through our platform.",
-  },
-]
+interface FAQ {
+  question: string
+  answer: string
+}
 
-export function FAQSection() {
+interface FAQSectionProps {
+  faqs: FAQ[]
+}
+
+export function FAQSection({ faqs }: FAQSectionProps) {
   const [openFAQ, setOpenFAQ] = useState<number | null>(0)
 
   return (
