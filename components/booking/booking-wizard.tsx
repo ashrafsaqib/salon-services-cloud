@@ -11,20 +11,7 @@ import { TimeSlotStep } from "./steps/time-slot-step"
 import { StaffSelectionStep } from "./steps/staff-selection-step"
 import { BookingSummaryStep } from "./steps/booking-summary-step"
 import searchData from "@/data/search-data.json"
-
-interface Service {
-  id: number
-  name: string
-  category: string
-  categorySlug: string
-  serviceSlug: string
-  price: string
-  duration: string
-  description: string
-  image: string
-  keywords: string[]
-}
-
+import type { Service } from "@/types"
 interface StaffMember {
   id: number
   name: string

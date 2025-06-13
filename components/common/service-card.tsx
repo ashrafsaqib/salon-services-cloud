@@ -3,6 +3,7 @@ import Link from "next/link"
 import { Star, Clock, MapPin, Shield } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { BookButton } from "@/components/ui/book-button"
 import type { Service } from "@/types"
 
 export interface ServiceCardProps {
@@ -21,9 +22,8 @@ export function ServiceCard( {service}: ServiceCardProps) {
     duration,
     features
   } = service
-  const link = category ? `/services/${category}/${slug}` : `/services/${slug}`
   return (
-    <Link href={link}>
+    <Link href={'/services/'+slug}>
       <Card className="hover:shadow-lg transition-shadow h-full cursor-pointer">
         <div className="h-48 bg-gray-200 relative">
           <Image
@@ -77,11 +77,13 @@ export function ServiceCard( {service}: ServiceCardProps) {
 
           <div className="flex justify-between items-center">
             <span className="text-2xl font-bold text-rose-600">{price}</span>
-            
-              <Button className="bg-rose-600 hover:bg-rose-700" onClick={e => { e.preventDefault(); /* handle booking here if needed */ }}>
-                Book Now
-              </Button>
-           
+            <BookButton
+              service={service}
+              category={category}
+              className="bg-rose-600 hover:bg-rose-700"
+            >
+              Book Now
+            </BookButton>
           </div>
         </CardContent>
       </Card>
