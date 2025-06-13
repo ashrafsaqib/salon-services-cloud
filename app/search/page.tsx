@@ -2,8 +2,6 @@
 
 import { useState, useEffect, useMemo } from "react"
 import { useSearchParams } from "next/navigation"
-import Image from "next/image"
-import Link from "next/link"
 import { Search, Filter, X, Star, Clock, MapPin } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -16,18 +14,8 @@ import { Footer } from "@/components/layout/footer"
 import { useDebounce } from "@/hooks/use-debounce"
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
-interface Service {
-  id: number
-  name: string
-  category: string
-  categorySlug: string
-  serviceSlug: string
-  price: string
-  duration: string
-  description: string
-  image: string
-  keywords: string[]
-}
+import type { Service } from "@/types"
+import { ServiceCard } from "@/components/common/service-card"
 
 const categories = [
   { name: "All Categories", value: "all" },
@@ -96,9 +84,9 @@ export default function SearchPage() {
     let filtered = allResults
 
     // Filter by categories
-    if (!selectedCategories.includes("all")) {
-      filtered = filtered.filter((service) => selectedCategories.includes(service.categorySlug))
-    }
+    // if (!selectedCategories.includes("all")) {
+    //   filtered = filtered.filter((service) => selectedCategories.includes(service.categorySlug))
+    // }
 
     // Filter by price range
     if (selectedPriceRange !== "all") {
@@ -398,52 +386,10 @@ export default function SearchPage() {
                 {filteredAndSortedResults.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredAndSortedResults.map((service) => (
-                      <Link href={`/services/${service.categorySlug}/${service.serviceSlug}`} key={service.id}>
-                        <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
-                          <div className="h-48 bg-gray-200 relative">
-                            <Image
-                              src={
-                                service.image
-                                  ? service.image
-                                  : "/placeholder.svg"
-                              }
-                              alt={service.name}
-                              fill
-                              className="object-cover"
-                            />
-                          </div>
-                          <CardContent className="p-4">
-                            <div className="flex justify-between items-start mb-2">
-                              <h3 className="text-lg font-semibold text-gray-800 line-clamp-2">{service.name}</h3>
-                              <div className="flex items-center ml-2">
-                                <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 mr-1" />
-                                <span className="text-sm">4.8</span>
-                              </div>
-                            </div>
-
-                            <p className="text-sm text-rose-600 font-medium mb-2">{service.category}</p>
-                            <p className="text-gray-600 text-sm mb-4 line-clamp-2">{service.description}</p>
-
-                            <div className="flex items-center gap-4 mb-4 text-xs text-gray-500">
-                              <div className="flex items-center">
-                                <Clock className="h-3 w-3 mr-1" />
-                                {service.duration}
-                              </div>
-                              <div className="flex items-center">
-                                <MapPin className="h-3 w-3 mr-1" />
-                                At your location
-                              </div>
-                            </div>
-
-                            <div className="flex justify-between items-center">
-                              <span className="text-xl font-bold text-rose-600">{service.price}</span>
-                              <Button size="sm" className="bg-rose-600 hover:bg-rose-700">
-                                Book Now
-                              </Button>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      </Link>
+                      <ServiceCard
+                        key={service.id}
+                        service={service}
+                      /> 
                     ))}
                   </div>
                 ) : (

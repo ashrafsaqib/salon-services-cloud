@@ -1,10 +1,12 @@
 "use client"
 
 import { useState } from "react"
+import { usePathname } from "next/navigation"
 import { Plus, Minus, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+import Link from "next/link"
 
 interface FAQ {
   question: string
@@ -17,6 +19,8 @@ interface FAQSectionProps {
 
 export function FAQSection({ faqs }: FAQSectionProps) {
   const [openFAQ, setOpenFAQ] = useState<number | null>(0)
+  const pathname = usePathname()
+  const isFaqsPage = pathname === "/faq"
 
   return (
     <section className="py-16 bg-gray-50">
@@ -58,12 +62,16 @@ export function FAQSection({ faqs }: FAQSectionProps) {
           ))}
         </div>
 
-        <div className="text-center mt-10">
-          <Button className="bg-rose-600 hover:bg-rose-700">
-            View All FAQs
-            <ChevronRight className="ml-2 h-4 w-4" />
-          </Button>
-        </div>
+        {!isFaqsPage && (
+          <div className="text-center mt-10">
+            <Link href="/faq">
+              <Button className="bg-rose-600 hover:bg-rose-700">
+                View All FAQs
+                <ChevronRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+        )}
       </div>
     </section>
   )

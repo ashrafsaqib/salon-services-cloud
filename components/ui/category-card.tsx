@@ -1,19 +1,14 @@
 import Image from "next/image"
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import type { Category } from "@/types"
 
-interface ServiceCardProps {
-  title: string
-  description: string
-  image: string
-  popular?: boolean
-  href: string
+interface CategoryCardProps {
+  cat: Category
 }
 
-export function ServiceCard({ title, description, image, popular, href }: ServiceCardProps) {
-  // Convert title to slug format for linking to individual service pages
-  const slug = title.toLowerCase().replace(/\s+/g, "-")
+export function CategoryCard({ cat }: CategoryCardProps) {
+  const { title, description, image, popular, href } = cat
 
   return (
     <Card className="flex-shrink-0 w-80 hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { HeroSection } from "@/components/sections/hero-section"
-import { ServicesCarousel } from "@/components/sections/services-carousel"
+import { CategoryCarousel } from "@/components/sections/category-carousel"
 import { FeaturedServices } from "@/components/sections/featured-services"
 import { HowItWorks } from "@/components/sections/how-it-works"
 import { StaffCarousel } from "@/components/sections/staff-carousel"
@@ -38,7 +38,7 @@ export default function HomePage() {
     <div className="min-h-screen bg-gray-50">
       <Header />
       <HeroSection />
-      <ServicesCarousel services={data.servicesCarousel} />
+      <CategoryCarousel services={data.categoryCarousel} />
       <FeaturedServices featured={data.featuredServices} />
       <HowItWorks />
       <StaffCarousel staff={data.staffMembers} />

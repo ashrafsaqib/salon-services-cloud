@@ -1,11 +1,9 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import Image from "next/image"
-import Link from "next/link"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
-import { Card, CardContent } from "@/components/ui/card"
+import { CategoryCard } from "@/components/ui/category-card"
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
 interface Category {
@@ -43,22 +41,9 @@ export default function ServicesPage() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {categories.map(category => (
-                <Link href={`/services/${category.slug}`} key={category.slug}>
-                  <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
-                    <div className="h-48 bg-gray-200 relative">
-                      <Image
-                        src={category.image || "/placeholder.svg"}
-                        alt={category.title}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                    <CardContent className="p-6">
-                      <h2 className="text-2xl font-semibold mb-2">{category.title}</h2>
-                      <p className="text-gray-600">{category.description}</p>
-                    </CardContent>
-                  </Card>
-                </Link>
+              <div key={category.id} className="mb-4">
+                <CategoryCard category={category} />
+              </div>
               ))}
             </div>
           )}

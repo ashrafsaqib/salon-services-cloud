@@ -3,21 +3,14 @@
 import Link from "next/link"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { ServiceCard } from "@/components/ui/service-card"
+import { CategoryCard } from "@/components/ui/category-card"
+import type { Category } from "@/types"
 
-type Service = {
-  title: string
-  description: string
-  image: string
-  popular?: boolean
-  href: string
+interface CategoryCarouselProps {
+  services: Category[]
 }
 
-interface ServicesCarouselProps {
-  services: Service[]
-}
-
-export function ServicesCarousel({ services }: ServicesCarouselProps) {
+export function CategoryCarousel({ services }: CategoryCarouselProps) {
   return (
     <section className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -70,7 +63,7 @@ export function ServicesCarousel({ services }: ServicesCarouselProps) {
               }}
             >
               {services.map((service, index) => (
-                <ServiceCard key={index} {...service} />
+                <CategoryCard key={index} cat={service} />
               ))}
             </div>
           </div>
