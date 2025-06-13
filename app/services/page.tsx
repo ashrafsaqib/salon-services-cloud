@@ -4,14 +4,8 @@ import { useEffect, useState } from "react"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { CategoryCard } from "@/components/ui/category-card"
+import type { Category } from "@/types"
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
-
-interface Category {
-  slug: string
-  title: string
-  description: string
-  image: string
-}
 
 export default function ServicesPage() {
   const [categories, setCategories] = useState<Category[]>([])
@@ -42,7 +36,7 @@ export default function ServicesPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {categories.map(category => (
               <div key={category.id} className="mb-4">
-                <CategoryCard category={category} />
+                <CategoryCard cat={category} />
               </div>
               ))}
             </div>

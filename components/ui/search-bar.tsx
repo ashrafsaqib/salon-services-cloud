@@ -11,19 +11,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useDebounce } from "@/hooks/use-debounce"
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
-
-interface Service {
-  id: number
-  name: string
-  category: string
-  categorySlug: string
-  serviceSlug: string
-  price: string
-  duration: string
-  description: string
-  image: string
-  keywords: string[]
-}
+import type { Service } from "@/types"
 
 interface SearchBarProps {
   placeholder?: string
@@ -164,7 +152,7 @@ export function SearchBar({ placeholder = "Search for services...", className = 
                   <div key={service.id} className="block hover:bg-gray-50 transition-colors">
                     <div className="p-4 flex items-center space-x-4">
                       <Link
-                        href={`/services/${service.categorySlug}/${service.serviceSlug}`}
+                        href={`/services/${service.slug}`}
                         onClick={handleResultClick}
                         className="flex items-center space-x-4 flex-1 min-w-0"
                       >
@@ -179,7 +167,6 @@ export function SearchBar({ placeholder = "Search for services...", className = 
                         <div className="flex-1 min-w-0">
                           <h3 className="text-lg font-semibold text-gray-900 truncate">{service.name}</h3>
                           <p className="text-sm text-gray-500 mb-1">{service.category}</p>
-                          <p className="text-sm text-gray-600 line-clamp-2">{service.description}</p>
                           <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
                             <div className="flex items-center">
                               <Clock className="h-3 w-3 mr-1" />
@@ -189,22 +176,12 @@ export function SearchBar({ placeholder = "Search for services...", className = 
                               <MapPin className="h-3 w-3 mr-1" />
                               At your location
                             </div>
+                            <div className="flex items-center font-bold text-rose-600">
+                              {service.price}
+                            </div>
                           </div>
                         </div>
                       </Link>
-                      <div className="text-right flex-shrink-0">
-                        <div className="text-lg font-bold text-rose-600 mb-2">{service.price}</div>
-                        <Button
-                          size="sm"
-                          className="bg-rose-600 hover:bg-rose-700"
-                          onClick={() => {
-                            handleResultClick()
-                            router.push(`/book?service=${service.id}&category=${service.categorySlug}`)
-                          }}
-                        >
-                          Book
-                        </Button>
-                      </div>
                     </div>
                   </div>
                 ))}
