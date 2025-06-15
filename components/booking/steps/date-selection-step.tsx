@@ -4,19 +4,7 @@ import { useState, useEffect } from "react"
 import { Calendar, ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-
-interface Service {
-  id: number
-  name: string
-  category: string
-  categorySlug: string
-  serviceSlug: string
-  price: string
-  duration: string
-  description: string
-  image: string
-  keywords: string[]
-}
+import type { Service } from "@/types"
 
 interface DateSelectionStepProps {
   selectedDate?: string

@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { StaffCard } from "@/components/ui/staff-card"
+import { useRouter } from "next/navigation"
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
 interface ServiceDetailPageProps {
@@ -25,6 +26,7 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
   const [serviceData, setServiceData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
+  const router = useRouter()
 
   useEffect(() => {
     const fetchService = async () => {
@@ -122,7 +124,16 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
                 </div>
               </div>
 
-              <Button className="bg-rose-600 hover:bg-rose-700 h-12 px-8 text-lg">Book This Service</Button>
+              <Button
+                className="bg-rose-600 hover:bg-rose-700 h-12 px-8 text-lg"
+                onClick={() => {
+                  if (serviceData && serviceData.id) {
+                    router.push(`/book?serviceId=${serviceData.id}`)
+                  }
+                }}
+              >
+                Book This Service
+              </Button>
             </div>
 
             <div className="relative h-80 rounded-lg overflow-hidden">

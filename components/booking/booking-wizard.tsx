@@ -7,35 +7,10 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { ServiceSelectionStep } from "./steps/service-selection-step"
 import { DateSelectionStep } from "./steps/date-selection-step"
-import { TimeSlotStep } from "./steps/time-slot-step"
-import { StaffSelectionStep } from "./steps/staff-selection-step"
+import { SlotSelectionStep } from "./steps/slot-selection-step"
 import { BookingSummaryStep } from "./steps/booking-summary-step"
-import searchData from "@/data/search-data.json"
-import type { Service } from "@/types"
-interface StaffMember {
-  id: number
-  name: string
-  role: string
-  experience: string
-  rating: number
-  specialties: string[]
-  image: string
-  priceModifier?: number // Additional cost or discount
-}
-
-interface BookingData {
-  service?: Service
-  date?: string
-  timeSlot?: string
-  staff?: StaffMember
-  customerInfo?: {
-    name: string
-    email: string
-    phone: string
-    address: string
-    notes?: string
-  }
-}
+import { CustomerDetailsStep } from "./steps/customer-details-step"
+import type { Service, StaffMember, CustomerInfo, BookingData } from "@/types"
 
 interface BookingWizardProps {
   initialServiceId?: number
@@ -43,29 +18,91 @@ interface BookingWizardProps {
 }
 
 const steps = [
-  { id: 1, name: "Service", description: "Choose your service" },
-  { id: 2, name: "Date", description: "Select date" },
-  { id: 3, name: "Time", description: "Pick time slot" },
-  { id: 4, name: "Staff", description: "Choose professional" },
-  { id: 5, name: "Summary", description: "Review & book" },
+  { id: 1, name: "Service" },
+  { id: 2, name: "Date" },
+  { id: 3, name: "Slot" },
+  { id: 4, name: "Details" },
+  { id: 5, name: "Summary" },
 ]
 
 export function BookingWizard({ initialServiceId, initialCategory }: BookingWizardProps) {
   const [currentStep, setCurrentStep] = useState(1)
-  const [bookingData, setBookingData] = useState<BookingData>({})
+  const [bookingData, setBookingData] = useState<BookingData>({ services: [] })
+  const [customerDetails, setCustomerDetails] = useState<any>({
+    name: "",
+    email: "",
+    phone_number: "",
+    whatsapp_number: "",
+    gender: "",
+    affiliate_code: "",
+    coupon_code: "",
+    save_data: true,
+    building_name: "",
+    flat_or_villa: "",
+    street: "",
+    area: "Dubai",
+    district: "",
+    landmark: "",
+    city: "",
+    latitude: "",
+    longitude: "",
+  })
+  const [selectedSlot, setSelectedSlot] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
   // Initialize with pre-selected service if provided
   useEffect(() => {
-    if (initialServiceId) {
-      const service = searchData.services.find((s) => s.id === initialServiceId) as Service
-      if (service) {
-        setBookingData((prev) => ({ ...prev, service }))
-        setCurrentStep(2) // Skip to date selection
+    const fetchAndSetService = async () => {
+      if (initialServiceId) {
+        try {
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/search?id=${initialServiceId}`)  
+          if (!res.ok) throw new Error("Failed to fetch services list")
+          const data = await res.json()
+          setBookingData((prev) => ({ ...prev, services: data.services}))
+        } catch (e) {
+          // Optionally handle error (e.g., show toast)
+        }
       }
     }
+    fetchAndSetService()
   }, [initialServiceId])
+
+  // New: fetch staff and slots after date selection
+  const handleDateSelect = async (date: string) => {
+    if (!bookingData.services || !bookingData.services.length) return
+    setIsLoading(true)
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/booking/slots`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          services: bookingData.services.map(service => String(service.id)),
+          date,
+          area: "Dubai"
+        })
+      })
+      if (!res.ok) throw new Error("Failed to fetch staff and slots")
+      const data = await res.json()
+      setBookingData((prev) => ({ ...prev, date, staff: undefined, timeSlot: undefined, staffAndSlotsData: data }))
+      setCurrentStep(3)
+    } catch (e) {
+      setBookingData((prev) => ({ ...prev, date, staff: undefined, timeSlot: undefined, staffAndSlotsData: undefined }))
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  // In handleSlotSelect, store both slot and staff for summary
+  const handleSlotSelect = (slot: any, staff: any) => {
+    setSelectedSlot({ ...slot, staffId: staff.id })
+    setBookingData((prev) => ({
+      ...prev,
+      staff,
+      timeSlot: slot.id,
+    }))
+    setCurrentStep(4)
+  }
 
   const updateBookingData = (data: Partial<BookingData>) => {
     setBookingData((prev) => ({ ...prev, ...data }))
@@ -86,73 +123,137 @@ export function BookingWizard({ initialServiceId, initialCategory }: BookingWiza
   const canProceed = () => {
     switch (currentStep) {
       case 1:
-        return !!bookingData.service
+        return (bookingData.services && bookingData.services.length > 0)
       case 2:
         return !!bookingData.date
       case 3:
-        return !!bookingData.timeSlot
-      case 4:
         return !!bookingData.staff
+      case 4:
+        return !!bookingData.timeSlot
       case 5:
+        return true
+      case 6:
         return true
       default:
         return false
     }
   }
 
+  // Helper to check if customer details are valid for Next button
+  const isCustomerDetailsValid = () => {
+    return (
+      customerDetails.name?.trim() &&
+      customerDetails.email?.trim() &&
+      customerDetails.phone_number?.trim() &&
+      customerDetails.whatsapp_number?.trim() &&
+      customerDetails.gender?.trim() &&
+      customerDetails.building_name?.trim() &&
+      customerDetails.flat_or_villa?.trim() &&
+      customerDetails.street?.trim() &&
+      customerDetails.area?.trim() &&
+      customerDetails.district?.trim() &&
+      customerDetails.landmark?.trim() &&
+      customerDetails.city?.trim()
+    )
+  }
+
   const handleFinalBooking = async () => {
     setIsLoading(true)
-
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-
-    // Redirect to checkout with booking data
-    const bookingId = Math.random().toString(36).substr(2, 9)
-    router.push(`/checkout?booking=${bookingId}`)
+    try {
+      // Prepare payload for /api/order
+      const payload = {
+        name: customerDetails.name,
+        email: customerDetails.email,
+        number_country_code: customerDetails.phone_country_code || "+92",
+        number: customerDetails.phone_number || "3001234567",
+        whatsapp_country_code: customerDetails.whatsapp_country_code || "+92",
+        whatsapp: customerDetails.whatsapp_number || "3001234567",
+        latitude: customerDetails.latitude || "24.8607",
+        longitude: customerDetails.longitude || "67.0011",
+        affiliate_code: customerDetails.affiliate_code || undefined,
+        coupon_code: customerDetails.coupon_code || undefined,
+        gender: customerDetails.gender || undefined,
+        building_name: customerDetails.building_name || undefined,
+        flat_or_villa: customerDetails.flat_or_villa || undefined,
+        street: customerDetails.street || undefined,
+        area: customerDetails.area || undefined,
+        district: customerDetails.district || undefined,
+        landmark: customerDetails.landmark || undefined,
+        city: customerDetails.city || undefined,
+        save_data: customerDetails.save_data,
+        staffZone: {
+          extra_charges: 100, // TODO: Replace with real value if available
+          transport_charges: 200 // TODO: Replace with real value if available
+        },
+        bookingData: [
+          {
+            date: bookingData.date,
+            service_staff_id: bookingData.staff?.id || 5, // fallback
+            time_slot_id: bookingData.timeSlot || 3, // fallback
+            service_ids: bookingData.services ? bookingData.services.map(s => Number(s.id)) : []
+          }
+        ]
+      }
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/order`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      })
+      if (!res.ok) throw new Error("Order submission failed")
+      // Optionally handle response (e.g., get booking/order id)
+      const bookingId = Math.random().toString(36).substr(2, 9)
+      router.push(`/checkout?booking=${bookingId}`)
+    } catch (e) {
+      // Optionally show error toast
+      setIsLoading(false)
+    }
   }
+
+  const areaOptions = ["Dubai"] // You can expand this as needed
 
   const renderStepContent = () => {
     switch (currentStep) {
       case 1:
         return (
           <ServiceSelectionStep
-            selectedService={bookingData.service}
+            selectedServices={bookingData.services || []}
             initialCategory={initialCategory}
-            onServiceSelect={(service) => updateBookingData({ service })}
+            onServiceSelect={(services) => setBookingData((prev) => ({ ...prev, services }))}
           />
         )
       case 2:
         return (
           <DateSelectionStep
             selectedDate={bookingData.date}
-            service={bookingData.service}
-            onDateSelect={(date) => updateBookingData({ date })}
+            service={bookingData.services && bookingData.services.length > 0 ? bookingData.services[0] : undefined}
+            onDateSelect={handleDateSelect}
           />
         )
       case 3:
         return (
-          <TimeSlotStep
-            selectedTimeSlot={bookingData.timeSlot}
-            selectedDate={bookingData.date}
-            service={bookingData.service}
-            onTimeSlotSelect={(timeSlot) => updateBookingData({ timeSlot })}
+          <SlotSelectionStep
+            slots={bookingData.staffAndSlotsData?.slots || []}
+            selectedSlot={selectedSlot}
+            onSlotSelect={handleSlotSelect}
           />
         )
       case 4:
         return (
-          <StaffSelectionStep
-            selectedStaff={bookingData.staff}
-            service={bookingData.service}
-            date={bookingData.date}
-            timeSlot={bookingData.timeSlot}
-            onStaffSelect={(staff) => updateBookingData({ staff })}
+          <CustomerDetailsStep
+            customerDetails={customerDetails}
+            onUpdate={setCustomerDetails}
+            onApplyCoupon={(code) => setCustomerDetails((prev: any) => ({ ...prev, coupon_code: code }))}
+            areaOptions={areaOptions}
+            onNext={() => setCurrentStep(5)}
+            onBack={prevStep}
           />
         )
       case 5:
         return (
           <BookingSummaryStep
-            bookingData={bookingData}
-            onCustomerInfoUpdate={(customerInfo) => updateBookingData({ customerInfo })}
+            bookingData={{ ...bookingData, customerInfo: customerDetails }}
+            onCustomerInfoUpdate={setCustomerDetails}
+            onEditDetails={() => setCurrentStep(4)}
             onConfirmBooking={handleFinalBooking}
             isLoading={isLoading}
           />
@@ -181,14 +282,11 @@ export function BookingWizard({ initialServiceId, initialCategory }: BookingWiza
                 {currentStep > step.id ? <Check className="w-5 h-5" /> : step.id}
               </div>
               <div className="ml-3 hidden sm:block">
-                <p className={`text-sm font-medium ${currentStep >= step.id ? "text-gray-900" : "text-gray-500"}`}>
-                  {step.name}
-                </p>
-                <p className="text-xs text-gray-500">{step.description}</p>
+                <p className={`text-sm font-medium ${currentStep >= step.id ? "text-gray-900" : "text-gray-500"}`}>{step.name}</p>
               </div>
             </div>
             {index < steps.length - 1 && (
-              <div className={`w-16 h-0.5 mx-4 ${currentStep > step.id ? "bg-green-500" : "bg-gray-200"}`} />
+              <div className={`w-8 h-0.5 mx-2 ${currentStep > step.id ? "bg-green-500" : "bg-gray-200"}`} />
             )}
           </div>
         ))}
@@ -209,7 +307,10 @@ export function BookingWizard({ initialServiceId, initialCategory }: BookingWiza
         {currentStep < steps.length ? (
           <Button
             onClick={nextStep}
-            disabled={!canProceed()}
+            disabled={
+              !canProceed() ||
+              (currentStep === 4 && !isCustomerDetailsValid())
+            }
             className="bg-rose-600 hover:bg-rose-700 flex items-center"
           >
             Next

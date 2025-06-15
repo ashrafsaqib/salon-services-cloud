@@ -6,7 +6,7 @@ import { BookingWizard } from "@/components/booking/booking-wizard"
 
 export default function BookingPage() {
   const searchParams = useSearchParams()
-  const serviceId = searchParams.get("service")
+  const serviceId = searchParams.get("serviceId")
   const categorySlug = searchParams.get("category")
 
   return (
@@ -21,7 +21,7 @@ export default function BookingPage() {
           </div>
 
           <BookingWizard
-            initialServiceId={serviceId ? Number.parseInt(serviceId) : undefined}
+            initialServiceId={serviceId ? Number(serviceId) : undefined}
             initialCategory={categorySlug || undefined}
           />
         </div>

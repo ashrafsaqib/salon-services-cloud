@@ -3,15 +3,7 @@
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { StaffCard } from "@/components/ui/staff-card"
-
-interface StaffMember {
-  name: string
-  role: string
-  experience: string
-  rating: number
-  specialties: string[]
-  image: string
-}
+import type { StaffMember } from "@/types"
 
 interface StaffCarouselProps {
   staff: StaffMember[]

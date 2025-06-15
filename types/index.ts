@@ -46,3 +46,48 @@ export interface FeaturedCategory {
   slug: string
   services: Service[]
 }
+
+export interface StaffMember {
+  id: string
+  name: string
+  role?: string
+  experience?: string
+  rating?: number
+  specialties?: string[]
+  image?: string
+  priceModifier?: number
+  bio?: string
+}
+
+export interface CustomerInfo {
+  name: string
+  email: string
+  phone: string
+  address: string
+  notes?: string
+  // Extended fields for booking form
+  phone_number?: string
+  whatsapp_number?: string
+  gender?: string
+  affiliate_code?: string
+  coupon_code?: string
+  save_data?: boolean
+  building_name?: string
+  flat_or_villa?: string
+  street?: string
+  area?: string
+  district?: string
+  landmark?: string
+  city?: string
+  latitude?: string
+  longitude?: string
+}
+
+export interface BookingData {
+  services: Service[]
+  date?: string
+  staff?: StaffMember
+  timeSlot?: string
+  staffAndSlotsData?: any
+  customerInfo?: CustomerInfo
+}
