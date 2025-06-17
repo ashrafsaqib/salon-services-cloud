@@ -2,8 +2,10 @@ import Image from "next/image"
 import { Star } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import Link from "next/link"
 
 interface StaffCardProps {
+  id: string | number
   name: string
   role: string
   experience: string
@@ -12,7 +14,7 @@ interface StaffCardProps {
   image: string
 }
 
-export function StaffCard({ name, role, experience, rating, specialties, image }: StaffCardProps) {
+export function StaffCard({ id, name, role, experience, rating, specialties, image }: StaffCardProps) {
   return (
     <Card className="flex-shrink-0 w-80 hover:shadow-lg transition-shadow overflow-hidden">
       <div className="h-64 bg-gray-200 relative">
@@ -33,9 +35,11 @@ export function StaffCard({ name, role, experience, rating, specialties, image }
             </span>
           ))}
         </div>
-        <Button variant="outline" className="text-rose-600 border-rose-600 hover:bg-rose-50 w-full">
-          Book with {name.split(" ")[0]}
-        </Button>
+        <Link href={`/staff?staff=${encodeURIComponent(id)}`} passHref legacyBehavior>
+          <Button variant="outline" className="text-rose-600 border-rose-600 hover:bg-rose-50 w-full" asChild>
+            <a>View Profile</a>
+          </Button>
+        </Link>
       </CardContent>
     </Card>
   )
