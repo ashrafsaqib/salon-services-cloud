@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { ChevronDown } from "lucide-react"
@@ -9,6 +9,20 @@ import { Button } from "@/components/ui/button"
 export function Header() {
   const [isServicesMenuOpen, setIsServicesMenuOpen] = useState(false)
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setIsLoggedIn(!!localStorage.getItem("token"))
+    }
+  }, [])
+
+  const handleLogout = () => {
+    localStorage.removeItem("token")
+    // Set a flash message in sessionStorage
+    sessionStorage.setItem("flashMessage", "You have been logged out.")
+    window.location.href = "/"
+  }
 
   const servicesMenu = {
     "Ladies Salon": {
@@ -109,14 +123,11 @@ export function Header() {
               )}
             </div>
 
-            <Link href="/packages" className="text-gray-600 hover:text-gray-900">
+            <Link href="/services/package" className="text-gray-600 hover:text-gray-900">
               Packages
             </Link>
-            <Link href="/add-ons" className="text-gray-600 hover:text-gray-900">
+            <Link href="/services/beauty-add-on" className="text-gray-600 hover:text-gray-900">
               Beauty Add-Ons
-            </Link>
-            <Link href="/cart" className="text-gray-600 hover:text-gray-900">
-              Cart(0)
             </Link>
 
             <div
@@ -131,23 +142,30 @@ export function Header() {
 
               {/* Account Menu */}
               {isAccountMenuOpen && (
-                <div className="absolute top-full right-0 w-48 bg-white shadow-lg border rounded-lg mt-1 py-2 z-50">
-                  <Link href="/signin" className="block px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50">
-                    Sign In
-                  </Link>
-                  <Link href="/signup" className="block px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50">
-                    Create Account
-                  </Link>
-                  <div className="border-t my-2"></div>
-                  <Link href="/bookings" className="block px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50">
-                    My Bookings
-                  </Link>
-                  <Link href="/profile" className="block px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50">
-                    Profile Settings
-                  </Link>
-                  <Link href="/payment" className="block px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50">
-                    Payment Methods
-                  </Link>
+                <div className="absolute top-full right-0 w-56 bg-white shadow-lg border rounded-lg mt-1 py-2 z-50">
+                  {!isLoggedIn && (
+                    <>
+                      <Link href="/login" className="block px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50">
+                        Login
+                      </Link>
+                      <Link href="/signup" className="block px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50">
+                        Create Account
+                      </Link>
+                    </>
+                  )}
+                  {isLoggedIn && (
+                    <>
+                      <Link href="/dashboard" className="block px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50">
+                        Dashboard
+                      </Link>
+                      <button
+                        onClick={handleLogout}
+                        className="block w-full text-left px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50"
+                      >
+                        Logout
+                      </button>
+                    </>
+                  )}
                 </div>
               )}
             </div>
@@ -163,7 +181,7 @@ export function Header() {
               </Button>
             </Link>
 
-            <Link href="/contact" className="text-gray-600 hover:text-gray-900">
+            <Link href="/info/contact-us" className="text-gray-600 hover:text-gray-900">
               Contact
             </Link>
           </nav>
