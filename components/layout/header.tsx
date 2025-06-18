@@ -86,7 +86,7 @@ export function Header() {
 
               {/* Services Mega Menu */}
               {isServicesMenuOpen && (
-                <div className="absolute top-full left-0 w-[600px] bg-white shadow-lg border rounded-lg mt-1 p-6 z-50">
+                <div className="absolute top-full left-0 w-[600px] bg-white shadow-lg border rounded-lg p-6 z-50">
                   <div className="grid grid-cols-3 gap-6">
                     {Object.entries(servicesMenu).map(([categoryName, categoryData]) => (
                       <div key={categoryName}>
@@ -142,7 +142,7 @@ export function Header() {
 
               {/* Account Menu */}
               {isAccountMenuOpen && (
-                <div className="absolute top-full right-0 w-56 bg-white shadow-lg border rounded-lg mt-1 py-2 z-50">
+                <div className="absolute top-full right-0 w-56 bg-white shadow-lg border rounded-lg py-2 z-50">
                   {!isLoggedIn && (
                     <>
                       <Link href="/login" className="block px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50">
