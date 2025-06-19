@@ -63,20 +63,43 @@ export function ServiceSelectionStep({ selectedServices = [], onServiceSelect, i
       {selectedServices.length > 0 && (
         <div className="mb-4">
           <h3 className="text-lg font-semibold mb-2">Selected Services</h3>
-          <div className="flex flex-wrap gap-3">
+          <div className="space-y-2">
             {selectedServices.map((service) => (
-              <div key={service.id} className="flex items-center bg-green-50 border border-green-200 rounded-lg px-3 py-1 text-sm">
-                <span className="mr-2 font-medium text-gray-900">{service.name}</span>
-                <button
-                  type="button"
-                  className="ml-1 text-gray-400 hover:text-rose-600"
+              <div
+                key={service.id}
+                className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg px-4 py-3 shadow-sm"
+              >
+                <div className="flex items-center gap-4">
+                  <Image
+                    src={service.image || "/placeholder.svg"}
+                    alt={service.name}
+                    width={48}
+                    height={48}
+                    className="rounded object-cover border"
+                  />
+                  <div>
+                    <div className="font-semibold text-gray-900 text-base">{service.name}</div>
+                    <div className="flex gap-4 text-sm text-gray-600 mt-1">
+                      {service.duration && (
+                        <span className="flex items-center gap-1"><Clock className="w-4 h-4" />{service.duration}</span>
+                      )}
+                      {service.price && (
+                        <span className="flex items-center gap-1 text-rose-600 font-medium">{service.price}</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="text-gray-400 hover:text-rose-600"
                   aria-label="Remove service"
                   onClick={() => onServiceSelect(selectedServices.filter((s) => s.id !== service.id))}
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                   </svg>
-                </button>
+                </Button>
               </div>
             ))}
           </div>

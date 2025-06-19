@@ -15,6 +15,7 @@ import type { Service, StaffMember, CustomerInfo, BookingData } from "@/types"
 interface BookingWizardProps {
   initialServiceId?: number
   initialCategory?: string
+  initialOptions?: number[]
 }
 
 const steps = [
@@ -25,7 +26,7 @@ const steps = [
   { id: 5, name: "Summary" },
 ]
 
-export function BookingWizard({ initialServiceId, initialCategory }: BookingWizardProps) {
+export function BookingWizard({ initialServiceId, initialCategory, initialOptions }: BookingWizardProps) {
   const [currentStep, setCurrentStep] = useState(1)
   const [bookingData, setBookingData] = useState<BookingData>({ services: [] })
   const [customerDetails, setCustomerDetails] = useState<any>({
@@ -48,6 +49,7 @@ export function BookingWizard({ initialServiceId, initialCategory }: BookingWiza
     longitude: "",
   })
   const [selectedSlot, setSelectedSlot] = useState<any>(null)
+  const [selectedOptions, setSelectedOptions] = useState<number[]>(initialOptions || [])
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 

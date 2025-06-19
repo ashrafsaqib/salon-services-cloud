@@ -8,6 +8,7 @@ export default function BookingPage() {
   const searchParams = useSearchParams()
   const serviceId = searchParams.get("serviceId")
   const categorySlug = searchParams.get("category")
+  const options = searchParams.get("options")
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -23,6 +24,7 @@ export default function BookingPage() {
           <BookingWizard
             initialServiceId={serviceId ? Number(serviceId) : undefined}
             initialCategory={categorySlug || undefined}
+            initialOptions={options ? JSON.parse(options) : undefined}
           />
         </div>
       </div>

@@ -12,6 +12,7 @@ import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { StaffCard } from "@/components/ui/staff-card"
 import { useRouter } from "next/navigation"
+import { Input } from "@/components/ui/input"
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
 interface ServiceDetailPageProps {
@@ -26,6 +27,7 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
   const [serviceData, setServiceData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
+  const [selectedOptions, setSelectedOptions] = useState<any[]>([])
   const router = useRouter()
 
   useEffect(() => {
@@ -123,17 +125,6 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
                   <span className="font-semibold">{serviceData.price}</span>
                 </div>
               </div>
-
-              <Button
-                className="bg-rose-600 hover:bg-rose-700 h-12 px-8 text-lg"
-                onClick={() => {
-                  if (serviceData && serviceData.id) {
-                    router.push(`/book?serviceId=${serviceData.id}`)
-                  }
-                }}
-              >
-                Book This Service
-              </Button>
             </div>
 
             <div className="relative h-80 rounded-lg overflow-hidden">
@@ -196,30 +187,60 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
                       <h3 className="text-xl font-semibold mb-4">Book This Service</h3>
 
                       <div className="space-y-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Select Date</label>
-                          <div className="flex items-center border rounded-md p-2">
-                            <Calendar className="h-5 w-5 text-gray-400 mr-2" />
-                            <span className="text-gray-500">Choose a date</span>
+                        {/* Options Section (moved here) */}
+                        {serviceData.options && serviceData.options.length > 0 && (
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Select Options</label>
+                            <div className="space-y-3">
+                              {serviceData.options.map((option: any) => (
+                                <label key={option.id} className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 cursor-pointer">
+                                  <div className="flex items-center gap-3">
+                                    <Input
+                                      type="checkbox"
+                                      checked={selectedOptions.some((o) => o.id === option.id)}
+                                      onChange={e => {
+                                        if (e.target.checked) {
+                                          setSelectedOptions(prev => [...prev, option])
+                                        } else {
+                                          setSelectedOptions(prev => prev.filter(o => o.id !== option.id))
+                                        }
+                                      }}
+                                      className="w-5 h-5 mr-2"
+                                    />
+                                    <div>
+                                      <div className="font-medium text-gray-900">{option.option_name}</div>
+                                      <div className="flex gap-4 text-sm text-gray-600 mt-1">
+                                        {option.option_duration && (
+                                          <span className="flex items-center gap-1"><Clock className="w-4 h-4" />{option.option_duration}</span>
+                                        )}
+                                        {option.option_price && (
+                                          <span className="flex items-center gap-1 text-rose-600 font-medium">AED {option.option_price}</span>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </label>
+                              ))}
+                            </div>
                           </div>
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Select Time</label>
-                          <div className="grid grid-cols-3 gap-2">
-                            {["9:00 AM", "10:00 AM", "11:00 AM", "1:00 PM", "2:00 PM", "3:00 PM"].map((time, index) => (
-                              <div
-                                key={index}
-                                className="border rounded-md p-2 text-center text-sm cursor-pointer hover:border-rose-500 hover:text-rose-500"
-                              >
-                                {time}
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-
+                        )}
                         <div className="pt-4">
-                          <Button className="w-full bg-rose-600 hover:bg-rose-700">Book Now</Button>
+                          <Button
+                            className="w-full bg-rose-600 hover:bg-rose-700"
+                            disabled={serviceData.options && serviceData.options.length > 0 && selectedOptions.length === 0}
+                            onClick={() => {
+                              if (serviceData && serviceData.id) {
+                                const params = new URLSearchParams()
+                                params.append("serviceId", serviceData.id)
+                                if (serviceData.options && serviceData.options.length > 0 && selectedOptions.length > 0) {
+                                  params.append("options", JSON.stringify(selectedOptions.map(o => o.id)))
+                                }
+                                router.push(`/book?${params.toString()}`)
+                              }
+                            }}
+                          >
+                            Book This Service
+                          </Button>
                         </div>
                       </div>
                     </CardContent>
