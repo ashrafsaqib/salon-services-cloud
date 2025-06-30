@@ -148,7 +148,7 @@ export function Header() {
                       <Link href="/login" className="block px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50">
                         Login
                       </Link>
-                      <Link href="/signup" className="block px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50">
+                      <Link href="/register" className="block px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50">
                         Create Account
                       </Link>
                     </>
@@ -157,6 +157,12 @@ export function Header() {
                     <>
                       <Link href="/dashboard" className="block px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50">
                         Dashboard
+                      </Link>
+                      <Link href="/profile" className="block px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50">
+                        Edit Profile
+                      </Link>
+                      <Link href="/addresses" className="block px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50">
+                        Address Book
                       </Link>
                       <button
                         onClick={handleLogout}
