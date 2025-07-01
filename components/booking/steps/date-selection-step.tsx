@@ -78,45 +78,48 @@ export function DateSelectionStep({ selectedDate, service, onDateSelect }: DateS
     }
   }
 
-  const renderCalendar = () => {
-    const daysInMonth = getDaysInMonth(currentMonth)
-    const firstDay = getFirstDayOfMonth(currentMonth)
-    const days = []
+const renderCalendar = () => {
+  const year = currentMonth.getFullYear()
+  const month = currentMonth.getMonth()
+  const daysInMonth = new Date(year, month + 1, 0).getDate()
+  const firstDay = new Date(year, month, 1).getDay()
+  const days = []
 
-    // Empty cells for days before the first day of the month
-    for (let i = 0; i < firstDay; i++) {
-      days.push(<div key={`empty-${i}`} className="h-12"></div>)
-    }
-
-    // Days of the month
-    for (let day = 1; day <= daysInMonth; day++) {
-      const dateString = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day).toISOString().split("T")[0]
-
-      const isAvailable = isDateAvailable(dateString)
-      const isSelected = isDateSelected(dateString)
-      const isToday = dateString === new Date().toISOString().split("T")[0]
-      const isPast = new Date(dateString) < new Date()
-
-      days.push(
-        <button
-          key={day}
-          onClick={() => handleDateClick(dateString)}
-          disabled={!isAvailable || isPast}
-          className={`h-12 w-full rounded-lg text-sm font-medium transition-colors ${
-            isSelected
-              ? "bg-rose-600 text-white"
-              : isAvailable && !isPast
-                ? "hover:bg-rose-100 text-gray-900"
-                : "text-gray-400 cursor-not-allowed"
-          } ${isToday && !isSelected ? "ring-2 ring-rose-200" : ""}`}
-        >
-          {day}
-        </button>,
-      )
-    }
-
-    return days
+  // Empty cells before the first day
+  for (let i = 0; i < firstDay; i++) {
+    days.push(<div key={`empty-${i}`} className="h-12" />)
   }
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const currentDate = new Date(year, month, day)
+    // Fix: use local date string in YYYY-MM-DD format
+    const dateString = currentDate.toLocaleDateString('en-CA')
+
+    const isAvailable = isDateAvailable(dateString)
+    const isSelected = isDateSelected(dateString)
+    const isToday = dateString === new Date().toISOString().split("T")[0]
+    const isPast = currentDate < new Date(new Date().toDateString()) // Compare only date parts
+
+    days.push(
+      <button
+        key={day}
+        onClick={() => handleDateClick(dateString)}
+        disabled={!isAvailable || isPast}
+        className={`h-12 w-full rounded-lg text-sm font-medium transition-colors ${
+          isSelected
+            ? "bg-rose-600 text-white"
+            : isAvailable && !isPast
+              ? "hover:bg-rose-100 text-gray-900"
+              : "text-gray-400 cursor-not-allowed"
+        } ${isToday && !isSelected ? "ring-2 ring-rose-200" : ""}`}
+      >
+        {day}
+      </button>
+    )
+  }
+
+  return days
+}
 
   if (!service) {
     return (

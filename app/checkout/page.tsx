@@ -1,17 +1,125 @@
 "use client"
 
-import { useState } from "react"
+import React, { useState } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import Image from "next/image"
 import { Calendar, Clock, MapPin, User, CreditCard, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
+import { Elements } from "@stripe/react-stripe-js"
+import { loadStripe } from "@stripe/stripe-js"
+import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js"
+
+// Load your Stripe publishable key
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_KEY!)
+
+function StripeCardForm({ bookingId, amount, onPaymentSuccess }: { bookingId: string, amount: number, onPaymentSuccess: () => void }) {
+  const stripe = useStripe()
+  const elements = useElements()
+  const [error, setError] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [clientSecret, setClientSecret] = useState<string | null>(null)
+
+  React.useEffect(() => {
+    // Create PaymentIntent on mount
+    const createPaymentIntent = async () => {
+      setError("")
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/stripe/payment-intent`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            amount: amount,
+            currency: "aed",
+            description: `Order payment for #${bookingId}`
+          })
+        })
+        if (!res.ok) throw new Error("Failed to create payment intent")
+        const data = await res.json()
+        setClientSecret(data.clientSecret)
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message)
+        } else {
+          setError("Failed to initialize payment")
+        }
+      }
+    }
+    if (bookingId && amount) createPaymentIntent()
+  }, [bookingId, amount])
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError("")
+    setLoading(true)
+    if (!stripe || !elements) {
+      setError("Stripe not loaded")
+      setLoading(false)
+      return
+    }
+    const cardElement = elements.getElement(CardElement)
+    if (!cardElement) {
+      setError("Card element not found")
+      setLoading(false)
+      return
+    }
+    // Create PaymentMethod
+    const { error: pmError, paymentMethod } = await stripe.createPaymentMethod({
+      type: "card",
+      card: cardElement,
+      billing_details: {},
+    })
+    if (pmError || !paymentMethod) {
+      setError(pmError?.message || "Payment error")
+      setLoading(false)
+      return
+    }
+    // Call backend to process payment
+    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/stripe/payment`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+      },
+      body: JSON.stringify({
+        paymentMethodId: paymentMethod.id,
+        amount: amount,
+        currency: "aed",
+        description: `Order payment for #${bookingId}`,
+        order_ids: [Number(bookingId)]
+      })
+    })
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}))
+      setError(data.message || "Payment failed")
+      setLoading(false)
+      return
+    }
+    onPaymentSuccess()
+    setLoading(false)
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <Label>Card Information</Label>
+        <div className="border rounded p-3">
+          <CardElement options={{ style: { base: { fontSize: "16px" } } }} />
+        </div>
+      </div>
+      {error && <div className="text-red-600 text-sm">{error}</div>}
+      <Button type="submit" className="w-full bg-green-600 hover:bg-green-700 h-12 text-lg" disabled={loading || !clientSecret}>
+        {loading ? "Processing..." : "Pay Now"}
+      </Button>
+    </form>
+  )
+}
 
 export default function CheckoutPage() {
   const searchParams = useSearchParams()
@@ -20,12 +128,6 @@ export default function CheckoutPage() {
 
   const [isProcessing, setIsProcessing] = useState(false)
   const [paymentMethod, setPaymentMethod] = useState("card")
-  const [paymentInfo, setPaymentInfo] = useState({
-    cardNumber: "",
-    expiryDate: "",
-    cvv: "",
-    cardName: "",
-  })
 
   // Mock booking data (in real app, fetch from API using bookingId)
   const mockBookingData = {
@@ -84,11 +186,9 @@ export default function CheckoutPage() {
     router.push(`/booking-confirmation?booking=${bookingId}`)
   }
 
-  const isFormValid = () => {
-    if (paymentMethod === "card") {
-      return paymentInfo.cardNumber && paymentInfo.expiryDate && paymentInfo.cvv && paymentInfo.cardName
-    }
-    return true
+  const handleStripeSuccess = () => {
+    setIsProcessing(false)
+    router.push(`/booking-confirmation?booking=${bookingId}`)
   }
 
   if (!bookingId) {
@@ -110,7 +210,6 @@ export default function CheckoutPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
           <Button
@@ -122,12 +221,10 @@ export default function CheckoutPage() {
             Back to Booking
           </Button>
         </div>
-
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Secure Checkout</h1>
           <p className="text-gray-600">Complete your payment to confirm your booking</p>
         </div>
-
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Booking Summary */}
           <Card>
@@ -250,90 +347,39 @@ export default function CheckoutPage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="card">Credit/Debit Card</SelectItem>
-                    <SelectItem value="paypal">PayPal</SelectItem>
-                    <SelectItem value="apple">Apple Pay</SelectItem>
-                    <SelectItem value="google">Google Pay</SelectItem>
+                    <SelectItem value="cod">Cash on Delivery</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               {paymentMethod === "card" && (
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="cardName">Cardholder Name</Label>
-                    <Input
-                      id="cardName"
-                      value={paymentInfo.cardName}
-                      onChange={(e) => setPaymentInfo((prev) => ({ ...prev, cardName: e.target.value }))}
-                      placeholder="Enter cardholder name"
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="cardNumber">Card Number</Label>
-                    <Input
-                      id="cardNumber"
-                      value={paymentInfo.cardNumber}
-                      onChange={(e) => setPaymentInfo((prev) => ({ ...prev, cardNumber: e.target.value }))}
-                      placeholder="1234 5678 9012 3456"
-                      maxLength={19}
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="expiryDate">Expiry Date</Label>
-                      <Input
-                        id="expiryDate"
-                        value={paymentInfo.expiryDate}
-                        onChange={(e) => setPaymentInfo((prev) => ({ ...prev, expiryDate: e.target.value }))}
-                        placeholder="MM/YY"
-                        maxLength={5}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="cvv">CVV</Label>
-                      <Input
-                        id="cvv"
-                        value={paymentInfo.cvv}
-                        onChange={(e) => setPaymentInfo((prev) => ({ ...prev, cvv: e.target.value }))}
-                        placeholder="123"
-                        maxLength={4}
-                      />
-                    </div>
-                  </div>
-                </div>
+                process.env.NEXT_PUBLIC_STRIPE_KEY ? (
+                  <Elements stripe={stripePromise}>
+                    <StripeCardForm bookingId={bookingId} amount={mockBookingData.pricing.total} onPaymentSuccess={handleStripeSuccess} />
+                  </Elements>
+                ) : (
+                  <div className="text-red-600">Stripe key not configured</div>
+                )
               )}
 
-              {paymentMethod !== "card" && (
-                <div className="text-center py-8">
-                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <CreditCard className="h-8 w-8 text-gray-400" />
-                  </div>
-                  <p className="text-gray-600">
-                    You will be redirected to{" "}
-                    {paymentMethod === "paypal" ? "PayPal" : paymentMethod === "apple" ? "Apple Pay" : "Google Pay"} to
-                    complete your payment
-                  </p>
+              {paymentMethod === "cod" && (
+                <div className="pt-4">
+                  <Button
+                    onClick={handlePayment}
+                    disabled={isProcessing}
+                    className="w-full bg-green-600 hover:bg-green-700 h-12 text-lg"
+                  >
+                    {isProcessing ? (
+                      <div className="flex items-center">
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                        Processing Order...
+                      </div>
+                    ) : (
+                      `Place Order (Cash on Delivery)`
+                    )}
+                  </Button>
                 </div>
               )}
-
-              <div className="pt-4">
-                <Button
-                  onClick={handlePayment}
-                  disabled={!isFormValid() || isProcessing}
-                  className="w-full bg-green-600 hover:bg-green-700 h-12 text-lg"
-                >
-                  {isProcessing ? (
-                    <div className="flex items-center">
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                      Processing Payment...
-                    </div>
-                  ) : (
-                    `Pay $${mockBookingData.pricing.total}`
-                  )}
-                </Button>
-              </div>
 
               <div className="text-xs text-gray-500 text-center space-y-2">
                 <p>🔒 Your payment information is secure and encrypted</p>
@@ -343,7 +389,6 @@ export default function CheckoutPage() {
           </Card>
         </div>
       </div>
-
       <Footer />
     </div>
   )
