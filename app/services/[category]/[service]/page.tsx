@@ -4,7 +4,7 @@ import { use, useEffect, useState } from "react"
 import { notFound } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
-import { Star, Clock, MapPin, Calendar, ChevronRight, Check, Info } from "lucide-react"
+import { Star, Clock, MapPin, ChevronRight, Check, Info } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -156,15 +156,7 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
                   <h2 className="text-2xl font-semibold mb-4">Service Details</h2>
                   <p className="text-gray-600 mb-6">{serviceData.longDescription}</p>
 
-                  <h3 className="text-xl font-semibold mb-3">What's Included</h3>
-                  <ul className="space-y-2 mb-6">
-                    {serviceData.features.map((feature: string, index: number) => (
-                      <li key={index} className="flex items-start">
-                        <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
+                 
 
                   <h3 className="text-xl font-semibold mb-3">Service Gallery</h3>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
@@ -249,7 +241,7 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
                   <div className="mt-6">
                     <h3 className="text-xl font-semibold mb-4">Related Services</h3>
                     <div className="space-y-4">
-                      {serviceData.relatedServices.map((related: any, index: number) => (
+                      {serviceData.addOns.map((related: any, index: number) => (
                         <Link href={`/services/${category}/${related.slug}`} key={index}>
                           <div className="flex items-center p-3 border rounded-lg hover:shadow-md transition-shadow">
                             <div className="relative h-16 w-16 rounded overflow-hidden flex-shrink-0">
