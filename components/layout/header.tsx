@@ -5,6 +5,33 @@ import Link from "next/link"
 import { ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
+function FlashMessage() {
+  const [message, setMessage] = useState("")
+  const [visible, setVisible] = useState(false)
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const msg = sessionStorage.getItem("flashMessage")
+      if (msg) {
+        setMessage(msg)
+        setVisible(true)
+        sessionStorage.removeItem("flashMessage")
+      }
+    }
+  }, [])
+  useEffect(() => {
+    if (visible) {
+      const timer = setTimeout(() => setVisible(false), 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [visible])
+  if (!message || !visible) return null
+  return (
+    <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded shadow z-50 transition-opacity duration-500">
+      {message}
+    </div>
+  )
+}
+
 export function Header() {
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -76,6 +103,7 @@ export function Header() {
 
   return (
     <header className="bg-white shadow-sm border-b sticky top-0 z-50">
+      <FlashMessage />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">

@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
@@ -21,10 +21,7 @@ export default function AddressesPage() {
     flatVilla: "",
     street: "",
     city: "",
-    district: "",
-    number: "",
-    whatsapp: "",
-    gender: "Male"
+    district: ""
   })
   const [formError, setFormError] = useState("")
   const [formLoading, setFormLoading] = useState(false)
@@ -85,10 +82,7 @@ export default function AddressesPage() {
         flatVilla: "",
         street: "",
         city: "",
-        district: "",
-        number: "",
-        whatsapp: "",
-        gender: "Male"
+        district: ""
       })
       // Always refresh addresses from /api/addresses
       await fetchAddresses()
@@ -108,10 +102,7 @@ export default function AddressesPage() {
       flatVilla: addr.flatVilla || "",
       street: addr.street || "",
       city: addr.city || "",
-      district: addr.district || "",
-      number: addr.number || "",
-      whatsapp: addr.whatsapp || "",
-      gender: addr.gender || "Male"
+      district: addr.district || ""
     })
     setShowForm(true)
   }
@@ -128,9 +119,8 @@ export default function AddressesPage() {
         body: JSON.stringify({ address_id: id })
       })
       if (!res.ok) throw new Error("Failed to delete address")
-      // Reload addresses
-      const data = await res.json()
-      setAddresses(data.addresses || [])
+      // Always refresh addresses from /api/addresses after delete
+      await fetchAddresses()
     } catch (err: any) {
       alert(err.message || "Failed to delete address")
     }
@@ -144,7 +134,7 @@ export default function AddressesPage() {
           <CardContent className="p-8">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold">Saved Addresses</h2>
-              <Button onClick={() => { setShowForm(true); setEditingId(null); setForm({ buildingName: "", area: "", landmark: "", flatVilla: "", street: "", city: "", district: "", number: "", whatsapp: "", gender: "Male" }) }} className="bg-rose-600 hover:bg-rose-700">Add Address</Button>
+              <Button onClick={() => { setShowForm(true); setEditingId(null); setForm({ buildingName: "", area: "", landmark: "", flatVilla: "", street: "", city: "", district: "" }) }} className="bg-rose-600 hover:bg-rose-700">Add Address</Button>
             </div>
             {isLoading ? (
               <div>Loading...</div>
@@ -167,9 +157,6 @@ export default function AddressesPage() {
                     <div className="text-sm text-gray-700 mb-1">Street: {addr.street}</div>
                     <div className="text-sm text-gray-700 mb-1">City: {addr.city}</div>
                     <div className="text-sm text-gray-700 mb-1">District: {addr.district}</div>
-                    <div className="text-sm text-gray-700 mb-1">Phone: {addr.number}</div>
-                    <div className="text-sm text-gray-700 mb-1">Whatsapp: {addr.whatsapp}</div>
-                    <div className="text-sm text-gray-700 mb-1">Gender: {addr.gender}</div>
                   </li>
                 ))}
               </ul>
@@ -217,21 +204,6 @@ export default function AddressesPage() {
                 <div>
                   <label className="block text-sm font-medium mb-1">District</label>
                   <Input name="district" value={form.district} onChange={handleFormChange} />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Phone</label>
-                  <Input name="number" value={form.number} onChange={handleFormChange} required />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Whatsapp</label>
-                  <Input name="whatsapp" value={form.whatsapp} onChange={handleFormChange} required />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Gender</label>
-                  <select name="gender" value={form.gender} onChange={handleFormChange} className="w-full border rounded px-3 py-2">
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                  </select>
                 </div>
                 {formError && <div className="text-red-600 text-sm">{formError}</div>}
                 <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700" disabled={formLoading}>

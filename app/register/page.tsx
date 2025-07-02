@@ -50,7 +50,7 @@ export default function RegisterPage() {
           email: form.email,
           password: form.password,
           role: form.role,
-          phone: countryCode + form.phone,
+          number: countryCode + form.phone,
           whatsapp: countryCode + form.whatsapp,
           affiliate: form.affiliate,
           gender: form.gender
@@ -58,6 +58,7 @@ export default function RegisterPage() {
       })
       if (!res.ok) throw new Error("Registration failed")
       setSuccess("Registration successful! Please login.")
+      sessionStorage.setItem("flashMessage", "Successfully Registered")
       setTimeout(() => router.push("/login"), 1500)
     } catch (err: any) {
       setError(err.message || "Registration failed")

@@ -1,6 +1,7 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import React from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
@@ -45,8 +46,6 @@ export default function LoginPage() {
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-1 flex items-center justify-center bg-gray-50 py-12">
-        {/* Flash message for logout */}
-        <FlashMessage />
         <Card className="w-full max-w-md mx-auto">
           <CardContent className="p-8">
             <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
@@ -80,25 +79,6 @@ export default function LoginPage() {
         </Card>
       </main>
       <Footer />
-    </div>
-  )
-}
-
-function FlashMessage() {
-  const [message, setMessage] = useState("")
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const msg = sessionStorage.getItem("flashMessage")
-      if (msg) {
-        setMessage(msg)
-        sessionStorage.removeItem("flashMessage")
-      }
-    }
-  }, [])
-  if (!message) return null
-  return (
-    <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded shadow z-50">
-      {message}
     </div>
   )
 }

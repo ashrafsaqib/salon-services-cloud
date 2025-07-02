@@ -1,7 +1,7 @@
 "use client"
 
+import React from "react"
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { Card, CardContent } from "@/components/ui/card"
@@ -22,7 +22,6 @@ export default function EditProfilePage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
-  const router = useRouter()
 
   useEffect(() => {
     // Fetch user profile (replace with real API and auth)
