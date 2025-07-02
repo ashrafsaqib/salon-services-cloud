@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Check, ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -51,6 +51,7 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
   const [selectedSlot, setSelectedSlot] = useState<any>(null)
   const [selectedOptions, setSelectedOptions] = useState<number[]>(initialOptions || [])
   const [isLoading, setIsLoading] = useState(false)
+  const [totals, setTotals] = useState<any>(null)
   const router = useRouter()
 
   // Initialize with pre-selected service if provided
@@ -246,7 +247,7 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
             onUpdate={setCustomerDetails}
             onApplyCoupon={(code) => setCustomerDetails((prev: any) => ({ ...prev, coupon_code: code }))}
             areaOptions={areaOptions}
-            onNext={() => setCurrentStep(5)}
+            onNext={handleCustomerDetailsNext}
             onBack={prevStep}
           />
         )
@@ -254,6 +255,7 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
         return (
           <BookingSummaryStep
             bookingData={{ ...bookingData, customerInfo: customerDetails }}
+            totals={totals}
             onCustomerInfoUpdate={setCustomerDetails}
             onEditDetails={() => setCurrentStep(4)}
             onConfirmBooking={handleFinalBooking}
@@ -262,6 +264,33 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
         )
       default:
         return null
+    }
+  }
+
+  // Call gettotals API when moving from details to summary
+  const handleCustomerDetailsNext = async () => {
+    setIsLoading(true)
+    try {
+      const payload = {
+        customerDetails,
+        services: bookingData.services,
+        staff: bookingData.staff,
+        timeSlot: bookingData.timeSlot,
+        date: bookingData.date,
+      }
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/gettotals`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      })
+      if (!res.ok) throw new Error("Failed to get totals")
+      const data = await res.json()
+      setTotals(data)
+      setCurrentStep(5)
+    } catch {
+      // Optionally show error
+    } finally {
+      setIsLoading(false)
     }
   }
 

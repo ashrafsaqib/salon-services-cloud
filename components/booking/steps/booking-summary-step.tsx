@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import React, { useState } from "react"
 import Image from "next/image"
 import { Calendar, MapPin, User, CreditCard } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -17,6 +17,7 @@ interface BookingSummaryStepProps {
   onEditDetails: () => void
   onConfirmBooking: () => void
   isLoading: boolean
+  totals?: any // API totals response
 }
 
 export function BookingSummaryStep({
@@ -25,6 +26,7 @@ export function BookingSummaryStep({
   onEditDetails,
   onConfirmBooking,
   isLoading,
+  totals,
 }: BookingSummaryStepProps) {
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo>(
     bookingData.customerInfo || {
@@ -181,27 +183,41 @@ export function BookingSummaryStep({
 
             {/* Pricing */}
             <div className="space-y-2">
-              {bookingData.services.map((service) => (
-                <div className="flex justify-between" key={service.id}>
-                  <span>{service.name}</span>
-                  <span>{service.price}</span>
-                </div>
-              ))}
-              {bookingData.staff?.priceModifier && bookingData.staff.priceModifier > 0 && (
-                <div className="flex justify-between text-sm">
-                  <span>Professional fee</span>
-                  <span>+${bookingData.staff.priceModifier}</span>
-                </div>
+              {totals && Array.isArray(totals.lineItems) ? (
+                <>
+                  {totals.lineItems.map((item: any) => (
+                    <div className={`flex justify-between ${item.isTotal ? "font-semibold text-lg" : "text-sm"}`} key={item.label}>
+                      <span>{item.label}</span>
+                      <span className={item.isTotal ? "text-rose-600" : undefined}>{item.value}</span>
+                    </div>
+                  ))}
+                </>
+              ) : (
+                // fallback to old pricing if no totals
+                <>
+                  {bookingData.services.map((service) => (
+                    <div className="flex justify-between" key={service.id}>
+                      <span>{service.name}</span>
+                      <span>{service.price}</span>
+                    </div>
+                  ))}
+                  {bookingData.staff?.priceModifier && bookingData.staff.priceModifier > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span>Professional fee</span>
+                      <span>+${bookingData.staff.priceModifier}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-sm">
+                    <span>Tax</span>
+                    <span>${pricing.tax}</span>
+                  </div>
+                  <Separator />
+                  <div className="flex justify-between font-semibold text-lg">
+                    <span>Total</span>
+                    <span className="text-rose-600">${pricing.total}</span>
+                  </div>
+                </>
               )}
-              <div className="flex justify-between text-sm">
-                <span>Tax</span>
-                <span>${pricing.tax}</span>
-              </div>
-              <Separator />
-              <div className="flex justify-between font-semibold text-lg">
-                <span>Total</span>
-                <span className="text-rose-600">${pricing.total}</span>
-              </div>
             </div>
           </CardContent>
         </Card>
@@ -249,7 +265,9 @@ export function BookingSummaryStep({
               Processing Booking...
             </div>
           ) : (
-            `Confirm Booking - $${pricing.total}`
+            totals && totals.lineItems && totals.lineItems.find((i: any) => i.isTotal)
+              ? `Confirm Booking - ${totals.lineItems.find((i: any) => i.isTotal).value}`
+              : `Confirm Booking - $${pricing.total}`
           )}
         </Button>
         <p className="text-xs text-gray-500 text-center mt-2">

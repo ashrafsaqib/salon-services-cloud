@@ -159,6 +159,9 @@ export function Header() {
                       <Link href="/addresses" className="block px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50">
                         Address Book
                       </Link>
+                      <Link href="/complaints" className="block px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50">
+                        Complaints
+                      </Link>
                       <button
                         onClick={handleLogout}
                         className="block w-full text-left px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50"
@@ -264,6 +267,7 @@ export function Header() {
               <Link href="/dashboard" className="block px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50">Dashboard</Link>
               <Link href="/profile" className="block px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50">Edit Profile</Link>
               <Link href="/addresses" className="block px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50">Address Book</Link>
+              <Link href="/complaints" className="block px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50">Complaints</Link>
               <button
                 onClick={handleLogout}
                 className="block w-full text-left px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50"

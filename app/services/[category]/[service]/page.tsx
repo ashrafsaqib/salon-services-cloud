@@ -1,10 +1,10 @@
 "use client"
 
-import { use, useEffect, useState } from "react"
+import React, { use, useEffect, useState } from "react"
 import { notFound } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
-import { Star, Clock, MapPin, ChevronRight, Check, Info } from "lucide-react"
+import { Star, Clock, MapPin, ChevronRight, Info } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -28,6 +28,7 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
   const [selectedOptions, setSelectedOptions] = useState<any[]>([])
+  const [selectedAddOns, setSelectedAddOns] = useState<number[]>([])
   const router = useRouter()
 
   useEffect(() => {
@@ -154,9 +155,33 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="md:col-span-2">
                   <h2 className="text-2xl font-semibold mb-4">Service Details</h2>
-                  <p className="text-gray-600 mb-6">{serviceData.longDescription}</p>
+                  <p className="text-gray-600 mb-6">{serviceData.longDescription || serviceData.description}</p>
 
-                 
+                  {/* This Package Includes section */}
+                  {serviceData.packages && serviceData.packages.length > 0 && (
+                    <div className="mb-8">
+                      <h3 className="text-xl font-semibold mb-3 text-rose-700">This Package Includes</h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {serviceData.packages.map((pkg: any) => (
+                          <div key={pkg.id} className="flex items-center bg-gray-50 border rounded-lg p-3">
+                            <div className="relative h-14 w-14 rounded overflow-hidden flex-shrink-0 mr-4">
+                              <Image
+                                src={pkg.image || "/placeholder.svg"}
+                                alt={pkg.name}
+                                fill
+                                className="object-cover"
+                              />
+                            </div>
+                            <div>
+                              <div className="font-medium text-gray-900">{pkg.name}</div>
+                              <div className="text-sm text-gray-600">{pkg.duration || ""}</div>
+                              <div className="text-rose-600 font-semibold">{pkg.price}</div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   <h3 className="text-xl font-semibold mb-3">Service Gallery</h3>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
@@ -227,6 +252,9 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
                                 if (serviceData.options && serviceData.options.length > 0 && selectedOptions.length > 0) {
                                   params.append("options", JSON.stringify(selectedOptions.map(o => o.id)))
                                 }
+                                if (selectedAddOns.length > 0) {
+                                  params.append("addOns", JSON.stringify(selectedAddOns))
+                                }
                                 router.push(`/book?${params.toString()}`)
                               }
                             }}
@@ -239,11 +267,23 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
                   </Card>
 
                   <div className="mt-6">
-                    <h3 className="text-xl font-semibold mb-4">Related Services</h3>
+                    <h3 className="text-xl font-semibold mb-4">Addons Services</h3>
                     <div className="space-y-4">
-                      {serviceData.addOns.map((related: any, index: number) => (
-                        <Link href={`/services/${category}/${related.slug}`} key={index}>
-                          <div className="flex items-center p-3 border rounded-lg hover:shadow-md transition-shadow">
+                      {serviceData.addOns.map((related: any) => (
+                        <div key={related.id} className="flex items-center p-3 border rounded-lg hover:shadow-md transition-shadow">
+                          <input
+                            type="checkbox"
+                            className="mr-3 w-5 h-5 accent-rose-600"
+                            checked={selectedAddOns.includes(related.id)}
+                            onChange={e => {
+                              if (e.target.checked) {
+                                setSelectedAddOns(prev => [...prev, related.id])
+                              } else {
+                                setSelectedAddOns(prev => prev.filter(id => id !== related.id))
+                              }
+                            }}
+                          />
+                          <Link href={`/services/${category}/${related.slug}`} className="flex items-center flex-1 min-w-0">
                             <div className="relative h-16 w-16 rounded overflow-hidden flex-shrink-0">
                               <Image
                                 src={related.image || "/placeholder.svg"}
@@ -252,12 +292,12 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
                                 className="object-cover"
                               />
                             </div>
-                            <div className="ml-4">
-                              <h4 className="font-medium">{related.name}</h4>
+                            <div className="ml-4 min-w-0">
+                              <h4 className="font-medium truncate">{related.name}</h4>
                               <p className="text-rose-600">{related.price}</p>
                             </div>
-                          </div>
-                        </Link>
+                          </Link>
+                        </div>
                       ))}
                     </div>
                   </div>

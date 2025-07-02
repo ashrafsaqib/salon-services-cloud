@@ -22,6 +22,12 @@ export default function DashboardPage() {
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
+  const [showComplaintModal, setShowComplaintModal] = useState(false)
+  const [complaintOrderId, setComplaintOrderId] = useState<number | null>(null)
+  const [complaintTitle, setComplaintTitle] = useState("")
+  const [complaintDescription, setComplaintDescription] = useState("")
+  const [complaintLoading, setComplaintLoading] = useState(false)
+  const [complaintError, setComplaintError] = useState("")
   const router = useRouter()
 
   useEffect(() => {
@@ -81,6 +87,52 @@ export default function DashboardPage() {
     }
   }
 
+  const openComplaintModal = (orderId: number) => {
+    setComplaintOrderId(orderId)
+    setComplaintTitle("")
+    setComplaintDescription("")
+    setComplaintError("")
+    setShowComplaintModal(true)
+  }
+  const closeComplaintModal = () => {
+    setShowComplaintModal(false)
+    setComplaintOrderId(null)
+    setComplaintTitle("")
+    setComplaintDescription("")
+    setComplaintError("")
+  }
+  const handleComplaintSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!complaintOrderId || !complaintTitle.trim() || !complaintDescription.trim()) {
+      setComplaintError("Please fill all fields.")
+      return
+    }
+    setComplaintLoading(true)
+    setComplaintError("")
+    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/complaints`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          title: complaintTitle,
+          description: complaintDescription,
+          order_id: complaintOrderId
+        })
+      })
+      if (!res.ok) throw new Error("Failed to submit complaint")
+      sessionStorage.setItem("flashMessage", "Your complaint has been submitted successfully.")
+      router.push("/complaints")
+    } catch (err: any) {
+      setComplaintError(err.message || "Failed to submit complaint")
+    } finally {
+      setComplaintLoading(false)
+    }
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -123,6 +175,12 @@ export default function DashboardPage() {
                         Cancel Order
                       </button>
                     )}
+                    <button
+                      className="mt-2 ml-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                      onClick={() => openComplaintModal(order.id)}
+                    >
+                      Add Complaint
+                    </button>
                   </CardContent>
                 </Card>
               ))}
@@ -131,6 +189,51 @@ export default function DashboardPage() {
         </div>
       </main>
       <Footer />
+      {showComplaintModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md relative">
+            <button
+              className="absolute top-2 right-2 text-gray-400 hover:text-gray-700"
+              onClick={closeComplaintModal}
+              aria-label="Close"
+            >
+              &times;
+            </button>
+            <h3 className="text-xl font-bold mb-4">Add Complaint</h3>
+            <form onSubmit={handleComplaintSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Title</label>
+                <input
+                  className="w-full border rounded px-3 py-2"
+                  value={complaintTitle}
+                  onChange={e => setComplaintTitle(e.target.value)}
+                  required
+                  maxLength={100}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Description</label>
+                <textarea
+                  className="w-full border rounded px-3 py-2"
+                  value={complaintDescription}
+                  onChange={e => setComplaintDescription(e.target.value)}
+                  required
+                  maxLength={500}
+                  rows={4}
+                />
+              </div>
+              {complaintError && <div className="text-red-600 text-sm">{complaintError}</div>}
+              <button
+                type="submit"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded"
+                disabled={complaintLoading}
+              >
+                {complaintLoading ? "Submitting..." : "Submit Complaint"}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
