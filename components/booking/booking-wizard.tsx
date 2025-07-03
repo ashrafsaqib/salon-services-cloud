@@ -11,7 +11,17 @@ import { SlotSelectionStep } from "./steps/slot-selection-step"
 import { BookingSummaryStep } from "./steps/booking-summary-step"
 import { CustomerDetailsStep } from "./steps/customer-details-step"
 import type { Service, StaffMember, CustomerInfo, BookingData } from "@/types"
+const BOOKING_SERVICES_KEY = "booking_selected_services"
 
+function getStoredServices(): {service: Service, options?: number[]}[] {
+  if (typeof window === "undefined") return []
+  try {
+    const raw = localStorage.getItem(BOOKING_SERVICES_KEY)
+    return raw ? JSON.parse(raw) : []
+  } catch {
+    return []
+  }
+}
 interface BookingWizardProps {
   initialServiceId?: number
   initialCategory?: string
@@ -163,6 +173,14 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
   const handleFinalBooking = async () => {
     setIsLoading(true)
     try {
+      // Prepare bookingData array with service ids and option ids
+      const bookingDataArr = (bookingData.services || []).map((s: any) => {
+        const stored = getStoredServices().find((ss: any) => ss.service.id === s.id)
+        return {
+          service_id: s.id,
+          option_ids: stored?.options ? stored.options.map((o: any) => o.id) : undefined
+        }
+      })
       // Prepare payload for /api/order
       const payload = {
         name: customerDetails.name,
@@ -193,7 +211,7 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
             date: bookingData.date,
             service_staff_id: bookingData.staff?.id || 5, // fallback
             time_slot_id: bookingData.timeSlot || 3, // fallback
-            service_ids: bookingData.services ? bookingData.services.map(s => Number(s.id)) : []
+            services: bookingDataArr
           }
         ]
       }
@@ -278,9 +296,17 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
   const handleCustomerDetailsNext = async () => {
     setIsLoading(true)
     try {
+      // Prepare services array for gettotals
+      const servicesArr = (bookingData.services || []).map((s: any) => {
+        const stored = getStoredServices().find((ss: any) => ss.service.id === s.id)
+        return {
+          service_id: s.id,
+          option_ids: stored?.options ? stored.options.map((o: any) => o.id) : undefined
+        }
+      })
       const payload = {
         customerDetails,
-        services: bookingData.services,
+        services: servicesArr,
         staff: bookingData.staff,
         timeSlot: bookingData.timeSlot,
         date: bookingData.date,

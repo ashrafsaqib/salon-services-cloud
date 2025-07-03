@@ -113,44 +113,54 @@ export function ServiceSelectionStep({ selectedServices = [], onServiceSelect, i
         <div className="mb-4">
           <h3 className="text-lg font-semibold mb-2">Selected Services</h3>
           <div className="space-y-2">
-            {selectedServices.map((service) => (
-              <div
-                key={service.id}
-                className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg px-4 py-3 shadow-sm"
-              >
-                <div className="flex items-center gap-4">
-                  <Image
-                    src={service.image || "/placeholder.svg"}
-                    alt={service.name}
-                    width={48}
-                    height={48}
-                    className="rounded object-cover border"
-                  />
-                  <div>
-                    <div className="font-semibold text-gray-900 text-base">{service.name}</div>
-                    <div className="flex gap-4 text-sm text-gray-600 mt-1">
-                      {service.duration && (
-                        <span className="flex items-center gap-1"><Clock className="w-4 h-4" />{service.duration}</span>
-                      )}
-                      {service.price && (
-                        <span className="flex items-center gap-1 text-rose-600 font-medium">{service.price}</span>
+            {selectedServices.map((service) => {
+              // Find the stored entry for this service to get its options
+              const stored = getStoredServices().find(s => s.service.id === service.id)
+              return (
+                <div
+                  key={service.id}
+                  className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg px-4 py-3 shadow-sm"
+                >
+                  <div className="flex items-center gap-4">
+                    <Image
+                      src={service.image || "/placeholder.svg"}
+                      alt={service.name}
+                      width={48}
+                      height={48}
+                      className="rounded object-cover border"
+                    />
+                    <div>
+                      <div className="font-semibold text-gray-900 text-base">{service.name}</div>
+                      <div className="flex gap-4 text-sm text-gray-600 mt-1">
+                        {service.duration && (
+                          <span className="flex items-center gap-1"><Clock className="w-4 h-4" />{service.duration}</span>
+                        )}
+                        {service.price && (
+                          <span className="flex items-center gap-1 text-rose-600 font-medium">{service.price}</span>
+                        )}
+                      </div>
+                      {/* Show selected options if present */}
+                      {stored?.options && stored.options.length > 0 && (
+                        <div className="text-xs text-blue-700 mt-1">
+                          Option{stored.options.length > 1 ? 's' : ''}: {stored.options.map((opt: any) => opt.name || opt.option_name).join(", ")}
+                        </div>
                       )}
                     </div>
                   </div>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="text-gray-400 hover:text-rose-600"
+                    aria-label="Remove service"
+                    onClick={() => handleRemoveService(service.id)}
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </Button>
                 </div>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  className="text-gray-400 hover:text-rose-600"
-                  aria-label="Remove service"
-                  onClick={() => handleRemoveService(service.id)}
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </Button>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </div>
       )}

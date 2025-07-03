@@ -281,7 +281,7 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
                                     duration: serviceData.duration,
                                     // add other fields as needed
                                   },
-                                  options: selectedOptions.map(o => o.id),
+                                  options: selectedOptions.map(o => ({ id: o.id, name: o.option_name })), // Save option id and name
                                   addOns: selectedAddOns
                                 }
                                 if (idx > -1) {
