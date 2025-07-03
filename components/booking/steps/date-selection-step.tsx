@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import React, { useState, useMemo, useCallback } from "react"
 import { Calendar, ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -10,117 +10,92 @@ interface DateSelectionStepProps {
   selectedDate?: string
   service?: Service
   onDateSelect: (date: string) => void
+  holidays?: string[]
 }
 
-export function DateSelectionStep({ selectedDate, service, onDateSelect }: DateSelectionStepProps) {
+export function DateSelectionStep({ selectedDate, service, onDateSelect, holidays: initialHolidays }: DateSelectionStepProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date())
-  const [availableDates, setAvailableDates] = useState<string[]>([])
+  const holidays = initialHolidays || []
 
-  useEffect(() => {
-    // Mock available dates (next 30 days excluding some random dates)
-    const dates: string[] = []
-    const today = new Date()
-
-    for (let i = 1; i <= 30; i++) {
-      const date = new Date(today)
-      date.setDate(today.getDate() + i)
-
-      // Skip some random dates to simulate unavailability
-      if (Math.random() > 0.2) {
-        dates.push(date.toISOString().split("T")[0])
-      }
-    }
-
-    setAvailableDates(dates)
-  }, [service])
-
-  const getDaysInMonth = (date: Date) => {
-    return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate()
-  }
-
-  const getFirstDayOfMonth = (date: Date) => {
-    return new Date(date.getFullYear(), date.getMonth(), 1).getDay()
-  }
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString("en-US", {
+  // Memoized date formatting function
+  const formatDate = useCallback((dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
       weekday: "long",
       year: "numeric",
       month: "long",
       day: "numeric",
     })
-  }
+  }, [])
 
-  const isDateAvailable = (dateString: string) => {
-    return availableDates.includes(dateString)
-  }
+  // Memoized availability check
+  const isDateAvailable = useCallback((dateString: string) => {
+    const date = new Date(dateString)
+    const isPast = date < new Date(new Date().toDateString())
+    const isHoliday = holidays.includes(dateString)
+    return !isHoliday && !isPast
+  }, [holidays])
 
-  const isDateSelected = (dateString: string) => {
-    return selectedDate === dateString
-  }
+  // Navigation handlers
+  const nextMonth = useCallback(() => {
+    setCurrentMonth(prev => new Date(prev.getFullYear(), prev.getMonth() + 1))
+  }, [])
 
-  const handleDateClick = (dateString: string) => {
-    if (isDateAvailable(dateString)) {
-      onDateSelect(dateString)
-    }
-  }
-
-  const nextMonth = () => {
-    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1))
-  }
-
-  const prevMonth = () => {
+  const prevMonth = useCallback(() => {
     const today = new Date()
     const newMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1)
     if (newMonth >= new Date(today.getFullYear(), today.getMonth())) {
       setCurrentMonth(newMonth)
     }
+  }, [currentMonth])
+
+  // Helper to get YYYY-MM-DD in local time
+  const toLocalYYYYMMDD = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 
-const renderCalendar = () => {
-  const year = currentMonth.getFullYear()
-  const month = currentMonth.getMonth()
-  const daysInMonth = new Date(year, month + 1, 0).getDate()
-  const firstDay = new Date(year, month, 1).getDay()
-  const days = []
+  // Memoized calendar rendering
+  const calendarDays = () => {
+    const year = currentMonth.getFullYear()
+    const month = currentMonth.getMonth()
+    const daysInMonth = new Date(year, month + 1, 0).getDate()
+    const firstDay = new Date(year, month, 1).getDay()
+    const days = []
 
-  // Empty cells before the first day
-  for (let i = 0; i < firstDay; i++) {
-    days.push(<div key={`empty-${i}`} className="h-12" />)
+    // Add empty cells for days before the first of the month
+    for (let i = 0; i < firstDay; i++) {
+      days.push(<div key={`empty-${i}`} className="h-12" />)
+    }
+
+    // Add day buttons
+    for (let day = 1; day <= daysInMonth; day++) {
+      const currentDate = new Date(year, month, day)
+      const dateString = toLocalYYYYMMDD(currentDate)
+      const isAvailable = !holidays.includes(dateString)
+      const isSelected = selectedDate === dateString
+      const isToday = dateString === toLocalYYYYMMDD(new Date())
+
+      days.push(
+        <button
+          key={day}
+          onClick={() => onDateSelect(dateString)}
+          disabled={!isAvailable}
+          className={`h-12 w-full rounded-lg text-sm font-medium transition-colors ${
+            isAvailable
+          ? "hover:bg-rose-100 text-gray-900"
+          : "bg-gray-300 text-gray-400 cursor-not-allowed"
+          } ${isToday && !isSelected ? "ring-2 ring-rose-200" : ""}`}
+        >
+          {day}
+        </button>
+      )
+    }
+    return days
   }
 
-  for (let day = 1; day <= daysInMonth; day++) {
-    const currentDate = new Date(year, month, day)
-    // Fix: use local date string in YYYY-MM-DD format
-    const dateString = currentDate.toLocaleDateString('en-CA')
-
-    const isAvailable = isDateAvailable(dateString)
-    const isSelected = isDateSelected(dateString)
-    const isToday = dateString === new Date().toISOString().split("T")[0]
-    const isPast = currentDate < new Date(new Date().toDateString()) // Compare only date parts
-
-    days.push(
-      <button
-        key={day}
-        onClick={() => handleDateClick(dateString)}
-        disabled={!isAvailable || isPast}
-        className={`h-12 w-full rounded-lg text-sm font-medium transition-colors ${
-          isSelected
-            ? "bg-rose-600 text-white"
-            : isAvailable && !isPast
-              ? "hover:bg-rose-100 text-gray-900"
-              : "text-gray-400 cursor-not-allowed"
-        } ${isToday && !isSelected ? "ring-2 ring-rose-200" : ""}`}
-      >
-        {day}
-      </button>
-    )
-  }
-
-  return days
-}
-
+  // No service selected
   if (!service) {
     return (
       <div className="text-center py-8">
@@ -139,7 +114,6 @@ const renderCalendar = () => {
 
       <Card>
         <CardContent className="p-6">
-          {/* Calendar Header */}
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-lg font-semibold text-gray-900">
               {currentMonth.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
@@ -154,17 +128,15 @@ const renderCalendar = () => {
             </div>
           </div>
 
-          {/* Calendar Grid */}
           <div className="grid grid-cols-7 gap-2 mb-4">
             {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
               <div key={day} className="h-12 flex items-center justify-center text-sm font-medium text-gray-500">
                 {day}
               </div>
             ))}
-            {renderCalendar()}
+            {calendarDays()}
           </div>
 
-          {/* Legend */}
           <div className="flex items-center justify-center space-x-6 text-sm">
             <div className="flex items-center">
               <div className="w-3 h-3 bg-rose-600 rounded mr-2"></div>

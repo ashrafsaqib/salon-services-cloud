@@ -61,6 +61,9 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
   const [selectedSlot, setSelectedSlot] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [totals, setTotals] = useState<any>(null)
+  const [holidays, setHolidays] = useState<string[]>([])
+  const [holidaysLoaded, setHolidaysLoaded] = useState(false)
+  const [pendingDateStep, setPendingDateStep] = useState(false)
   const router = useRouter()
 
   // Initialize with pre-selected service if provided
@@ -79,6 +82,27 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
     }
     fetchAndSetService()
   }, [initialServiceId])
+
+  // New: fetch holidays before showing date step
+  const handleServiceNext = async () => {
+    setIsLoading(true)
+    setPendingDateStep(true)
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/holidays`)
+      if (!res.ok) throw new Error("Failed to fetch holidays")
+      const data = await res.json()
+      setHolidays(data.dates || [])
+      setHolidaysLoaded(true)
+      setCurrentStep(2)
+    } catch {
+      setHolidays([])
+      setHolidaysLoaded(true)
+      setCurrentStep(2)
+    } finally {
+      setIsLoading(false)
+      setPendingDateStep(false)
+    }
+  }
 
   // New: fetch staff and slots after date selection
   const handleDateSelect = async (date: string) => {
@@ -245,12 +269,17 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
           />
         )
       case 2:
-        return (
+        return holidaysLoaded ? (
           <DateSelectionStep
             selectedDate={bookingData.date}
             service={bookingData.services && bookingData.services.length > 0 ? bookingData.services[0] : undefined}
             onDateSelect={handleDateSelect}
+            holidays={holidays}
           />
+        ) : (
+          <div className="text-center py-8">
+            <p className="text-gray-600">Loading calendar...</p>
+          </div>
         )
       case 3:
         return (
@@ -390,7 +419,16 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
           Previous
         </Button>
 
-        {currentStep < steps.length ? (
+        {currentStep === 1 ? (
+          <Button
+            onClick={handleServiceNext}
+            disabled={!canProceed() || isLoading}
+            className="bg-rose-600 hover:bg-rose-700 flex items-center"
+          >
+            Next
+            <ChevronRight className="w-4 h-4 ml-2" />
+          </Button>
+        ) : currentStep < steps.length ? (
           <Button
             onClick={
               currentStep === 4
