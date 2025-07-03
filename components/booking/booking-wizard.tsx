@@ -10,7 +10,7 @@ import { DateSelectionStep } from "./steps/date-selection-step"
 import { SlotSelectionStep } from "./steps/slot-selection-step"
 import { BookingSummaryStep } from "./steps/booking-summary-step"
 import { CustomerDetailsStep } from "./steps/customer-details-step"
-import type { Service, StaffMember, CustomerInfo, BookingData } from "@/types"
+import type { Service, BookingData } from "@/types"
 const BOOKING_SERVICES_KEY = "booking_selected_services"
 
 function getStoredServices(): {service: Service, options?: number[]}[] {
@@ -59,7 +59,6 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
     longitude: "",
   })
   const [selectedSlot, setSelectedSlot] = useState<any>(null)
-  const [selectedOptions, setSelectedOptions] = useState<number[]>(initialOptions || [])
   const [isLoading, setIsLoading] = useState(false)
   const [totals, setTotals] = useState<any>(null)
   const router = useRouter()
@@ -115,10 +114,6 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
       timeSlot: slot.id,
     }))
     setCurrentStep(4)
-  }
-
-  const updateBookingData = (data: Partial<BookingData>) => {
-    setBookingData((prev) => ({ ...prev, ...data }))
   }
 
   const nextStep = () => {
@@ -296,20 +291,47 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
   const handleCustomerDetailsNext = async () => {
     setIsLoading(true)
     try {
-      // Prepare services array for gettotals
-      const servicesArr = (bookingData.services || []).map((s: any) => {
+      // Prepare bookingData array with service ids and option ids
+      const bookingDataArr = (bookingData.services || []).map((s: any) => {
         const stored = getStoredServices().find((ss: any) => ss.service.id === s.id)
         return {
           service_id: s.id,
           option_ids: stored?.options ? stored.options.map((o: any) => o.id) : undefined
         }
       })
+      // Prepare payload for /api/order
       const payload = {
-        customerDetails,
-        services: servicesArr,
-        staff: bookingData.staff,
-        timeSlot: bookingData.timeSlot,
-        date: bookingData.date,
+        name: customerDetails.name,
+        email: customerDetails.email,
+        number_country_code: customerDetails.phone_country_code || "+92",
+        number: customerDetails.phone_number || "3001234567",
+        whatsapp_country_code: customerDetails.whatsapp_country_code || "+92",
+        whatsapp: customerDetails.whatsapp_number || "3001234567",
+        latitude: customerDetails.latitude || "24.8607",
+        longitude: customerDetails.longitude || "67.0011",
+        affiliate_code: customerDetails.affiliate_code || undefined,
+        coupon_code: customerDetails.coupon_code || undefined,
+        gender: customerDetails.gender || undefined,
+        building_name: customerDetails.building_name || undefined,
+        flat_or_villa: customerDetails.flat_or_villa || undefined,
+        street: customerDetails.street || undefined,
+        area: customerDetails.area || undefined,
+        district: customerDetails.district || undefined,
+        landmark: customerDetails.landmark || undefined,
+        city: customerDetails.city || undefined,
+        save_data: customerDetails.save_data,
+        staffZone: {
+          extra_charges: 100, // TODO: Replace with real value if available
+          transport_charges: 200 // TODO: Replace with real value if available
+        },
+        bookingData: [
+          {
+            date: bookingData.date,
+            service_staff_id: bookingData.staff?.id || 5, // fallback
+            time_slot_id: bookingData.timeSlot || 3, // fallback
+            services: bookingDataArr
+          }
+        ]
       }
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/gettotals`, {
         method: "POST",
