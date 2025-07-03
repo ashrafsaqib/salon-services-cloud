@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import Image from "next/image"
 import { Search, Star, Clock, MapPin } from "lucide-react"
 import { Input } from "@/components/ui/input"
@@ -10,6 +10,24 @@ import { useDebounce } from "@/hooks/use-debounce"
 import type { Service } from "@/types"
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
+
+// Utility for localStorage key
+const BOOKING_SERVICES_KEY = "booking_selected_services"
+
+// Helper to get and set services+options in localStorage
+function getStoredServices(): {service: Service, options?: number[]}[] {
+  if (typeof window === "undefined") return []
+  try {
+    const raw = localStorage.getItem(BOOKING_SERVICES_KEY)
+    return raw ? JSON.parse(raw) : []
+  } catch {
+    return []
+  }
+}
+function setStoredServices(services: {service: Service, options?: number[]}[]) {
+  if (typeof window === "undefined") return
+  localStorage.setItem(BOOKING_SERVICES_KEY, JSON.stringify(services))
+}
 
 interface ServiceSelectionStepProps {
   selectedServices?: Service[]
@@ -47,6 +65,14 @@ export function ServiceSelectionStep({ selectedServices = [], onServiceSelect, i
     fetchResults()
   }, [debouncedQuery])
 
+  // On mount, load from localStorage if available
+  useEffect(() => {
+    const stored = getStoredServices()
+    if (stored.length > 0) {
+      onServiceSelect(stored.map(s => s.service))
+    }
+  }, [])
+
   const handleServiceToggle = (service: Service) => {
     let updated: Service[]
     if (selectedServices.some((s) => s.id === service.id)) {
@@ -55,6 +81,29 @@ export function ServiceSelectionStep({ selectedServices = [], onServiceSelect, i
       updated = [...selectedServices, service]
     }
     onServiceSelect(updated)
+  }
+
+  // Book button handler
+  const handleBookService = (service: Service, options?: number[]) => {
+    const stored = getStoredServices()
+    // If already exists, update options; else add
+    const idx = stored.findIndex(s => s.service.id === service.id)
+    if (idx > -1) {
+      stored[idx] = { service, options }
+    } else {
+      stored.push({ service, options })
+    }
+    setStoredServices(stored)
+    onServiceSelect(stored.map(s => s.service))
+  }
+
+  // Remove service handler
+  const handleRemoveService = (serviceId: number) => {
+    // Remove from localStorage
+    const stored = getStoredServices().filter(s => s.service.id !== serviceId)
+    setStoredServices(stored)
+    // Update selection in parent
+    onServiceSelect(selectedServices.filter((s) => s.id !== serviceId))
   }
 
   return (
@@ -94,7 +143,7 @@ export function ServiceSelectionStep({ selectedServices = [], onServiceSelect, i
                   variant="ghost"
                   className="text-gray-400 hover:text-rose-600"
                   aria-label="Remove service"
-                  onClick={() => onServiceSelect(selectedServices.filter((s) => s.id !== service.id))}
+                  onClick={() => handleRemoveService(service.id)}
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -128,7 +177,6 @@ export function ServiceSelectionStep({ selectedServices = [], onServiceSelect, i
             <Card
               key={service.id}
               className={`cursor-pointer transition-all hover:shadow-lg ${isSelected ? "ring-2 ring-rose-500 bg-rose-50" : "hover:shadow-md"}`}
-              onClick={() => handleServiceToggle(service)}
             >
               <div className="h-32 bg-gray-200 relative">
                 <Image src={service.image || "/placeholder.svg"} alt={service.name} fill className="object-cover" />
@@ -167,6 +215,12 @@ export function ServiceSelectionStep({ selectedServices = [], onServiceSelect, i
                     {service.price}
                   </div>
                 </div>
+                <Button
+                  className="mt-2 w-full bg-rose-600 hover:bg-rose-700"
+                  onClick={() => handleBookService(service)}
+                >
+                  {isSelected ? "Added" : "Book"}
+                </Button>
               </CardContent>
             </Card>
           )

@@ -183,12 +183,15 @@ export function BookingSummaryStep({
 
             {/* Pricing */}
             <div className="space-y-2">
-              {totals && Array.isArray(totals.lineItems) ? (
+              {totals && typeof totals === "object" && !Array.isArray(totals) && Object.keys(totals).length > 0 ? (
                 <>
-                  {totals.lineItems.map((item: any) => (
-                    <div className={`flex justify-between ${item.isTotal ? "font-semibold text-lg" : "text-sm"}`} key={item.label}>
-                      <span>{item.label}</span>
-                      <span className={item.isTotal ? "text-rose-600" : undefined}>{item.value}</span>
+                  {Object.entries(totals).map(([label, value]) => (
+                    <div
+                      key={label}
+                      className={`flex justify-between ${label.toLowerCase().includes("total") ? "font-semibold text-lg" : "text-sm"}`}
+                    >
+                      <span>{label}</span>
+                      <span className={label.toLowerCase().includes("total") ? "text-rose-600" : undefined}>{typeof value === "number" ? `AED ${value}` : value}</span>
                     </div>
                   ))}
                 </>
@@ -265,8 +268,8 @@ export function BookingSummaryStep({
               Processing Booking...
             </div>
           ) : (
-            totals && totals.lineItems && totals.lineItems.find((i: any) => i.isTotal)
-              ? `Confirm Booking - ${totals.lineItems.find((i: any) => i.isTotal).value}`
+            totals && typeof totals === "object" && !Array.isArray(totals) && Object.keys(totals).length > 0 && totals["Total"]
+              ? `Confirm Booking - AED ${totals["Total"]}`
               : `Confirm Booking - $${pricing.total}`
           )}
         </Button>

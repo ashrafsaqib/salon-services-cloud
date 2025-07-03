@@ -101,6 +101,25 @@ export function Header() {
     window.location.href = "/"
   }
 
+  // Booking cart count from localStorage
+  const [bookingCount, setBookingCount] = useState(0)
+  useEffect(() => {
+    function updateCount() {
+      if (typeof window !== "undefined") {
+        try {
+          const raw = localStorage.getItem("booking_selected_services")
+          const arr = raw ? JSON.parse(raw) : []
+          setBookingCount(Array.isArray(arr) ? arr.length : 0)
+        } catch {
+          setBookingCount(0)
+        }
+      }
+    }
+    updateCount()
+    window.addEventListener("storage", updateCount)
+    return () => window.removeEventListener("storage", updateCount)
+  }, [])
+
   return (
     <header className="bg-white shadow-sm border-b sticky top-0 z-50">
       <FlashMessage />
@@ -177,8 +196,11 @@ export function Header() {
               FAQs
             </Link>
             <Link href="/book">
-              <Button className="bg-rose-600 hover:bg-rose-700 text-white px-6 py-2 rounded-full font-medium transition-colors">
+              <Button className="bg-rose-600 hover:bg-rose-700 text-white px-6 py-2 rounded-full font-medium transition-colors relative">
                 Book Now
+                {bookingCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-green-500 text-white text-xs rounded-full px-2 py-0.5 font-bold shadow">{bookingCount}</span>
+                )}
               </Button>
             </Link>
             <Link href="/info/contact-us" className="text-gray-600 hover:text-gray-900">

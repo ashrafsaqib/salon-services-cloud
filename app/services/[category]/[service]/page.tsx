@@ -64,6 +64,23 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
     notFound()
   }
 
+  // Utility for localStorage key (should match booking wizard)
+  const BOOKING_SERVICES_KEY = "booking_selected_services"
+
+  function getStoredServices() {
+    if (typeof window === "undefined") return []
+    try {
+      const raw = localStorage.getItem(BOOKING_SERVICES_KEY)
+      return raw ? JSON.parse(raw) : []
+    } catch {
+      return []
+    }
+  }
+  function setStoredServices(services: any[]) {
+    if (typeof window === "undefined") return
+    localStorage.setItem(BOOKING_SERVICES_KEY, JSON.stringify(services))
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -183,19 +200,24 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
                     </div>
                   )}
 
-                  <h3 className="text-xl font-semibold mb-3">Service Gallery</h3>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-                    {serviceData.gallery.map((image: string, index: number) => (
-                      <div key={index} className="relative h-40 rounded-lg overflow-hidden">
-                        <Image
-                          src={image || "/placeholder.svg"}
-                          alt={`${serviceData.name} gallery image ${index + 1}`}
-                          fill
-                          className="object-cover"
-                        />
+                  {/* Service Gallery section, only if images exist */}
+                  {serviceData.gallery && serviceData.gallery.length > 0 && (
+                    <>
+                      <h3 className="text-xl font-semibold mb-3">Service Gallery</h3>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+                        {serviceData.gallery.map((image: string, index: number) => (
+                          <div key={index} className="relative h-40 rounded-lg overflow-hidden">
+                            <Image
+                              src={image || "/placeholder.svg"}
+                              alt={`${serviceData.name} gallery image ${index + 1}`}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
+                    </>
+                  )}
                 </div>
 
                 <div>
@@ -247,15 +269,29 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
                             disabled={serviceData.options && serviceData.options.length > 0 && selectedOptions.length === 0}
                             onClick={() => {
                               if (serviceData && serviceData.id) {
-                                const params = new URLSearchParams()
-                                params.append("serviceId", serviceData.id)
-                                if (serviceData.options && serviceData.options.length > 0 && selectedOptions.length > 0) {
-                                  params.append("options", JSON.stringify(selectedOptions.map(o => o.id)))
+                                // Store in localStorage for multi-service booking
+                                const stored = getStoredServices()
+                                const idx = stored.findIndex((s: any) => s.service.id === serviceData.id)
+                                const newEntry = {
+                                  service: {
+                                    id: serviceData.id,
+                                    name: serviceData.name,
+                                    image: serviceData.image,
+                                    price: serviceData.price,
+                                    duration: serviceData.duration,
+                                    // add other fields as needed
+                                  },
+                                  options: selectedOptions.map(o => o.id),
+                                  addOns: selectedAddOns
                                 }
-                                if (selectedAddOns.length > 0) {
-                                  params.append("addOns", JSON.stringify(selectedAddOns))
+                                if (idx > -1) {
+                                  stored[idx] = newEntry
+                                } else {
+                                  stored.push(newEntry)
                                 }
-                                router.push(`/book?${params.toString()}`)
+                                setStoredServices(stored)
+                                // Redirect to booking wizard
+                                router.push("/book")
                               }
                             }}
                           >

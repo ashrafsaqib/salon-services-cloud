@@ -337,7 +337,11 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
 
         {currentStep < steps.length ? (
           <Button
-            onClick={nextStep}
+            onClick={
+              currentStep === 4
+                ? handleCustomerDetailsNext
+                : nextStep
+            }
             disabled={
               !canProceed() ||
               (currentStep === 4 && !isCustomerDetailsValid())
