@@ -203,9 +203,16 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
         body: JSON.stringify(payload)
       })
       if (!res.ok) throw new Error("Order submission failed")
-      // Optionally handle response (e.g., get booking/order id)
-      const bookingId = Math.random().toString(36).substr(2, 9)
-      router.push(`/checkout?booking=${bookingId}`)
+      const orderData = await res.json()
+      // Redirect to checkout with booking/order id and total
+      const orderIds = Array.isArray(orderData.order_ids) ? orderData.order_ids : []
+      const total = orderData.Total
+      if (orderIds.length > 0 && total) {
+        router.push(`/checkout?orders=${orderIds.join(",")}&total=${total}`)
+      } else {
+        // fallback
+        router.push("/checkout")
+      }
     } catch (e) {
       // Optionally show error toast
       setIsLoading(false)

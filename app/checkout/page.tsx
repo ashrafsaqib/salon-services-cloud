@@ -3,12 +3,11 @@
 import React, { useState } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import Image from "next/image"
-import { Calendar, Clock, MapPin, User, CreditCard, ArrowLeft } from "lucide-react"
+import { Calendar, User, CreditCard, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Separator } from "@/components/ui/separator"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { Elements } from "@stripe/react-stripe-js"
@@ -115,7 +114,7 @@ function StripeCardForm({ bookingId, amount, onPaymentSuccess }: { bookingId: st
       </div>
       {error && <div className="text-red-600 text-sm">{error}</div>}
       <Button type="submit" className="w-full bg-green-600 hover:bg-green-700 h-12 text-lg" disabled={loading || !clientSecret}>
-        {loading ? "Processing..." : "Pay Now"}
+        {loading ? "Processing..." : `Pay Now (AED ${amount})`}
       </Button>
     </form>
   )
@@ -124,85 +123,58 @@ function StripeCardForm({ bookingId, amount, onPaymentSuccess }: { bookingId: st
 export default function CheckoutPage() {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const bookingId = searchParams.get("booking")
-
-  const [isProcessing, setIsProcessing] = useState(false)
+  const ordersParam = searchParams.get("orders")
+  const [orders, setOrders] = useState<any[]>([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [paymentMethod, setPaymentMethod] = useState("card")
+  const [allOrdersTotal, setAllOrdersTotal] = useState<string | null>(null)
 
-  // Mock booking data (in real app, fetch from API using bookingId)
-  const mockBookingData = {
-    id: bookingId,
-    service: {
-      name: "Hair Styling & Cut",
-      category: "Ladies Salon",
-      duration: "60 min",
-      image: "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?q=80&w=1000&auto=format&fit=crop",
-    },
-    date: "2024-01-15",
-    timeSlot: "14:00",
-    staff: {
-      name: "Sarah Martinez",
-      role: "Senior Hair Stylist",
-      image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1000&auto=format&fit=crop",
-    },
-    customer: {
-      name: "Jane Doe",
-      email: "jane@example.com",
-      phone: "+1 (555) 123-4567",
-      address: "123 Main St, City, State 12345",
-    },
-    pricing: {
-      subtotal: 55,
-      tax: 4,
-      total: 59,
-    },
-  }
+  React.useEffect(() => {
+    if (!ordersParam) return
+    setLoading(true)
+    setError(null)
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getorders?orders=${ordersParam}`)
+      .then(res => {
+        if (!res.ok) throw new Error("Failed to fetch order details")
+        return res.json()
+      })
+      .then(data => {
+        setOrders(data.orders || [])
+        setAllOrdersTotal(data.all_orders_total || null)
+      })
+      .catch(err => setError(err.message || "Failed to load order details"))
+      .finally(() => setLoading(false))
+  }, [ordersParam])
 
-  const formatTime = (time: string) => {
-    const [hour, minute] = time.split(":")
-    const hourNum = Number.parseInt(hour)
-    const ampm = hourNum >= 12 ? "PM" : "AM"
-    const displayHour = hourNum > 12 ? hourNum - 12 : hourNum === 0 ? 12 : hourNum
-    return `${displayHour}:${minute} ${ampm}`
-  }
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString("en-US", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })
-  }
-
-  const handlePayment = async () => {
-    setIsProcessing(true)
-
-    // Simulate payment processing
-    await new Promise((resolve) => setTimeout(resolve, 3000))
-
-    // Redirect to success page
-    router.push(`/booking-confirmation?booking=${bookingId}`)
-  }
-
-  const handleStripeSuccess = () => {
-    setIsProcessing(false)
-    router.push(`/booking-confirmation?booking=${bookingId}`)
-  }
-
-  if (!bookingId) {
+  if (!ordersParam) {
     return (
       <div className="min-h-screen bg-gray-50">
         <Header />
         <div className="max-w-2xl mx-auto px-4 py-16 text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">Invalid Booking</h1>
-          <p className="text-gray-600 mb-6">The booking ID is missing or invalid.</p>
+          <p className="text-gray-600 mb-6">The order ID(s) are missing or invalid.</p>
           <Button onClick={() => router.push("/book")} className="bg-rose-600 hover:bg-rose-700">
             Start New Booking
           </Button>
         </div>
         <Footer />
+      </div>
+    )
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <span className="text-gray-500 text-lg">Loading order details...</span>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <span className="text-red-500 text-lg">{error}</span>
       </div>
     )
   }
@@ -234,101 +206,52 @@ export default function CheckoutPage() {
                 Booking Details
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Service */}
-              <div className="flex items-start space-x-4">
-                <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
-                  <Image
-                    src={mockBookingData.service.image || "/placeholder.svg"}
-                    alt={mockBookingData.service.name}
-                    width={64}
-                    height={64}
-                    className="object-cover"
-                  />
+            <CardContent className="space-y-8">
+              {orders.map((order) => (
+                <div key={order.id} className="border-b pb-6 last:border-b-0">
+                  <div className="mb-4">
+                    <h3 className="font-semibold text-lg text-gray-900 mb-2">Order #{order.id}</h3>
+                    <div className="flex flex-wrap gap-4 mb-2">
+                      <span className="bg-gray-100 px-3 py-1 rounded-full text-sm text-gray-700">Staff: {order.staff_name}</span>
+                      <span className="bg-gray-100 px-3 py-1 rounded-full text-sm text-gray-700">Time: {order.time_slot}</span>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    {order.order_services.map((service: any, idx: number) => (
+                      <div key={idx} className="flex items-center gap-4 border rounded-lg p-3 bg-gray-50">
+                        <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+                          <Image
+                            src={service.image?.startsWith("http") ? service.image : `/service-images/${service.image}`}
+                            alt={service.name}
+                            width={64}
+                            height={64}
+                            className="object-cover"
+                          />
+                        </div>
+                        <div>
+                          <div className="font-medium text-gray-900">{service.name}</div>
+                          <div className="text-sm text-gray-600">{service.duration}</div>
+                          <div className="text-rose-600 font-semibold">AED {service.price}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mb-2">
+                    <h4 className="font-medium text-gray-900 flex items-center">
+                      <User className="h-4 w-4 mr-2" />
+                      Customer Information
+                    </h4>
+                    <div className="text-sm text-gray-600 space-y-1">
+                      <p>{order.customer.name}</p>
+                      <p>{order.customer.email}</p>
+                      <p>{order.customer.phone}</p>
+                      <p>{order.customer.address}</p>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900">{mockBookingData.service.name}</h3>
-                  <p className="text-sm text-gray-600">{mockBookingData.service.category}</p>
-                  <p className="text-sm text-rose-600 font-medium">{mockBookingData.service.duration}</p>
-                </div>
-              </div>
-
-              <Separator />
-
-              {/* Date & Time */}
-              <div className="space-y-3">
-                <div className="flex items-center text-gray-700">
-                  <Calendar className="h-4 w-4 mr-3" />
-                  <span>{formatDate(mockBookingData.date)}</span>
-                </div>
-                <div className="flex items-center text-gray-700">
-                  <Clock className="h-4 w-4 mr-3" />
-                  <span>
-                    {formatTime(mockBookingData.timeSlot)} ({mockBookingData.service.duration})
-                  </span>
-                </div>
-                <div className="flex items-center text-gray-700">
-                  <MapPin className="h-4 w-4 mr-3" />
-                  <span>At your location</span>
-                </div>
-              </div>
-
-              <Separator />
-
-              {/* Staff */}
-              <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 rounded-full overflow-hidden">
-                  <Image
-                    src={mockBookingData.staff.image || "/placeholder.svg"}
-                    alt={mockBookingData.staff.name}
-                    width={48}
-                    height={48}
-                    className="object-cover"
-                  />
-                </div>
-                <div>
-                  <h4 className="font-medium text-gray-900">{mockBookingData.staff.name}</h4>
-                  <p className="text-sm text-gray-600">{mockBookingData.staff.role}</p>
-                </div>
-              </div>
-
-              <Separator />
-
-              {/* Customer Info */}
-              <div className="space-y-2">
-                <h4 className="font-medium text-gray-900 flex items-center">
-                  <User className="h-4 w-4 mr-2" />
-                  Customer Information
-                </h4>
-                <div className="text-sm text-gray-600 space-y-1">
-                  <p>{mockBookingData.customer.name}</p>
-                  <p>{mockBookingData.customer.email}</p>
-                  <p>{mockBookingData.customer.phone}</p>
-                  <p>{mockBookingData.customer.address}</p>
-                </div>
-              </div>
-
-              <Separator />
-
-              {/* Pricing */}
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span>Subtotal</span>
-                  <span>${mockBookingData.pricing.subtotal}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span>Tax</span>
-                  <span>${mockBookingData.pricing.tax}</span>
-                </div>
-                <Separator />
-                <div className="flex justify-between font-semibold text-lg">
-                  <span>Total</span>
-                  <span className="text-rose-600">${mockBookingData.pricing.total}</span>
-                </div>
-              </div>
+              ))}
             </CardContent>
           </Card>
-
           {/* Payment Form */}
           <Card>
             <CardHeader>
@@ -355,7 +278,11 @@ export default function CheckoutPage() {
               {paymentMethod === "card" && (
                 process.env.NEXT_PUBLIC_STRIPE_KEY ? (
                   <Elements stripe={stripePromise}>
-                    <StripeCardForm bookingId={bookingId} amount={mockBookingData.pricing.total} onPaymentSuccess={handleStripeSuccess} />
+                    <StripeCardForm
+                      bookingId={ordersParam || ''}
+                      amount={allOrdersTotal ? Number(allOrdersTotal) : 0}
+                      onPaymentSuccess={() => router.push(`/booking-confirmation?orders=${ordersParam}`)}
+                    />
                   </Elements>
                 ) : (
                   <div className="text-red-600">Stripe key not configured</div>
@@ -365,11 +292,38 @@ export default function CheckoutPage() {
               {paymentMethod === "cod" && (
                 <div className="pt-4">
                   <Button
-                    onClick={handlePayment}
-                    disabled={isProcessing}
+                    onClick={async () => {
+                      setLoading(true)
+                      try {
+                        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/stripe/payment`, {
+                          method: "POST",
+                          headers: {
+                            "Content-Type": "application/json",
+                            ...(typeof window !== "undefined" ? { Authorization: `Bearer ${localStorage.getItem("token")}` } : {})
+                          },
+                          body: JSON.stringify({
+                            paymentMethodId: null,
+                            amount: allOrdersTotal ? Number(allOrdersTotal) : 0,
+                            currency: "aed",
+                            description: `Order payment for #${ordersParam}`,
+                            order_ids: ordersParam ? ordersParam.split(",").map(id => Number(id)) : []
+                          })
+                        })
+                        if (!res.ok) {
+                          const data = await res.json()
+                          throw new Error(data.message || "Payment failed")
+                        }
+                        router.push(`/booking-confirmation?orders=${ordersParam}`)
+                      } catch (err) {
+                        setError(err.message || "Failed to process payment")
+                      } finally {
+                        setLoading(false)
+                      }
+                    }}
+                    disabled={loading}
                     className="w-full bg-green-600 hover:bg-green-700 h-12 text-lg"
                   >
-                    {isProcessing ? (
+                    {loading ? (
                       <div className="flex items-center">
                         <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
                         Processing Order...
