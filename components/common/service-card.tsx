@@ -75,7 +75,7 @@ export function ServiceCard( {service}: ServiceCardProps) {
             </div>
           )}
 
-          <div className="flex justify-between items-center">
+          {/* <div className="flex justify-between items-center">
             <span className="text-2xl font-bold text-rose-600">{price}</span>
             <BookButton
               service={service}
@@ -84,7 +84,7 @@ export function ServiceCard( {service}: ServiceCardProps) {
             >
               Book Now
             </BookButton>
-          </div>
+          </div> */}
         </CardContent>
       </Card>
     </Link>

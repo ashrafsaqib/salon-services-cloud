@@ -307,7 +307,7 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
                     <div className="space-y-4">
                       {serviceData.addOns.map((related: any) => (
                         <div key={related.id} className="flex items-center p-3 border rounded-lg hover:shadow-md transition-shadow">
-                          <input
+                          {/* <input
                             type="checkbox"
                             className="mr-3 w-5 h-5 accent-rose-600"
                             checked={selectedAddOns.includes(related.id)}
@@ -318,7 +318,7 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
                                 setSelectedAddOns(prev => prev.filter(id => id !== related.id))
                               }
                             }}
-                          />
+                          /> */}
                           <Link href={`/services/${category}/${related.slug}`} className="flex items-center flex-1 min-w-0">
                             <div className="relative h-16 w-16 rounded overflow-hidden flex-shrink-0">
                               <Image

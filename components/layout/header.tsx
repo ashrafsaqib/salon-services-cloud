@@ -142,12 +142,22 @@ export function Header() {
               <Image src="/logo.png" alt="Lipslay Marketplace" width={180} height={40} className="h-8 w-auto" />
             </Link>
             <button
-              className="ml-4 text-gray-600 hover:text-rose-600 flex items-center"
+              className="ml-4 flex items-center justify-center bg-lime-300 text-green-900 rounded-full shadow-lg hover:bg-lime-200 hover:scale-105 hover:shadow-lime-400 transition-all duration-200 p-2 border-2 border-green-500"
               title="Set Location"
               onClick={() => setIsLocationModalOpen(true)}
+              style={{ boxShadow: "0 4px 16px 0 rgba(163, 230, 53, 0.2)" }}
             >
-              <MapPin className="w-6 h-6" />
+              <MapPin className="w-6 h-6 drop-shadow" />
             </button>
+            <span
+              className="ml-2 px-3 py-1 rounded-full bg-lime-200 text-green-900 font-semibold text-sm shadow border border-green-400 cursor-pointer hover:bg-lime-100 transition"
+              onClick={() => setIsLocationModalOpen(true)}
+              style={{ userSelect: "none" }}
+            >
+              {typeof window !== "undefined"
+              ? localStorage.getItem("selected_zone_name") || "Set Location"
+              : "Set Location"}
+            </span>
           </div>
 
           <nav className="hidden md:flex items-center space-x-6">
