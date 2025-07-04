@@ -85,7 +85,7 @@ export function HeroSection() {
           </div>
 
           {/* Service Categories Preview */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
+          {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
             {[
               { icon: "💇‍♀️", name: "Hair & Beauty", href: "/services/ladies-salon" },
               { icon: "🧔‍♂️", name: "Men's Grooming", href: "/services/gents-salon" },
@@ -99,7 +99,7 @@ export function HeroSection() {
                 </div>
               </Link>
             ))}
-          </div>
+          </div> */}
         </div>
       </div>
 
