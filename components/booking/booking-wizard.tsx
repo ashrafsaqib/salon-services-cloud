@@ -211,7 +211,7 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
         latitude: customerDetails.latitude || "24.8607",
         longitude: customerDetails.longitude || "67.0011",
         affiliate_code: customerDetails.affiliate_code || undefined,
-        coupon_code: customerDetails.coupon_code || undefined,
+        coupon_code: customerDetails.coupon_code || bookingData.customerInfo?.coupon_code || undefined,
         gender: customerDetails.gender || undefined,
         building_name: customerDetails.building_name || undefined,
         flat_or_villa: customerDetails.flat_or_villa || undefined,
@@ -289,7 +289,48 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
             onSlotSelect={handleSlotSelect}
           />
         )
-      case 4:
+      case 4: {
+        // Prepare the same bookingData payload as used for gettotals
+        const bookingDataArr = (bookingData.services || []).map((s: any) => {
+          const stored = getStoredServices().find((ss: any) => ss.service.id === s.id)
+          return {
+            service_id: s.id,
+            option_ids: stored?.options ? stored.options.map((o: any) => o.id) : undefined
+          }
+        })
+        const getTotalsPayload = {
+          name: customerDetails.name,
+          email: customerDetails.email,
+          number_country_code: customerDetails.phone_country_code || "+92",
+          number: customerDetails.phone_number || "3001234567",
+          whatsapp_country_code: customerDetails.whatsapp_country_code || "+92",
+          whatsapp: customerDetails.whatsapp_number || "3001234567",
+          latitude: customerDetails.latitude || "24.8607",
+          longitude: customerDetails.longitude || "67.0011",
+          affiliate_code: customerDetails.affiliate_code || undefined,
+          coupon_code: customerDetails.coupon_code || bookingData.customerInfo?.coupon_code || undefined,
+          gender: customerDetails.gender || undefined,
+          building_name: customerDetails.building_name || undefined,
+          flat_or_villa: customerDetails.flat_or_villa || undefined,
+          street: customerDetails.street || undefined,
+          area: customerDetails.area || undefined,
+          district: customerDetails.district || undefined,
+          landmark: customerDetails.landmark || undefined,
+          city: customerDetails.city || undefined,
+          save_data: customerDetails.save_data,
+          staffZone: {
+            extra_charges: 100, // TODO: Replace with real value if available
+            transport_charges: 200 // TODO: Replace with real value if available
+          },
+          bookingData: [
+            {
+              date: bookingData.date,
+              service_staff_id: bookingData.staff?.id || 5, // fallback
+              time_slot_id: bookingData.timeSlot || 3, // fallback
+              services: bookingDataArr
+            }
+          ]
+        }
         return (
           <CustomerDetailsStep
             customerDetails={customerDetails}
@@ -298,8 +339,11 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
             areaOptions={areaOptions}
             onNext={handleCustomerDetailsNext}
             onBack={prevStep}
+            bookingData={getTotalsPayload}
+            // userId={userId} // pass userId if available in your context
           />
         )
+      }
       case 5:
         return (
           <BookingSummaryStep
@@ -328,7 +372,7 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
           option_ids: stored?.options ? stored.options.map((o: any) => o.id) : undefined
         }
       })
-      // Prepare payload for /api/order
+      // Prepare payload for /api/gettotals
       const payload = {
         name: customerDetails.name,
         email: customerDetails.email,
@@ -339,7 +383,7 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
         latitude: customerDetails.latitude || "24.8607",
         longitude: customerDetails.longitude || "67.0011",
         affiliate_code: customerDetails.affiliate_code || undefined,
-        coupon_code: customerDetails.coupon_code || undefined,
+        coupon_code: customerDetails.coupon_code || bookingData.customerInfo?.coupon_code || undefined,
         gender: customerDetails.gender || undefined,
         building_name: customerDetails.building_name || undefined,
         flat_or_villa: customerDetails.flat_or_villa || undefined,

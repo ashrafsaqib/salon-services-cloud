@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import React, { useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
@@ -16,6 +16,8 @@ interface CustomerDetailsStepProps {
   areaOptions: string[]
   onNext: () => void
   onBack: () => void
+  bookingData: any // Add bookingData prop
+  userId?: string | null // Add userId prop
 }
 
 export function CustomerDetailsStep({
@@ -25,15 +27,41 @@ export function CustomerDetailsStep({
   areaOptions,
   onNext,
   onBack,
+  bookingData,
+  userId = null,
 }: CustomerDetailsStepProps) {
   const [couponInput, setCouponInput] = useState("")
+  const [couponError, setCouponError] = useState("")
 
   const handleChange = (field: keyof CustomerInfo, value: string | boolean) => {
+    if (field === "coupon_code") {
+      setCouponInput(value as string) // Update local coupon input state
+    }
     onUpdate({ ...customerDetails, [field]: value })
   }
-
-  const handleApplyCoupon = () => {
-    onApplyCoupon(couponInput)
+// TODO cleanup payload for apply coupon
+  const handleApplyCoupon = async () => {
+    const code = (couponInput || customerDetails.coupon_code || "").trim();
+    if (!code) return;
+    try {
+      const res = await fetch("/api/coupon", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          coupon_code: code,
+          bookingData,
+          user_id: userId || null,
+        }),
+      });
+      if (res.status === 200) {
+        setCouponError("");
+        onApplyCoupon(code);
+      } else {
+        setCouponError("Invalid coupon code");
+      }
+    } catch {
+      setCouponError("Invalid coupon code");
+    }
   }
 
   // Validation for required fields
@@ -61,6 +89,7 @@ export function CustomerDetailsStep({
     e.preventDefault()
     if (isFormValid()) {
       setShowError(false)
+      onApplyCoupon(couponInput) // Ensure coupon is always sent to parent
       onNext()
     } else {
       setShowError(true)
@@ -148,7 +177,10 @@ export function CustomerDetailsStep({
           <div className="flex gap-2 items-end">
             <div className="flex-1">
               <Label>Coupon Code</Label>
-              <Input value={couponInput} onChange={e => setCouponInput(e.target.value)} />
+              <Input value={customerDetails.coupon_code} onChange={e => handleChange("coupon_code", e.target.value)} />
+              {couponError && (
+                <div className="text-red-500 text-xs mt-1">{couponError}</div>
+              )}
             </div>
             <Button type="button" onClick={handleApplyCoupon}>Apply Coupon</Button>
           </div>
