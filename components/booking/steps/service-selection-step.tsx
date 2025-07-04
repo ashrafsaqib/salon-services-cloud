@@ -39,8 +39,54 @@ export function ServiceSelectionStep({ selectedServices = [], onServiceSelect, i
   const [searchQuery, setSearchQuery] = useState("")
   const [services, setServices] = useState<Service[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  const [storedServices, setStoredServicesState] = useState<{service: Service, options?: number[]}[]>([])
 
   const debouncedQuery = useDebounce(searchQuery, 300)
+
+  // On mount, load from localStorage if available
+  useEffect(() => {
+    const stored = getStoredServices()
+    setStoredServicesState(stored)
+    if (stored.length > 0) {
+      onServiceSelect(stored.map(s => s.service))
+    }
+  }, [])
+
+  // Helper to update both localStorage and state
+  const updateStoredServices = (servicesArr: {service: Service, options?: number[]}[]) => {
+    setStoredServices(servicesArr)
+    setStoredServicesState(servicesArr)
+  }
+
+  const handleServiceToggle = (service: Service) => {
+    let updated: Service[]
+    if (selectedServices.some((s) => s.id === service.id)) {
+      updated = selectedServices.filter((s) => s.id !== service.id)
+    } else {
+      updated = [...selectedServices, service]
+    }
+    onServiceSelect(updated)
+  }
+
+  // Book button handler
+  const handleBookService = (service: Service, options?: number[]) => {
+    const stored = [...storedServices]
+    const idx = stored.findIndex(s => s.service.id === service.id)
+    if (idx > -1) {
+      stored[idx] = { service, options }
+    } else {
+      stored.push({ service, options })
+    }
+    updateStoredServices(stored)
+    onServiceSelect(stored.map(s => s.service))
+  }
+
+  // Remove service handler
+  const handleRemoveService = (serviceId: number) => {
+    const stored = storedServices.filter(s => s.service.id !== serviceId)
+    updateStoredServices(stored)
+    onServiceSelect(selectedServices.filter((s) => s.id !== serviceId))
+  }
 
   useEffect(() => {
     const fetchResults = async () => {
@@ -65,47 +111,6 @@ export function ServiceSelectionStep({ selectedServices = [], onServiceSelect, i
     fetchResults()
   }, [debouncedQuery])
 
-  // On mount, load from localStorage if available
-  useEffect(() => {
-    const stored = getStoredServices()
-    if (stored.length > 0) {
-      onServiceSelect(stored.map(s => s.service))
-    }
-  }, [])
-
-  const handleServiceToggle = (service: Service) => {
-    let updated: Service[]
-    if (selectedServices.some((s) => s.id === service.id)) {
-      updated = selectedServices.filter((s) => s.id !== service.id)
-    } else {
-      updated = [...selectedServices, service]
-    }
-    onServiceSelect(updated)
-  }
-
-  // Book button handler
-  const handleBookService = (service: Service, options?: number[]) => {
-    const stored = getStoredServices()
-    // If already exists, update options; else add
-    const idx = stored.findIndex(s => s.service.id === service.id)
-    if (idx > -1) {
-      stored[idx] = { service, options }
-    } else {
-      stored.push({ service, options })
-    }
-    setStoredServices(stored)
-    onServiceSelect(stored.map(s => s.service))
-  }
-
-  // Remove service handler
-  const handleRemoveService = (serviceId: number) => {
-    // Remove from localStorage
-    const stored = getStoredServices().filter(s => s.service.id !== serviceId)
-    setStoredServices(stored)
-    // Update selection in parent
-    onServiceSelect(selectedServices.filter((s) => s.id !== serviceId))
-  }
-
   return (
     <div className="space-y-6">
       {/* Selected Services List */}
@@ -115,7 +120,7 @@ export function ServiceSelectionStep({ selectedServices = [], onServiceSelect, i
           <div className="space-y-2">
             {selectedServices.map((service) => {
               // Find the stored entry for this service to get its options
-              const stored = getStoredServices().find(s => s.service.id === service.id)
+              const stored = storedServices.find(s => s.service.id === service.id)
               return (
                 <div
                   key={service.id}
@@ -187,6 +192,14 @@ export function ServiceSelectionStep({ selectedServices = [], onServiceSelect, i
             <Card
               key={service.id}
               className={`cursor-pointer transition-all hover:shadow-lg ${isSelected ? "ring-2 ring-rose-500 bg-rose-50" : "hover:shadow-md"}`}
+              onClick={() => {
+                handleServiceToggle(service)
+                if (isSelected) {
+                  // Remove from storage if deselected
+                  const updated = storedServices.filter(s => s.service.id !== service.id)
+                  updateStoredServices(updated)
+                }
+              }}
             >
               <div className="h-32 bg-gray-200 relative">
                 <Image src={service.image || "/placeholder.svg"} alt={service.name} fill className="object-cover" />
@@ -227,7 +240,10 @@ export function ServiceSelectionStep({ selectedServices = [], onServiceSelect, i
                 </div>
                 <Button
                   className="mt-2 w-full bg-rose-600 hover:bg-rose-700"
-                  onClick={() => handleBookService(service)}
+                  onClick={e => {
+                    e.stopPropagation()
+                    handleBookService(service)
+                  }}
                 >
                   {isSelected ? "Added" : "Book"}
                 </Button>
@@ -236,15 +252,6 @@ export function ServiceSelectionStep({ selectedServices = [], onServiceSelect, i
           )
         })}
       </div>
-      {services.length === 0 && !isLoading && (
-        <div className="text-center py-8">
-          <div className="text-gray-400 mb-2">
-            <Search className="h-12 w-12 mx-auto" />
-          </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">No services found</h3>
-          <p className="text-gray-600">Try adjusting your search</p>
-        </div>
-      )}
       {isLoading && (
         <div className="text-center py-8">
           <div className="text-gray-400 mb-2">

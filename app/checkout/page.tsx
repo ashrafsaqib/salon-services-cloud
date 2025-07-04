@@ -295,25 +295,20 @@ export default function CheckoutPage() {
                     onClick={async () => {
                       setLoading(true)
                       try {
-                        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/stripe/payment`, {
+                        const updateRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/orderupdate`, {
                           method: "POST",
                           headers: {
-                            "Content-Type": "application/json",
-                            ...(typeof window !== "undefined" ? { Authorization: `Bearer ${localStorage.getItem("token")}` } : {})
+                            "Content-Type": "application/json"
                           },
                           body: JSON.stringify({
-                            paymentMethodId: null,
-                            amount: allOrdersTotal ? Number(allOrdersTotal) : 0,
-                            currency: "aed",
-                            description: `Order payment for #${ordersParam}`,
-                            order_ids: ordersParam ? ordersParam.split(",").map(id => Number(id)) : []
+                            order_ids: ordersParam ? ordersParam.split(",").map(id => Number(id)) : [],
+                            payment_method: "cod"
                           })
                         })
-                        if (!res.ok) {
-                          const data = await res.json()
-                          throw new Error(data.message || "Payment failed")
+                        if (!updateRes.ok) {
+                          throw new Error("Failed to update order with payment method")
                         }
-                        router.push(`/booking-confirmation?orders=${ordersParam}`)
+                        router.push(`/payment-success?orders=${ordersParam}`)
                       } catch (err) {
                         setError(err.message || "Failed to process payment")
                       } finally {
@@ -329,7 +324,7 @@ export default function CheckoutPage() {
                         Processing Order...
                       </div>
                     ) : (
-                      `Place Order (Cash on Delivery)`
+                      `Confirm Cash on Delivery`
                     )}
                   </Button>
                 </div>
