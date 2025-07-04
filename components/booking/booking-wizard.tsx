@@ -55,6 +55,9 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
   const [holidays, setHolidays] = useState<string[]>([])
   const [holidaysLoaded, setHolidaysLoaded] = useState(false)
   const [pendingDateStep, setPendingDateStep] = useState(false)
+  const [slotsLoaded, setSlotsLoaded] = useState(false)
+  const [totalsError, setTotalsError] = useState<string | null>(null)
+  const [slotsError, setSlotsError] = useState<string | null>(null)
   const router = useRouter()
 
   // Initialize with pre-selected service if provided
@@ -99,6 +102,8 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
   const handleDateSelect = async (date: string) => {
     if (!bookingData.services || !bookingData.services.length) return
     setIsLoading(true)
+    setSlotsLoaded(false)
+    setSlotsError(null)
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/booking/slots`, {
         method: "POST",
@@ -113,9 +118,16 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
       if (!res.ok) throw new Error("Failed to fetch staff and slots")
       const data = await res.json()
       setBookingData((prev) => ({ ...prev, date, staff: undefined, timeSlot: undefined, staffAndSlotsData: data }))
+      const hasSlots = !!(data && data.slots && data.slots.length > 0)
+      setSlotsLoaded(hasSlots)
+      if (!hasSlots) {
+        setSlotsError("No slots available for this date. Please select another date.")
+      }
       setCurrentStep(3)
     } catch (e) {
       setBookingData((prev) => ({ ...prev, date, staff: undefined, timeSlot: undefined, staffAndSlotsData: undefined }))
+      setSlotsLoaded(false)
+      setSlotsError("No slots available for this date. Please select another date.")
     } finally {
       setIsLoading(false)
     }
@@ -139,6 +151,8 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
   }
 
   const prevStep = () => {
+    setTotalsError(null)
+    setSlotsError(null)
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1)
     }
@@ -149,7 +163,7 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
       case 1:
         return (bookingData.services && bookingData.services.length > 0)
       case 2:
-        return !!bookingData.date
+        return !!bookingData.date && slotsLoaded
       case 3:
         return !!bookingData.staff
       case 4:
@@ -359,6 +373,7 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
   // Call gettotals API when moving from details to summary
   const handleCustomerDetailsNext = async () => {
     setIsLoading(true)
+    setTotalsError(null)
     try {
       // Prepare bookingData array with service ids and option ids
       const bookingDataArr = (bookingData.services || []).map((s: any) => {
@@ -409,12 +424,16 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       })
-      if (!res.ok) throw new Error("Failed to get totals")
       const data = await res.json()
+      if (data.error) {
+        setTotalsError(typeof data.error === "string" ? data.error : "Unable to calculate totals. Please check your details and try again.")
+        return
+      }
+      if (!res.ok) throw new Error("Failed to get totals")
       setTotals(data)
       setCurrentStep(5)
-    } catch {
-      // Optionally show error
+    } catch (err) {
+      setTotalsError("Unable to calculate totals. Please check your details and try again.")
     } finally {
       setIsLoading(false)
     }
@@ -453,6 +472,13 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
       <Card>
         <CardContent className="p-6">{renderStepContent()}</CardContent>
       </Card>
+
+      {/* Universal Error Message Section */}
+      {(totalsError || slotsError) && (
+        <div className="text-center text-red-600 font-medium mb-2">
+          {totalsError || slotsError}
+        </div>
+      )}
 
       {/* Navigation */}
       <div className="flex justify-between">
