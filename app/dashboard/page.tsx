@@ -1,5 +1,7 @@
 "use client"
 
+// TODO show complaint button only if complaint is not already submitted
+// TODO show view complaint button if complaint is already submitted
 import React, { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Header } from "@/components/layout/header"
