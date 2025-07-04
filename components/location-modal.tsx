@@ -1,11 +1,10 @@
 "use client"
 
-import { useState } from "react"
-import { MapPin, Search, X } from "lucide-react"
+import React, { useState, useEffect } from "react"
+import { X } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 interface LocationModalProps {
@@ -14,7 +13,44 @@ interface LocationModalProps {
 }
 
 export function LocationModal({ isOpen, onClose }: LocationModalProps) {
-  const [searchAddress, setSearchAddress] = useState("")
+  const [zones, setZones] = useState<{ id: number; name: string }[]>([])
+  const [selectedZone, setSelectedZone] = useState<string>("")
+  const [loadingZones, setLoadingZones] = useState(false)
+
+  // Fetch zones when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setLoadingZones(true)
+      fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/zones`)
+        .then(res => res.json())
+        .then(data => setZones(data.zones || []))
+        .catch(() => setZones([]))
+        .finally(() => setLoadingZones(false))
+    }
+  }, [isOpen])
+
+  // Handle zone select
+  const handleZoneSelect = async (zoneId: string) => {
+    setSelectedZone(zoneId)
+    const zone = zones.find(z => String(z.id) === zoneId)
+    if (zone) {
+      localStorage.setItem("selected_zone_id", String(zone.id))
+      localStorage.setItem("selected_zone_name", zone.name)
+      // Save to backend
+      // const token = localStorage.getItem("token")
+      // if (token) {
+      //   await fetch("/api/savezone", {
+      //     method: "POST",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //       Authorization: `Bearer ${token}`,
+      //     },
+      //     body: JSON.stringify({ zone_id: zone.id, zone_name: zone.name }),
+      //   })
+      // }
+      onClose()
+    }
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -27,61 +63,17 @@ export function LocationModal({ isOpen, onClose }: LocationModalProps) {
             </Button>
           </DialogTitle>
         </DialogHeader>
-
         <div className="space-y-4">
-          <div>
-            <Select>
-              <SelectTrigger>
-                <SelectValue placeholder="-- Select Zone --" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="zone1">Zone 1</SelectItem>
-                <SelectItem value="zone2">Zone 2</SelectItem>
-                <SelectItem value="zone3">Zone 3</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="text-center text-sm text-gray-500">OR Add Address</div>
-
-          <div className="flex space-x-2">
-            <div className="flex-1 relative">
-              <Input
-                type="text"
-                placeholder="Search"
-                value={searchAddress}
-                onChange={(e) => setSearchAddress(e.target.value)}
-                className="pr-8"
-              />
-              {searchAddress && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setSearchAddress("")}
-                  className="absolute right-1 top-1/2 transform -translate-y-1/2 h-6 w-6"
-                >
-                  <X className="h-3 w-3" />
-                </Button>
-              )}
-            </div>
-            <Button className="bg-blue-600 hover:bg-blue-700">
-              <Search className="w-4 h-4 mr-1" />
-              Search
-            </Button>
-          </div>
-
-          <div className="text-center text-sm text-gray-500">OR Click Map</div>
-
-          <div className="h-32 bg-gray-100 rounded-lg flex items-center justify-center">
-            <div className="text-center text-gray-500">
-              <MapPin className="w-8 h-8 mx-auto mb-2" />
-              <p className="text-sm">Click to select location on map</p>
-            </div>
-          </div>
-
-          <Button className="w-full bg-blue-600 hover:bg-blue-700" onClick={onClose}>
-            Save Location
-          </Button>
+          <Select value={selectedZone} onValueChange={handleZoneSelect} disabled={loadingZones}>
+            <SelectTrigger>
+              <SelectValue placeholder={loadingZones ? "Loading..." : "-- Select Zone --"} />
+            </SelectTrigger>
+            <SelectContent>
+              {zones.map(zone => (
+                <SelectItem key={zone.id} value={String(zone.id)}>{zone.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </DialogContent>
     </Dialog>

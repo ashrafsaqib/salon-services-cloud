@@ -2,8 +2,9 @@
 import React, { useState, useEffect, useRef } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { ChevronDown } from "lucide-react"
+import { ChevronDown, MapPin } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { LocationModal } from "@/components/location-modal"
 
 function FlashMessage() {
   const [message, setMessage] = useState("")
@@ -35,6 +36,7 @@ function FlashMessage() {
 export function Header() {
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [isLocationModalOpen, setIsLocationModalOpen] = useState(false)
   interface Subcategory {
     id: number
     title: string
@@ -129,6 +131,13 @@ export function Header() {
             <Link href="/">
               <Image src="/logo.png" alt="Lipslay Marketplace" width={180} height={40} className="h-8 w-auto" />
             </Link>
+            <button
+              className="ml-4 text-gray-600 hover:text-rose-600 flex items-center"
+              title="Set Location"
+              onClick={() => setIsLocationModalOpen(true)}
+            >
+              <MapPin className="w-6 h-6" />
+            </button>
           </div>
 
           <nav className="hidden md:flex items-center space-x-6">
@@ -310,6 +319,7 @@ export function Header() {
           )}
         </div>
       </div>
+      <LocationModal isOpen={isLocationModalOpen} onClose={() => setIsLocationModalOpen(false)} />
     </header>
   )
 }

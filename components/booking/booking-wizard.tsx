@@ -11,17 +11,8 @@ import { SlotSelectionStep } from "./steps/slot-selection-step"
 import { BookingSummaryStep } from "./steps/booking-summary-step"
 import { CustomerDetailsStep } from "./steps/customer-details-step"
 import type { Service, BookingData } from "@/types"
-const BOOKING_SERVICES_KEY = "booking_selected_services"
+import { getStoredServices, getUserIdFromStorage, getSelectedZoneId } from "@/lib/storage"
 
-function getStoredServices(): {service: Service, options?: number[]}[] {
-  if (typeof window === "undefined") return []
-  try {
-    const raw = localStorage.getItem(BOOKING_SERVICES_KEY)
-    return raw ? JSON.parse(raw) : []
-  } catch {
-    return []
-  }
-}
 interface BookingWizardProps {
   initialServiceId?: number
   initialCategory?: string
@@ -115,7 +106,8 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
         body: JSON.stringify({
           services: bookingData.services.map(service => String(service.id)),
           date,
-          area: "Dubai"
+          area: "Dubai",
+          zone_id: getSelectedZoneId() || undefined,
         })
       })
       if (!res.ok) throw new Error("Failed to fetch staff and slots")
@@ -225,6 +217,7 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
           extra_charges: 100, // TODO: Replace with real value if available
           transport_charges: 200 // TODO: Replace with real value if available
         },
+        user_id: getUserIdFromStorage(),
         bookingData: [
           {
             date: bookingData.date,
@@ -322,6 +315,8 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
             extra_charges: 100, // TODO: Replace with real value if available
             transport_charges: 200 // TODO: Replace with real value if available
           },
+          user_id: getUserIdFromStorage(),
+          zone_id: getSelectedZoneId() || undefined,
           bookingData: [
             {
               date: bookingData.date,
@@ -340,7 +335,7 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
             onNext={handleCustomerDetailsNext}
             onBack={prevStep}
             bookingData={getTotalsPayload}
-            // userId={userId} // pass userId if available in your context
+            userId={getUserIdFromStorage()}
           />
         )
       }
@@ -397,6 +392,8 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
           extra_charges: 100, // TODO: Replace with real value if available
           transport_charges: 200 // TODO: Replace with real value if available
         },
+        user_id: getUserIdFromStorage(),
+        zone_id: getSelectedZoneId() || undefined,
         bookingData: [
           {
             date: bookingData.date,

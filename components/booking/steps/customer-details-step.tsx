@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Select } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import type { CustomerInfo } from "@/types"
+import { getUserIdFromStorage, getSelectedZoneId } from "@/lib/storage"
 
 interface CustomerDetailsStepProps {
   customerDetails: CustomerInfo
@@ -50,7 +51,8 @@ export function CustomerDetailsStep({
         body: JSON.stringify({
           coupon_code: code,
           bookingData,
-          user_id: userId || null,
+          user_id: userId || getUserIdFromStorage(),
+          zone_id: getSelectedZoneId() || undefined,
         }),
       });
       if (res.status === 200) {
