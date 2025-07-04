@@ -45,7 +45,7 @@ export function CustomerDetailsStep({
     const code = (couponInput || customerDetails.coupon_code || "").trim();
     if (!code) return;
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/coupon/validate`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/coupon`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
