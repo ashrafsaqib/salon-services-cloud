@@ -122,6 +122,16 @@ export function Header() {
     return () => window.removeEventListener("storage", updateCount)
   }, [])
 
+  // Open location modal on page load if no zone is set
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const zoneId = localStorage.getItem("selected_zone_id")
+      if (!zoneId) {
+        setIsLocationModalOpen(true)
+      }
+    }
+  }, [])
+
   return (
     <header className="bg-white shadow-sm border-b sticky top-0 z-50">
       <FlashMessage />

@@ -21,6 +21,13 @@ export function LocationModal({ isOpen, onClose }: LocationModalProps) {
   useEffect(() => {
     if (isOpen) {
       setLoadingZones(true)
+      // Set selected zone from localStorage if exists
+      const storedZoneId = localStorage.getItem("selected_zone_id")
+      if (storedZoneId) {
+        setSelectedZone(storedZoneId)
+      } else {
+        setSelectedZone("")
+      }
       fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/zones`)
         .then(res => res.json())
         .then(data => setZones(data.zones || []))
@@ -58,9 +65,6 @@ export function LocationModal({ isOpen, onClose }: LocationModalProps) {
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between">
             Set Location
-            <Button variant="ghost" size="icon" onClick={onClose} className="h-6 w-6">
-              <X className="h-4 w-4" />
-            </Button>
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
