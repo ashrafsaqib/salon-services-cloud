@@ -45,6 +45,7 @@ export function CustomerDetailsStep({
     const code = (couponInput || customerDetails.coupon_code || "").trim();
     if (!code) return;
     try {
+
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/coupon`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -53,8 +54,7 @@ export function CustomerDetailsStep({
           bookingData,
           user_id: userId || getUserIdFromStorage(),
           zone_id: getSelectedZoneId() || undefined,
-        }),
-        credentials: "include",
+        })
       });
       if (res.status === 200) {
         setCouponError("");

@@ -218,12 +218,13 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
           transport_charges: 200 // TODO: Replace with real value if available
         },
         user_id: getUserIdFromStorage(),
+        zone_id: getSelectedZoneId() || undefined,
         bookingData: [
           {
-            date: bookingData.date,
-            service_staff_id: bookingData.staff?.id || 5, // fallback
-            time_slot_id: bookingData.timeSlot || 3, // fallback
-            services: bookingDataArr
+        date: bookingData.date,
+        service_staff_id: bookingData.staff?.id || 5, // fallback
+        time_slot_id: bookingData.timeSlot || 3, // fallback
+        services: bookingDataArr
           }
         ]
       }
