@@ -98,7 +98,8 @@ export function Header() {
 
   const handleLogout = () => {
     localStorage.removeItem("token")
-    // Set a flash message in sessionStorage
+    localStorage.removeItem("user_id")
+    localStorage.removeItem("user")
     sessionStorage.setItem("flashMessage", "You have been logged out.")
     window.location.href = "/"
   }
@@ -210,6 +211,9 @@ export function Header() {
                       <Link href="/complaints" className="block px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50">
                         Complaints
                       </Link>
+                      <Link href="/quotes" className="block px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50">
+                        Quotes
+                      </Link>
                       <button
                         onClick={handleLogout}
                         className="block w-full text-left px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50"
@@ -306,6 +310,9 @@ export function Header() {
         <Link href="/faq" className="block text-gray-600 hover:text-gray-900 text-lg">FAQs</Link>
         <Link href="/book" className="block text-gray-600 hover:text-gray-900 text-lg">Book Now</Link>
         <Link href="/info/contact-us" className="block text-gray-600 hover:text-gray-900 text-lg">Contact</Link>
+        {isLoggedIn && (
+          <Link href="/quotes" className="block text-gray-600 hover:text-gray-900 text-lg">Quotes</Link>
+        )}
         <div className="mt-4">
           <div className="font-semibold text-gray-900 mb-2">Account</div>
           {!isLoggedIn ? (
@@ -319,6 +326,7 @@ export function Header() {
               <Link href="/profile" className="block px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50">Edit Profile</Link>
               <Link href="/addresses" className="block px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50">Address Book</Link>
               <Link href="/complaints" className="block px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50">Complaints</Link>
+              <Link href="/quotes" className="block px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50">Quotes</Link>
               <button
                 onClick={handleLogout}
                 className="block w-full text-left px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50"

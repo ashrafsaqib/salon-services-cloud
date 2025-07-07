@@ -13,6 +13,7 @@ import { Footer } from "@/components/layout/footer"
 import { StaffCard } from "@/components/ui/staff-card"
 import { useRouter } from "next/navigation"
 import { Input } from "@/components/ui/input"
+import { QuoteRequestModal } from "@/components/booking/QuoteRequestModal"
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
 interface ServiceDetailPageProps {
@@ -29,6 +30,7 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
   const [error, setError] = useState(false)
   const [selectedOptions, setSelectedOptions] = useState<any[]>([])
   const [selectedAddOns, setSelectedAddOns] = useState<number[]>([])
+  const [quoteModalOpen, setQuoteModalOpen] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -264,39 +266,48 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
                           </div>
                         )}
                         <div className="pt-4">
-                          <Button
-                            className="w-full bg-rose-600 hover:bg-rose-700"
-                            disabled={serviceData.options && serviceData.options.length > 0 && selectedOptions.length === 0}
-                            onClick={() => {
-                              if (serviceData && serviceData.id) {
-                                // Store in localStorage for multi-service booking
-                                const stored = getStoredServices()
-                                const idx = stored.findIndex((s: any) => s.service.id === serviceData.id)
-                                const newEntry = {
-                                  service: {
-                                    id: serviceData.id,
-                                    name: serviceData.name,
-                                    image: serviceData.image,
-                                    price: serviceData.price,
-                                    duration: serviceData.duration,
-                                    // add other fields as needed
-                                  },
-                                  options: selectedOptions.map(o => ({ id: o.id, name: o.option_name })), // Save option id and name
-                                  addOns: selectedAddOns
+                          {serviceData.quote === 1 ? (
+                            <Button
+                              className="w-full bg-yellow-400 hover:bg-yellow-300 text-black"
+                              onClick={() => setQuoteModalOpen(true)}
+                            >
+                              Request a Quote
+                            </Button>
+                          ) : (
+                            <Button
+                              className="w-full bg-rose-600 hover:bg-rose-700"
+                              disabled={serviceData.options && serviceData.options.length > 0 && selectedOptions.length === 0}
+                              onClick={() => {
+                                if (serviceData && serviceData.id) {
+                                  // Store in localStorage for multi-service booking
+                                  const stored = getStoredServices()
+                                  const idx = stored.findIndex((s: any) => s.service.id === serviceData.id)
+                                  const newEntry = {
+                                    service: {
+                                      id: serviceData.id,
+                                      name: serviceData.name,
+                                      image: serviceData.image,
+                                      price: serviceData.price,
+                                      duration: serviceData.duration,
+                                      // add other fields as needed
+                                    },
+                                    options: selectedOptions.map(o => ({ id: o.id, name: o.option_name })), // Save option id and name
+                                    addOns: selectedAddOns
+                                  }
+                                  if (idx > -1) {
+                                    stored[idx] = newEntry
+                                  } else {
+                                    stored.push(newEntry)
+                                  }
+                                  setStoredServices(stored)
+                                  // Redirect to booking wizard
+                                  router.push("/book")
                                 }
-                                if (idx > -1) {
-                                  stored[idx] = newEntry
-                                } else {
-                                  stored.push(newEntry)
-                                }
-                                setStoredServices(stored)
-                                // Redirect to booking wizard
-                                router.push("/book")
-                              }
-                            }}
-                          >
-                            Book This Service
-                          </Button>
+                              }}
+                            >
+                              Book This Service
+                            </Button>
+                          )}
                         </div>
                       </div>
                     </CardContent>
@@ -402,6 +413,14 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
           </Tabs>
         </div>
       </section>
+
+      <QuoteRequestModal
+        open={quoteModalOpen}
+        onClose={() => setQuoteModalOpen(false)}
+        serviceId={serviceData.id}
+        serviceName={serviceData.name}
+        serviceOptions={serviceData.options || []}
+      />
 
       <Footer />
     </div>
