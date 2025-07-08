@@ -40,6 +40,7 @@ export function Header() {
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false)
+  const [zoneName, setZoneName] = useState<string>("Set Location");
   interface Subcategory {
     id: number
     title: string
@@ -136,6 +137,12 @@ export function Header() {
     }
   }, [])
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setZoneName(localStorage.getItem("selected_zone_name") || "Set Location");
+    }
+  }, [isLocationModalOpen])
+
   return (
     <header className="bg-white shadow-sm border-b sticky top-0 z-50">
       <FlashMessage />
@@ -158,9 +165,7 @@ export function Header() {
               onClick={() => setIsLocationModalOpen(true)}
               style={{ userSelect: "none" }}
             >
-              {typeof window !== "undefined"
-              ? localStorage.getItem("selected_zone_name") || "Set Location"
-              : "Set Location"}
+              {zoneName}
             </span>
           </div>
 
