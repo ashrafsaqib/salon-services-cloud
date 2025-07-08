@@ -13,7 +13,7 @@ import { Footer } from "@/components/layout/footer"
 import { StaffCard } from "@/components/ui/staff-card"
 import { useRouter } from "next/navigation"
 import { Input } from "@/components/ui/input"
-import { QuoteRequestModal } from "@/components/booking/QuoteRequestModal"
+import { QuoteRequestModal } from "@/components/quote/QuoteRequestModal"
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
 interface ServiceDetailPageProps {

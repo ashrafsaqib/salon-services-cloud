@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { Card, CardContent } from "@/components/ui/card"
+import { ComplaintViewModal } from "@/components/complaint/ComplaintViewModal"
 
 interface Order {
   id: number
@@ -18,6 +19,32 @@ interface Order {
   customer_name?: string
   staff_name?: string
   time_slot_value?: string
+  complaint_id?: number | null
+}
+
+interface Complaint {
+  id: number
+  title: string
+  description: string
+  status: string
+  user_id: number
+  order_id: number
+  created_at: string
+  updated_at: string
+}
+
+interface ComplaintChat {
+  id: number
+  text: string
+  user_id: number
+  complaint_id: number
+  created_at: string
+  updated_at: string
+  self?: boolean
+}
+
+interface ComplaintDetail extends Complaint {
+  chats: ComplaintChat[]
 }
 
 export default function DashboardPage() {
@@ -30,6 +57,9 @@ export default function DashboardPage() {
   const [complaintDescription, setComplaintDescription] = useState("")
   const [complaintLoading, setComplaintLoading] = useState(false)
   const [complaintError, setComplaintError] = useState("")
+  // New state for viewing complaint
+  const [viewComplaintId, setViewComplaintId] = useState<number | null>(null)
+  // Remove viewComplaintDetail, viewComplaintLoading, chatText, chatLoading
   const router = useRouter()
 
   useEffect(() => {
@@ -177,12 +207,22 @@ export default function DashboardPage() {
                         Cancel Order
                       </button>
                     )}
-                    <button
-                      className="mt-2 ml-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-                      onClick={() => openComplaintModal(order.id)}
-                    >
-                      Add Complaint
-                    </button>
+                    {/* Complaint Button Logic */}
+                    {order.complaint_id == null ? (
+                      <button
+                        className="mt-2 ml-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                        onClick={() => openComplaintModal(order.id)}
+                      >
+                        Add Complaint
+                      </button>
+                    ) : (
+                      <button
+                        className="mt-2 ml-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors inline-block"
+                        onClick={() => setViewComplaintId(order.complaint_id!)}
+                      >
+                        View Complaint
+                      </button>
+                    )}
                   </CardContent>
                 </Card>
               ))}
@@ -236,6 +276,12 @@ export default function DashboardPage() {
           </div>
         </div>
       )}
+      {/* View Complaint Modal */}
+      <ComplaintViewModal
+        complaintId={viewComplaintId}
+        open={!!viewComplaintId}
+        onClose={() => setViewComplaintId(null)}
+      />
     </div>
   )
 }

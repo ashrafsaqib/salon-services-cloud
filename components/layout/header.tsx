@@ -5,6 +5,7 @@ import Link from "next/link"
 import { ChevronDown, MapPin } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { LocationModal } from "@/components/location-modal"
+// TODO loading after every ajax call
 
 function FlashMessage() {
   const [message, setMessage] = useState("")

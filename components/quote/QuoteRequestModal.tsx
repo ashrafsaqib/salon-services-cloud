@@ -165,15 +165,18 @@ export const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
         body: formData,
       }
     );
-    if (res.status === 400) {
-      const data = await res.json().catch(() => ({}));
+
+    const data = await res.json().catch(() => ({}));
+    if (data?.success) {
+      sessionStorage.setItem("flashMessage", data?.message || "Your quote request was submitted successfully.");
+      window.location.reload(); // or use router.push() if using Next.js router
+      return;
+    } else if (res.status === 400) {
       setSubmitError(
         data?.message || "Something went wrong. Please check your input."
       );
       return;
     }
-    resetForm();
-    onClose();
   };
 
   return (
