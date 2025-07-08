@@ -6,7 +6,9 @@ import { ChevronDown, MapPin } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { LocationModal } from "@/components/location-modal"
 // TODO loading after every ajax call
-
+// TODO search bar in header
+// TODO filters services
+// TODO on booking previous go back fix old data
 function FlashMessage() {
   const [message, setMessage] = useState("")
   const [visible, setVisible] = useState(false)

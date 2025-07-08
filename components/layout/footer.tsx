@@ -1,6 +1,6 @@
 import Image from "next/image"
 import Link from "next/link"
-
+// TODO remove extra item for footer
 export function Footer() {
   return (
     <footer className="bg-gray-900 text-white pt-12 pb-6">

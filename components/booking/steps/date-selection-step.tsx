@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useMemo, useCallback } from "react"
+import React, { useState, useMemo, useCallback, useEffect } from "react"
 import { Calendar, ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -16,6 +16,14 @@ interface DateSelectionStepProps {
 export function DateSelectionStep({ selectedDate, service, onDateSelect, holidays: initialHolidays }: DateSelectionStepProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date())
   const holidays = initialHolidays || []
+
+  // Sync calendar month with selectedDate
+  useEffect(() => {
+    if (selectedDate) {
+      const date = new Date(selectedDate)
+      setCurrentMonth(new Date(date.getFullYear(), date.getMonth(), 1))
+    }
+  }, [selectedDate])
 
   // Memoized date formatting function
   const formatDate = useCallback((dateString: string) => {
@@ -83,9 +91,11 @@ export function DateSelectionStep({ selectedDate, service, onDateSelect, holiday
           onClick={() => onDateSelect(dateString)}
           disabled={!isAvailable}
           className={`h-12 w-full rounded-lg text-sm font-medium transition-colors ${
-            isAvailable
-          ? "hover:bg-rose-100 text-gray-900"
-          : "bg-gray-300 text-gray-400 cursor-not-allowed"
+            isSelected
+              ? "bg-rose-600 text-white ring-2 ring-rose-600"
+              : isAvailable
+                ? "hover:bg-rose-100 text-gray-900"
+                : "bg-gray-300 text-gray-400 cursor-not-allowed"
           } ${isToday && !isSelected ? "ring-2 ring-rose-200" : ""}`}
         >
           {day}

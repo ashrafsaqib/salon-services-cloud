@@ -308,7 +308,7 @@ export default function CheckoutPage() {
                         if (!updateRes.ok) {
                           throw new Error("Failed to update order with payment method")
                         }
-                        router.push(`/payment-success?orders=${ordersParam}`)
+                        router.push(`/booking-confirmation?orders=${ordersParam}`)
                       } catch (err) {
                         setError(err.message || "Failed to process payment")
                       } finally {

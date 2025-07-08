@@ -49,7 +49,8 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
     latitude: "",
     longitude: "",
   })
-  const [selectedSlot, setSelectedSlot] = useState<any>(null)
+  // Change selectedSlot to selectedSlots (object: groupIdx -> {slot, staff})
+  const [selectedSlots, setSelectedSlots] = useState<{ [groupIdx: number]: { slot: any, staff: any } }>({})
   const [isLoading, setIsLoading] = useState(false)
   const [totals, setTotals] = useState<any>(null)
   const [holidays, setHolidays] = useState<string[]>([])
@@ -105,7 +106,7 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
     setSlotsLoaded(false)
     setSlotsError(null)
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/booking/slots`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/booking/slots-by-group`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -118,7 +119,8 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
       if (!res.ok) throw new Error("Failed to fetch staff and slots")
       const data = await res.json()
       setBookingData((prev) => ({ ...prev, date, staff: undefined, timeSlot: undefined, staffAndSlotsData: data }))
-      const hasSlots = !!(data && data.slots && data.slots.length > 0)
+      // Fix: check for slots in groups
+      const hasSlots = !!(data && data.groups && data.groups.some((g: any) => g.slots && g.slots.length > 0))
       setSlotsLoaded(hasSlots)
       if (!hasSlots) {
         setSlotsError("No slots available for this date. Please select another date.")
@@ -134,12 +136,17 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
   }
 
   // In handleSlotSelect, store both slot and staff for summary
-  const handleSlotSelect = (slot: any, staff: any) => {
-    setSelectedSlot({ ...slot, staffId: staff.id })
-    setBookingData((prev) => ({
+  // Now, after all groups are selected, merge into bookingData
+  const handleSlotStepNext = () => {
+    // Merge all selected slots/staff into bookingData
+    const groups = bookingData.staffAndSlotsData?.groups || []
+    // For now, just pick the first group's slot/staff for legacy fields
+    const first = selectedSlots[0] || {}
+    setBookingData(prev => ({
       ...prev,
-      staff,
-      timeSlot: slot.id,
+      staff: first.staff,
+      timeSlot: first.slot?.id,
+      selectedSlots, // store all selections for summary/submit
     }))
     setCurrentStep(4)
   }
@@ -158,6 +165,7 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
     }
   }
 
+  // Update canProceed for step 3: require a selection for every group
   const canProceed = () => {
     switch (currentStep) {
       case 1:
@@ -165,7 +173,8 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
       case 2:
         return !!bookingData.date && slotsLoaded
       case 3:
-        return !!bookingData.staff
+        const groups = bookingData.staffAndSlotsData?.groups || []
+        return groups.length > 0 && groups.every((_, idx) => selectedSlots[idx])
       case 4:
         return !!bookingData.timeSlot
       case 5:
@@ -195,17 +204,30 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
     )
   }
 
+  const buildBookingDataArray = () => {
+    const groups = bookingData.staffAndSlotsData?.groups || [];
+    return groups.map((group: any, idx: number) => {
+      const sel = selectedSlots[idx];
+      return {
+        date: bookingData.date,
+        service_staff_id: sel?.staff?.id,
+        time_slot_id: sel?.slot?.id,
+        services: (group.services || []).map((sid: number) => {
+          const stored = getStoredServices().find((ss: any) => ss.service.id === sid);
+          return {
+            service_id: sid,
+            option_ids: stored?.options ? stored.options.map((o: any) => o.id) : []
+          };
+        })
+      };
+    });
+  }
+
   const handleFinalBooking = async () => {
     setIsLoading(true)
     try {
-      // Prepare bookingData array with service ids and option ids
-      const bookingDataArr = (bookingData.services || []).map((s: any) => {
-        const stored = getStoredServices().find((ss: any) => ss.service.id === s.id)
-        return {
-          service_id: s.id,
-          option_ids: stored?.options ? stored.options.map((o: any) => o.id) : undefined
-        }
-      })
+      // Build bookingData array for payload
+      const bookingDataArr = buildBookingDataArray();
       // Prepare payload for /api/order
       const payload = {
         name: customerDetails.name,
@@ -233,14 +255,7 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
         },
         user_id: getUserIdFromStorage(),
         zone_id: getSelectedZoneId() || undefined,
-        bookingData: [
-          {
-        date: bookingData.date,
-        service_staff_id: bookingData.staff?.id || 5, // fallback
-        time_slot_id: bookingData.timeSlot || 3, // fallback
-        services: bookingDataArr
-          }
-        ]
+        bookingData: bookingDataArr
       }
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/order`, {
         method: "POST",
@@ -290,22 +305,28 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
           </div>
         )
       case 3:
+        // New: Pass groups to SlotSelectionStep
         return (
           <SlotSelectionStep
-            slots={bookingData.staffAndSlotsData?.slots || []}
-            selectedSlot={selectedSlot}
-            onSlotSelect={handleSlotSelect}
+            groups={bookingData.staffAndSlotsData?.groups || []}
+            services={bookingData.services || []}
+            selectedSlots={selectedSlots}
+            onSlotSelect={(groupIdx, slot, staff) => {
+              setSelectedSlots(prev => ({ ...prev, [groupIdx]: { slot, staff } }))
+            }}
           />
         )
       case 4: {
         // Prepare the same bookingData payload as used for gettotals
-        const bookingDataArr = (bookingData.services || []).map((s: any) => {
-          const stored = getStoredServices().find((ss: any) => ss.service.id === s.id)
-          return {
-            service_id: s.id,
-            option_ids: stored?.options ? stored.options.map((o: any) => o.id) : undefined
-          }
-        })
+        // const bookingDataArr = (bookingData.services || []).map((s: any) => {
+        //   const stored = getStoredServices().find((ss: any) => ss.service.id === s.id)
+        //   return {
+        //     service_id: s.id,
+        //     option_ids: stored?.options ? stored.options.map((o: any) => o.id) : undefined
+        //   }
+        // })
+        const bookingDataArr = buildBookingDataArray();
+
         const getTotalsPayload = {
           name: customerDetails.name,
           email: customerDetails.email,
@@ -332,14 +353,7 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
           },
           user_id: getUserIdFromStorage(),
           zone_id: getSelectedZoneId() || undefined,
-          bookingData: [
-            {
-              date: bookingData.date,
-              service_staff_id: bookingData.staff?.id || 5, // fallback
-              time_slot_id: bookingData.timeSlot || 3, // fallback
-              services: bookingDataArr
-            }
-          ]
+          bookingData: bookingDataArr
         }
         return (
           <CustomerDetailsStep
@@ -363,6 +377,8 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
             onEditDetails={() => setCurrentStep(4)}
             onConfirmBooking={handleFinalBooking}
             isLoading={isLoading}
+            selectedSlots={selectedSlots}
+            groups={bookingData.staffAndSlotsData?.groups || []}
           />
         )
       default:
@@ -375,14 +391,8 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
     setIsLoading(true)
     setTotalsError(null)
     try {
-      // Prepare bookingData array with service ids and option ids
-      const bookingDataArr = (bookingData.services || []).map((s: any) => {
-        const stored = getStoredServices().find((ss: any) => ss.service.id === s.id)
-        return {
-          service_id: s.id,
-          option_ids: stored?.options ? stored.options.map((o: any) => o.id) : undefined
-        }
-      })
+      // Build bookingData array for payload
+      const bookingDataArr = buildBookingDataArray();
       // Prepare payload for /api/gettotals
       const payload = {
         name: customerDetails.name,
@@ -410,14 +420,7 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
         },
         user_id: getUserIdFromStorage(),
         zone_id: getSelectedZoneId() || undefined,
-        bookingData: [
-          {
-            date: bookingData.date,
-            service_staff_id: bookingData.staff?.id || 5, // fallback
-            time_slot_id: bookingData.timeSlot || 3, // fallback
-            services: bookingDataArr
-          }
-        ]
+        bookingData: bookingDataArr
       }
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/gettotals`, {
         method: "POST",
@@ -490,6 +493,15 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
         {currentStep === 1 ? (
           <Button
             onClick={handleServiceNext}
+            disabled={!canProceed() || isLoading}
+            className="bg-rose-600 hover:bg-rose-700 flex items-center"
+          >
+            Next
+            <ChevronRight className="w-4 h-4 ml-2" />
+          </Button>
+        ) : currentStep === 3 ? (
+          <Button
+            onClick={handleSlotStepNext}
             disabled={!canProceed() || isLoading}
             className="bg-rose-600 hover:bg-rose-700 flex items-center"
           >
