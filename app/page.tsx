@@ -22,7 +22,12 @@ export default function HomePage() {
   useEffect(() => {
     fetch(`${API_BASE_URL}/api/home`)
       .then(res => res.json())
-      .then(setData)
+      .then((resData) => {
+        setData(resData);
+        if (resData?.whatsappNumber) {
+          localStorage.setItem("whatsappNumber", resData.whatsappNumber);
+        }
+      })
       .finally(() => setLoading(false))
   }, [])
 

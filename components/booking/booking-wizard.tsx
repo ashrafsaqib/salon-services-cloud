@@ -186,13 +186,20 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
     }
   }
 
+  // Helper to validate phone numbers (must be at least 10 digits and start with '+')
+  const isValidPhoneNumber = (num: string | undefined) => {
+    if (!num) return false;
+    const digits = num.replace(/\D/g, "");
+    return num.startsWith("+") && digits.length >= 10 && digits.length <= 15;
+  };
+
   // Helper to check if customer details are valid for Next button
   const isCustomerDetailsValid = () => {
     return (
       customerDetails.name?.trim() &&
       customerDetails.email?.trim() &&
-      customerDetails.phone_number?.trim() &&
-      customerDetails.whatsapp_number?.trim() &&
+      isValidPhoneNumber(customerDetails.phone_number) &&
+      isValidPhoneNumber(customerDetails.whatsapp_number) &&
       customerDetails.gender?.trim() &&
       customerDetails.building_name?.trim() &&
       customerDetails.flat_or_villa?.trim() &&
@@ -201,7 +208,7 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
       customerDetails.district?.trim() &&
       customerDetails.landmark?.trim() &&
       customerDetails.city?.trim()
-    )
+    );
   }
 
   const buildBookingDataArray = () => {

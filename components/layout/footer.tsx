@@ -1,7 +1,16 @@
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { WhatsappFloatingButton } from "@/components/ui/whatsapp-floating-button";
+
 // TODO remove extra item for footer
 export function Footer() {
+  const [whatsappNumber, setWhatsappNumber] = useState<string | null>(null);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setWhatsappNumber(localStorage.getItem("whatsappNumber"));
+    }
+  }, []);
   return (
     <footer className="bg-gray-900 text-white pt-12 pb-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -20,7 +29,7 @@ export function Footer() {
               Your one-stop solution for all beauty, grooming, and automotive
               services at your doorstep.
             </p>
-            <div className="flex space-x-4">
+            <div className="flex space-x-4 items-center">
               <Link href="#" className="text-gray-400 hover:text-white">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -72,6 +81,11 @@ export function Footer() {
                 </svg>
               </Link>
             </div>
+            {whatsappNumber && (
+              <div className="mt-2 font-semibold text-sm select-all">
+                {whatsappNumber}
+              </div>
+            )}
           </div>
           <div>
             <h4 className="font-semibold mb-4">Services</h4>
@@ -94,26 +108,18 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/services/automotive"
-                  className="text-gray-400 hover:text-white"
-                >
-                  Automotive
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/packages"
-                  className="text-gray-400 hover:text-white"
-                >
-                  Packages
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/add-ons"
+                  href="/services/beauty-add-on"
                   className="text-gray-400 hover:text-white"
                 >
                   Beauty Add-Ons
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/services/package"
+                  className="text-gray-400 hover:text-white"
+                >
+                  Packages
                 </Link>
               </li>
             </ul>
@@ -168,6 +174,7 @@ export function Footer() {
           </p>
         </div>
       </div>
+      <WhatsappFloatingButton />
     </footer>
   );
 }

@@ -14,6 +14,7 @@ import { StaffCard } from "@/components/ui/staff-card"
 import { useRouter } from "next/navigation"
 import { Input } from "@/components/ui/input"
 import { QuoteRequestModal } from "@/components/quote/QuoteRequestModal"
+import Script from "next/script"
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
 interface ServiceDetailPageProps {
@@ -86,6 +87,7 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
+      <Script src="https://static.addtoany.com/menu/page.js" strategy="afterInteractive" />
 
       {/* Breadcrumb */}
       <div className="bg-white border-b">
@@ -312,6 +314,17 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
                       </div>
                     </CardContent>
                   </Card>
+
+                  {/* AddToAny share buttons after Book This Service card */}
+                  <div className="mt-6 flex justify-center">
+                    <div className="a2a_kit a2a_kit_size_32 a2a_default_style flex gap-3">
+                      <a className="a2a_button_whatsapp rounded-full shadow-lg bg-green-500 hover:bg-green-600 transition-colors duration-200 flex items-center justify-center" style={{width: 48, height: 48}}></a>
+                      <a className="a2a_button_facebook rounded-full shadow-lg bg-blue-600 hover:bg-blue-700 transition-colors duration-200 flex items-center justify-center" style={{width: 48, height: 48}}></a>
+                      <a className="a2a_button_twitter rounded-full shadow-lg bg-sky-400 hover:bg-sky-500 transition-colors duration-200 flex items-center justify-center" style={{width: 48, height: 48}}></a>
+                      <a className="a2a_button_telegram rounded-full shadow-lg bg-blue-400 hover:bg-blue-500 transition-colors duration-200 flex items-center justify-center" style={{width: 48, height: 48}}></a>
+                      <a className="a2a_button_copy_link rounded-full shadow-lg bg-gray-200 hover:bg-gray-300 transition-colors duration-200 flex items-center justify-center" style={{width: 48, height: 48}}></a>
+                    </div>
+                  </div>
 
                   {serviceData.addOns && serviceData.addOns.length > 0 && (
                     <div className="mt-6">

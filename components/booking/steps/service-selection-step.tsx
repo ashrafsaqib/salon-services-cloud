@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { useDebounce } from "@/hooks/use-debounce"
 import type { Service } from "@/types"
+import { useRouter } from "next/navigation"
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
@@ -40,6 +41,7 @@ export function ServiceSelectionStep({ selectedServices = [], onServiceSelect, i
   const [services, setServices] = useState<Service[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [storedServices, setStoredServicesState] = useState<{service: Service, options?: number[]}[]>([])
+  const router = useRouter()
 
   const debouncedQuery = useDebounce(searchQuery, 300)
 
@@ -188,16 +190,22 @@ export function ServiceSelectionStep({ selectedServices = [], onServiceSelect, i
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {services.map((service) => {
           const isSelected = selectedServices.some((s) => s.id === service.id)
+          const hasOptions = Array.isArray((service as any).options) && (service as any).options.length > 0;
+          const isQuote = Boolean((service as any).quote);
           return (
             <Card
               key={service.id}
               className={`cursor-pointer transition-all hover:shadow-lg ${isSelected ? "ring-2 ring-rose-500 bg-rose-50" : "hover:shadow-md"}`}
               onClick={() => {
-                handleServiceToggle(service)
+                if ((hasOptions || isQuote) && service.slug) {
+                  router.push(`/services/${service.slug}`);
+                  return;
+                }
+                handleServiceToggle(service);
                 if (isSelected) {
                   // Remove from storage if deselected
-                  const updated = storedServices.filter(s => s.service.id !== service.id)
-                  updateStoredServices(updated)
+                  const updated = storedServices.filter(s => s.service.id !== service.id);
+                  updateStoredServices(updated);
                 }
               }}
             >
