@@ -266,7 +266,7 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
                           </div>
                         )}
                         <div className="pt-4">
-                          {serviceData.quote === 1 ? (
+                          {serviceData.quote === true ? (
                             <Button
                               className="w-full bg-yellow-400 hover:bg-yellow-300 text-black"
                               onClick={() => setQuoteModalOpen(true)}
