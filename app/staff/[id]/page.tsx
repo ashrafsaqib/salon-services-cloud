@@ -29,8 +29,6 @@ interface StaffDetail {
   image: string;
   sub_title?: string;
   about?: string;
-  phone?: string;
-  whatsapp?: string;
   facebook?: string;
   instagram?: string;
   youtube?: string;
@@ -38,12 +36,8 @@ interface StaffDetail {
   tiktok?: string;
   location?: string;
   charges?: string;
-  commission?: string;
-  fix_salary?: string;
   online?: number;
   get_quote?: number;
-  quote_amount?: string | null;
-  show_quote_detail?: number;
   services: any[];
   categories: any[];
   reviews: StaffReview[];
@@ -131,39 +125,6 @@ export default function StaffDetailPage() {
                 {typeof staff.order_count !== "undefined" && (
                   <span className="inline-block bg-rose-100 text-rose-700 px-2 py-1 rounded text-xs">
                     Delivered Orders: {staff.order_count}
-                  </span>
-                )}
-              </div>
-              <div className="flex flex-wrap gap-4 items-center text-sm text-gray-600 mb-2">
-                {staff.phone && (
-                  <span>
-                    📞{" "}
-                    <a
-                      href={`tel:${staff.phone}`}
-                      className="underline hover:text-blue-600"
-                    >
-                      {staff.phone}
-                    </a>
-                  </span>
-                )}
-                {staff.whatsapp && (
-                  <span className="flex items-center gap-1">
-                    <img
-                      src="/whatsapp.svg"
-                      alt="WhatsApp"
-                      className="h-4 w-4 inline"
-                    />
-                    <a
-                      href={`https://wa.me/${staff.whatsapp.replace(
-                        /[^\d]/g,
-                        ""
-                      )}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="underline hover:text-green-600"
-                    >
-                      WhatsApp
-                    </a>
                   </span>
                 )}
               </div>

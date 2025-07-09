@@ -7,8 +7,7 @@ import { Footer } from "@/components/layout/footer"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-
-const countryCode = "+971"
+import PhoneInputWithCountry from "@/components/ui/phone-input-with-country"
 
 export default function EditProfilePage() {
   const [form, setForm] = useState({
@@ -36,8 +35,8 @@ export default function EditProfilePage() {
         setForm({
           name: data.name || "",
           email: data.email || "",
-          phone: data.phone ? data.phone.replace(countryCode, "") : "",
-          whatsapp: data.whatsapp ? data.whatsapp.replace(countryCode, "") : "",
+          phone: data.phone ?? "",
+          whatsapp: data.whatsapp ?? "",
           affiliate: data.affiliate || "",
           gender: data.gender || "Male"
         })
@@ -70,8 +69,8 @@ export default function EditProfilePage() {
         body: JSON.stringify({
           name: form.name,
           email: form.email,
-          phone: countryCode + form.phone,
-          whatsapp: countryCode + form.whatsapp,
+          phone: form.phone,
+          whatsapp: form.whatsapp,
           affiliate: form.affiliate,
           gender: form.gender
         })
@@ -104,15 +103,23 @@ export default function EditProfilePage() {
               <div>
                 <label className="block text-sm font-medium mb-1 text-rose-600">*Phone Number</label>
                 <div className="flex gap-2">
-                  <span className="flex items-center bg-gray-100 border border-gray-200 rounded px-2 text-sm">🇦🇪 {countryCode}</span>
-                  <Input name="phone" type="tel" value={form.phone} onChange={handleChange} placeholder="050 123 4567" required className="flex-1" />
+                  <PhoneInputWithCountry
+                    value={form.phone}
+                    onChange={(value: string) =>
+                      setForm(prev => ({ ...prev, phone: value.startsWith('+') ? value : `+${value}` }))
+                    }
+                  />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1 text-rose-600">*Whatsapp whatsapp</label>
+                <label className="block text-sm font-medium mb-1 text-rose-600">*Whatsapp</label>
                 <div className="flex gap-2">
-                  <span className="flex items-center bg-gray-100 border border-gray-200 rounded px-2 text-sm">🇦🇪 {countryCode}</span>
-                  <Input name="whatsapp" type="tel" value={form.whatsapp} onChange={handleChange} placeholder="050 123 4567" required className="flex-1" />
+                  <PhoneInputWithCountry
+                    value={form.whatsapp}
+                    onChange={(value: string) =>
+                      setForm(prev => ({ ...prev, whatsapp: value.startsWith('+') ? value : `+${value}` }))
+                    }
+                  />
                 </div>
               </div>
               <div>

@@ -13,53 +13,65 @@ export function AppPromotion() {
               offers.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button className="bg-white text-rose-600 hover:bg-gray-100">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="lucide lucide-apple mr-2"
-                >
-                  <path d="M12 20.94c1.5 0 2.75-.48 3.76-1.42 1-1 1.65-2.2 1.65-3.54 0-1.28-.5-2.34-1.5-3.2" />
-                  <path d="M12 20.94c-1.5 0-2.75-.48-3.76-1.42-1-1-1.65-2.2-1.65-3.54 0-1.28.5-2.34 1.5-3.2" />
-                  <path d="M9 12.24c-.5-.56-.9-1.22-1.2-2-1.5-4 2-8 2-8s.5 2 2 3c1.5 1 4 1 4 1s.5 3-1.5 4c-1.5.8-3.8.2-3.8.2" />
-                  <path d="M12 20.94c1.5 0 2.5-.8 2.5-2.3 0-1.4-1-2.7-2.5-2.7-1.5 0-2.5 1.3-2.5 2.7 0 1.5 1 2.3 2.5 2.3Z" />
-                </svg>
-                App Store
-              </Button>
-              <Button className="bg-white text-rose-600 hover:bg-gray-100">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="lucide lucide-play mr-2"
-                >
-                  <polygon points="5 3 19 12 5 21 5 3" />
-                </svg>
-                Google Play
-              </Button>
+              <a
+                href="https://apps.apple.com/be/app/lipslay/id6477719247"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button className="bg-white text-rose-600 hover:bg-gray-100 w-full sm:w-auto mb-2 sm:mb-0">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="lucide lucide-apple mr-2"
+                  >
+                    <path d="M12 20.94c1.5 0 2.75-.48 3.76-1.42 1-1 1.65-2.2 1.65-3.54 0-1.28-.5-2.34-1.5-3.2" />
+                    <path d="M12 20.94c-1.5 0-2.75-.48-3.76-1.42-1-1-1.65-2.2-1.65-3.54 0-1.28.5-2.34 1.5-3.2" />
+                    <path d="M9 12.24c-.5-.56-.9-1.22-1.2-2-1.5-4 2-8 2-8s.5 2 2 3c1.5 1 4 1 4 1s.5 3-1.5 4c-1.5.8-3.8.2-3.8.2" />
+                    <path d="M12 20.94c1.5 0 2.5-.8 2.5-2.3 0-1.4-1-2.7-2.5-2.7-1.5 0-2.5 1.3-2.5 2.7 0 1.5 1 2.3 2.5 2.3Z" />
+                  </svg>
+                  App Store
+                </Button>
+              </a>
+              <a
+                href="https://play.google.com/store/apps/details?id=com.lipslay.Customerapp"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button className="bg-white text-rose-600 hover:bg-gray-100 w-full sm:w-auto">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="lucide lucide-play mr-2"
+                  >
+                    <polygon points="5 3 19 12 5 21 5 3" />
+                  </svg>
+                  Google Play
+                </Button>
+              </a>
             </div>
           </div>
-            <div className="hidden md:block relative h-80">
+          <div className="hidden md:block relative h-80">
             <Image
               src="/appstore.png"
               alt="App Store Preview"
               fill
               className="object-contain"
             />
-            </div>
+          </div>
         </div>
       </div>
     </section>

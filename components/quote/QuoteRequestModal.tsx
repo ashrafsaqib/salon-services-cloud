@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import Select from "react-select";
 import { getUserIdFromStorage } from "@/lib/storage";
+import PhoneInputWithCountry from "../ui/phone-input-with-country";
 
 interface ServiceOption {
   id: number;
@@ -51,6 +52,9 @@ export const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [hasUserId, setHasUserId] = useState(false);
   const [zoneName, setZoneName] = useState<string>("");
+  const [zoneList, setZoneList] = useState<{ value: string; label: string }[]>(
+    []
+  );
 
   // Helper to add images without duplicates (by name)
   const addImages = (files: FileList | File[]) => {
@@ -90,7 +94,6 @@ export const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
     setForm((prev) => ({
       ...prev,
       user_id: userId || "",
-      zone: zone,
     }));
   }, [open]);
 
@@ -98,6 +101,29 @@ export const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
   React.useEffect(() => {
     if (!open) resetForm();
   }, [open]);
+
+  // Fetch zones on load
+  React.useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/zones`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data.zones)) {
+          setZoneList(
+            data.zones.map((z: any) => ({
+              value: z.id,
+              label: z.name,
+            }))
+          );
+          // If zoneName exists, set form.zone to the matching zone id
+          if (zoneName) {
+            const found = data.zones.find((z: any) => z.name === zoneName);
+            if (found) {
+              setForm((prev) => ({ ...prev, zone: found.id }));
+            }
+          }
+        }
+      });
+  }, [zoneName]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -168,7 +194,10 @@ export const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
 
     const data = await res.json().catch(() => ({}));
     if (data?.success) {
-      sessionStorage.setItem("flashMessage", data?.message || "Your quote request was submitted successfully.");
+      sessionStorage.setItem(
+        "flashMessage",
+        data?.message || "Your quote request was submitted successfully."
+      );
       window.location.reload(); // or use router.push() if using Next.js router
       return;
     } else if (res.status === 400) {
@@ -267,19 +296,28 @@ export const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
             )}
             <div className="space-y-2">
               <Label className="text-gray-700">Phone</Label>
-              <Input
-                name="phone"
+              <PhoneInputWithCountry
                 value={form.phone}
-                onChange={handleChange}
-                required
+                onChange={(value) => {
+                  const phoneWithPlus = value.startsWith("+")
+                    ? value
+                    : `+${value}`;
+                  setForm((prev) => ({ ...prev, phone: phoneWithPlus }));
+                  console.log("Phone changed:", phoneWithPlus);
+                }}
               />
             </div>
             <div className="space-y-2">
               <Label className="text-gray-700">WhatsApp</Label>
-              <Input
-                name="whatsapp"
+              <PhoneInputWithCountry
                 value={form.whatsapp}
-                onChange={handleChange}
+                onChange={(value) => {
+                  const whatsappWithPlus = value.startsWith("+")
+                    ? value
+                    : `+${value}`;
+                  setForm((prev) => ({ ...prev, whatsapp: whatsappWithPlus }));
+                  console.log("WhatsApp changed:", whatsappWithPlus);
+                }}
               />
             </div>
           </div>
@@ -296,11 +334,18 @@ export const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
             </div>
             <div className="space-y-2">
               <Label className="text-gray-700">Zone/Area</Label>
-              <Input
-                name="zone"
-                value={form.zone}
-                onChange={handleChange}
-                disabled={!!zoneName}
+              <Select
+                options={zoneList}
+                value={zoneList.find((z) => z.value === form.zone) || null}
+                onChange={(selected) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    zone: selected ? selected.value : "",
+                  }))
+                }
+                // isDisabled={!!zoneName}
+                classNamePrefix="react-select"
+                placeholder="Select zone/area..."
               />
             </div>
           </div>

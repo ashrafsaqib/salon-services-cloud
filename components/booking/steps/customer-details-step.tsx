@@ -9,6 +9,7 @@ import { Select } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import type { CustomerInfo } from "@/types"
 import { getUserIdFromStorage, getSelectedZoneId } from "@/lib/storage"
+import PhoneInputWithCountry from "@/components/ui/phone-input-with-country"
 
 interface CustomerDetailsStepProps {
   customerDetails: CustomerInfo
@@ -160,11 +161,17 @@ export function CustomerDetailsStep({
           </div>
           <div>
             <Label>Phone Number *</Label>
-            <Input value={customerDetails.phone_number} onChange={e => handleChange("phone_number", e.target.value)} required />
+            <PhoneInputWithCountry
+              value={customerDetails.phone_number || ""}
+              onChange={(value: string) => handleChange("phone_number", value.startsWith('+') ? value : `+${value}`)}
+            />
           </div>
           <div>
             <Label>WhatsApp Number *</Label>
-            <Input value={customerDetails.whatsapp_number} onChange={e => handleChange("whatsapp_number", e.target.value)} required />
+            <PhoneInputWithCountry
+              value={customerDetails.whatsapp_number || ""}
+              onChange={(value: string) => handleChange("whatsapp_number", value.startsWith('+') ? value : `+${value}`)}
+            />
           </div>
           <div className="md:col-span-2">
             <Label>Gender *</Label>

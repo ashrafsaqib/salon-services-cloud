@@ -313,9 +313,10 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
                     </CardContent>
                   </Card>
 
-                  <div className="mt-6">
-                    <h3 className="text-xl font-semibold mb-4">Addons Services</h3>
-                    <div className="space-y-4">
+                  {serviceData.addOns && serviceData.addOns.length > 0 && (
+                    <div className="mt-6">
+                      <h3 className="text-xl font-semibold mb-4">Addons Services</h3>
+                      <div className="space-y-4">
                       {serviceData.addOns.map((related: any) => (
                         <div key={related.id} className="flex items-center p-3 border rounded-lg hover:shadow-md transition-shadow">
                           {/* <input
@@ -347,7 +348,7 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
                         </div>
                       ))}
                     </div>
-                  </div>
+                  </div>)}
                 </div>
               </div>
             </TabsContent>

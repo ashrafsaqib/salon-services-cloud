@@ -232,9 +232,7 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
       const payload = {
         name: customerDetails.name,
         email: customerDetails.email,
-        number_country_code: customerDetails.phone_country_code || "+92",
         number: customerDetails.phone_number || "3001234567",
-        whatsapp_country_code: customerDetails.whatsapp_country_code || "+92",
         whatsapp: customerDetails.whatsapp_number || "3001234567",
         latitude: customerDetails.latitude || "24.8607",
         longitude: customerDetails.longitude || "67.0011",
@@ -330,9 +328,7 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
         const getTotalsPayload = {
           name: customerDetails.name,
           email: customerDetails.email,
-          number_country_code: customerDetails.phone_country_code || "+92",
           number: customerDetails.phone_number || "3001234567",
-          whatsapp_country_code: customerDetails.whatsapp_country_code || "+92",
           whatsapp: customerDetails.whatsapp_number || "3001234567",
           latitude: customerDetails.latitude || "24.8607",
           longitude: customerDetails.longitude || "67.0011",
@@ -397,9 +393,7 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
       const payload = {
         name: customerDetails.name,
         email: customerDetails.email,
-        number_country_code: customerDetails.phone_country_code || "+92",
         number: customerDetails.phone_number || "3001234567",
-        whatsapp_country_code: customerDetails.whatsapp_country_code || "+92",
         whatsapp: customerDetails.whatsapp_number || "3001234567",
         latitude: customerDetails.latitude || "24.8607",
         longitude: customerDetails.longitude || "67.0011",
