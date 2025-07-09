@@ -12,9 +12,10 @@ interface StaffCardProps {
   rating: number
   specialties: string[]
   image: string
+  charges?: string
 }
 
-export function StaffCard({ id, name, role, experience, rating, specialties, image }: StaffCardProps) {
+export function StaffCard({ id, name, role, experience, rating, specialties, image, charges }: StaffCardProps) {
   return (
     <Card className="flex-shrink-0 w-80 hover:shadow-lg transition-shadow overflow-hidden">
       <div className="h-64 bg-gray-200 relative">
@@ -22,12 +23,13 @@ export function StaffCard({ id, name, role, experience, rating, specialties, ima
       </div>
       <CardContent className="p-6 text-center">
         <h3 className="text-xl font-semibold text-gray-800 mb-1">{name}</h3>
-        <p className="text-rose-600 font-medium mb-2">{role}</p>
         <div className="flex items-center justify-center mb-3">
           <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 mr-1" />
           <span className="text-sm font-medium">{rating}</span>
-          <span className="text-gray-500 text-sm ml-2">• {experience}</span>
         </div>
+        {charges && charges > 0 && (
+          <div className="mb-3 text-sm text-blue-600 font-semibold">Extra Charges: {charges}</div>
+        )}
         <div className="flex flex-wrap justify-center gap-1 mb-4">
           {specialties.map((specialty, idx) => (
             <span key={idx} className="px-2 py-1 bg-rose-100 text-rose-700 text-xs rounded-full">
@@ -35,7 +37,7 @@ export function StaffCard({ id, name, role, experience, rating, specialties, ima
             </span>
           ))}
         </div>
-        <Link href={`/staff?staff=${encodeURIComponent(id)}`} passHref legacyBehavior>
+        <Link href={`/staff/${id}`} passHref legacyBehavior>
           <Button variant="outline" className="text-rose-600 border-rose-600 hover:bg-rose-50 w-full" asChild>
             <a>View Profile</a>
           </Button>

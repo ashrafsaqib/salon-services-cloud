@@ -69,10 +69,12 @@ export function StaffCarousel({ staff }: StaffCarouselProps) {
         </div>
 
         <div className="text-center mt-10">
-          <Button className="bg-rose-600 hover:bg-rose-700">
-            View All Staff
-            <ChevronRight className="ml-2 h-4 w-4" />
-          </Button>
+          <a href="/staff">
+            <Button className="bg-rose-600 hover:bg-rose-700">
+              View All Staff
+              <ChevronRight className="ml-2 h-4 w-4" />
+            </Button>
+          </a>
         </div>
       </div>
     </section>
