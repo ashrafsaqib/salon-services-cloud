@@ -47,6 +47,9 @@ interface StaffDetail {
   services: any[];
   categories: any[];
   reviews: StaffReview[];
+  images?: string[];
+  youtube_videos?: string[];
+  order_count?: number;
 }
 
 export default function StaffDetailPage() {
@@ -231,9 +234,7 @@ export default function StaffDetailPage() {
           {/* About Section */}
           {staff.about && (
             <section className="px-8 py-6 border-b">
-              <h2 className="text-xl font-semibold mb-2 text-gray-800">
-                About
-              </h2>
+              <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight text-center mb-6">About</h2>
               <div
                 className="text-gray-700 prose prose-sm max-w-none"
                 dangerouslySetInnerHTML={{ __html: staff.about }}
@@ -243,23 +244,75 @@ export default function StaffDetailPage() {
           {/* Quote Section */}
           {staff.get_quote === 1 && (
             <section className="px-8 py-6 border-b">
-              <h2 className="text-lg font-semibold mb-2 text-gray-800">
-                Get a Quote
-              </h2>
+              <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight text-center mb-6">Get a Quote</h2>
               <div className="text-gray-700 mb-1">
                 This staff member accepts quote requests.
               </div>
             </section>
           )}
+
+          {/* Media Images Section */}
+          {Array.isArray(staff.images) && staff.images.length > 0 && (
+            <section className="mt-10">
+              <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight text-center mb-6">Gallery</h2>
+              <Carousel className="w-full max-w-5xl mx-auto">
+                <CarouselContent>
+                  {staff.images.map((img, idx) => (
+                    <CarouselItem
+                      key={idx}
+                      className="flex items-center justify-center lg:basis-1/3 md:basis-1/2 basis-full p-2"
+                    >
+                      <Image
+                        src={img}
+                        alt={`Staff Image ${idx + 1}`}
+                        width={600}
+                        height={400}
+                        className="rounded-lg object-contain max-h-[350px] w-full"
+                      />
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 flex bg-white border border-gray-200 shadow-md hover:bg-gray-100 transition rounded-full w-10 h-10 items-center justify-center z-10" />
+                <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 flex bg-white border border-gray-200 shadow-md hover:bg-gray-100 transition rounded-full w-10 h-10 items-center justify-center z-10" />
+              </Carousel>
+            </section>
+          )}
+
+          {/* Media Videos Section */}
+          {Array.isArray(staff.youtube_videos) &&
+            staff.youtube_videos.length > 0 && (
+              <section className="mt-10">
+                <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight text-center mb-6">Videos</h2>
+                <Carousel className="w-full max-w-5xl mx-auto">
+                  <CarouselContent>
+                    {staff.youtube_videos.map((id, idx) => (
+                      <CarouselItem
+                        key={idx}
+                        className="flex items-center justify-center lg:basis-1/3 md:basis-1/2 basis-full p-2"
+                      >
+                        <iframe
+                          width="100%"
+                          height="240"
+                          src={`https://www.youtube.com/embed/${id}`}
+                          title="YouTube video player"
+                          frameBorder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                          allowFullScreen
+                          className="rounded-lg w-full max-w-xl aspect-video"
+                        ></iframe>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 flex bg-white border border-gray-200 shadow-md hover:bg-gray-100 transition rounded-full w-10 h-10 items-center justify-center z-10" />
+                  <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 flex bg-white border border-gray-200 shadow-md hover:bg-gray-100 transition rounded-full w-10 h-10 items-center justify-center z-10" />
+                </Carousel>
+              </section>
+            )}
+
           {/* Categories Carousel */}
           {staff.categories?.length > 0 && (
             <section className="mt-12">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight">
-                  Categories
-                </h2>
-              </div>
-
+              <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight text-center mb-6">Categories</h2>
               <div className="relative px-2 py-6 md:px-6 md:py-8">
                 <Carousel
                   opts={{
@@ -289,7 +342,7 @@ export default function StaffDetailPage() {
           {/* Services Section */}
           {staff.services?.length > 0 && (
             <section className="mt-12">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">Services</h2>
+              <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight text-center mb-6">Services</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {staff.services
                   .slice(0, shownServices)
@@ -325,9 +378,7 @@ export default function StaffDetailPage() {
 
           {/* Reviews Section */}
           <section className="mt-12">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">
-              Customer Reviews
-            </h2>
+            <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight text-center mb-6">Customer Reviews</h2>
 
             {staff.reviews && staff.reviews.length > 0 ? (
               <>
@@ -406,3 +457,9 @@ export default function StaffDetailPage() {
     </div>
   );
 }
+
+/*
+.text-2xl font-extrabold text-gray-900 tracking-tight text-center mb-6 {
+  @apply text-2xl font-extrabold text-gray-900 tracking-tight text-center mb-6;
+}
+*/
