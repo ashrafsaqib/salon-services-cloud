@@ -1,5 +1,5 @@
-import Image from "next/image"
-import Link from "next/link"
+import Image from "next/image";
+import Link from "next/link";
 // TODO remove extra item for footer
 export function Footer() {
   return (
@@ -17,7 +17,8 @@ export function Footer() {
               />
             </div>
             <p className="text-gray-400 mb-4">
-              Your one-stop solution for all beauty, grooming, and automotive services at your doorstep.
+              Your one-stop solution for all beauty, grooming, and automotive
+              services at your doorstep.
             </p>
             <div className="flex space-x-4">
               <Link href="#" className="text-gray-400 hover:text-white">
@@ -76,68 +77,64 @@ export function Footer() {
             <h4 className="font-semibold mb-4">Services</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/services/ladies-salon" className="text-gray-400 hover:text-white">
+                <Link
+                  href="/services/ladies-salon"
+                  className="text-gray-400 hover:text-white"
+                >
                   Ladies Salon
                 </Link>
               </li>
               <li>
-                <Link href="/services/gents-salon" className="text-gray-400 hover:text-white">
+                <Link
+                  href="/services/gents-salon"
+                  className="text-gray-400 hover:text-white"
+                >
                   Gents Salon
                 </Link>
               </li>
               <li>
-                <Link href="/services/automotive" className="text-gray-400 hover:text-white">
+                <Link
+                  href="/services/automotive"
+                  className="text-gray-400 hover:text-white"
+                >
                   Automotive
                 </Link>
               </li>
               <li>
-                <Link href="/packages" className="text-gray-400 hover:text-white">
+                <Link
+                  href="/packages"
+                  className="text-gray-400 hover:text-white"
+                >
                   Packages
                 </Link>
               </li>
               <li>
-                <Link href="/add-ons" className="text-gray-400 hover:text-white">
+                <Link
+                  href="/add-ons"
+                  className="text-gray-400 hover:text-white"
+                >
                   Beauty Add-Ons
                 </Link>
               </li>
             </ul>
           </div>
           <div>
-            <h4 className="font-semibold mb-4">Company</h4>
+            <h4 className="font-semibold mb-4">Information</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/about" className="text-gray-400 hover:text-white">
+                <Link
+                  href="/info/about-us"
+                  className="text-gray-400 hover:text-white"
+                >
                   About Us
                 </Link>
               </li>
               <li>
-                <Link href="/how-it-works" className="text-gray-400 hover:text-white">
-                  How It Works
-                </Link>
-              </li>
-              <li>
-                <Link href="/careers" className="text-gray-400 hover:text-white">
-                  Careers
-                </Link>
-              </li>
-              <li>
-                <Link href="/blog" className="text-gray-400 hover:text-white">
-                  Blog
-                </Link>
-              </li>
-              <li>
-                <Link href="/contact" className="text-gray-400 hover:text-white">
+                <Link
+                  href="/info/contact-us"
+                  className="text-gray-400 hover:text-white"
+                >
                   Contact Us
-                </Link>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-semibold mb-4">Support</h4>
-            <ul className="space-y-2">
-              <li>
-                <Link href="/help" className="text-gray-400 hover:text-white">
-                  Help Center
                 </Link>
               </li>
               <li>
@@ -146,18 +143,19 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/privacy" className="text-gray-400 hover:text-white">
+                <Link
+                  href="/info/privacy-policy"
+                  className="text-gray-400 hover:text-white"
+                >
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="text-gray-400 hover:text-white">
+                <Link
+                  href="/info/terms-condition"
+                  className="text-gray-400 hover:text-white"
+                >
                   Terms of Service
-                </Link>
-              </li>
-              <li>
-                <Link href="/refund" className="text-gray-400 hover:text-white">
-                  Refund Policy
                 </Link>
               </li>
             </ul>
@@ -165,10 +163,11 @@ export function Footer() {
         </div>
         <div className="border-t border-gray-800 pt-6">
           <p className="text-center text-gray-400">
-            &copy; {new Date().getFullYear()} Lipslay Marketplace. All rights reserved.
+            &copy; {new Date().getFullYear()} Lipslay Marketplace. All rights
+            reserved.
           </p>
         </div>
       </div>
     </footer>
-  )
+  );
 }
