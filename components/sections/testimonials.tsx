@@ -15,6 +15,7 @@ interface TestimonialsProps {
 }
 
 export function Testimonials({ testimonials }: TestimonialsProps) {
+  if (!testimonials || testimonials.length === 0) return null // Don't show if no testimonials
   return (
     <section className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -30,7 +31,6 @@ export function Testimonials({ testimonials }: TestimonialsProps) {
                 <div className="flex items-center mb-4">
                   <div>
                     <h4 className="font-semibold">{testimonial.name}</h4>
-                    <p className="text-sm text-gray-500">{testimonial.service}</p>
                   </div>
                 </div>
                 <div className="flex mb-4">
@@ -38,7 +38,7 @@ export function Testimonials({ testimonials }: TestimonialsProps) {
                     <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                   ))}
                 </div>
-                <p className="text-gray-700">{testimonial.comment}</p>
+                <p className="text-gray-700 line-clamp-3">{testimonial.comment}</p>
               </CardContent>
             </Card>
           ))}

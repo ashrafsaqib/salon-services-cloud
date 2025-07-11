@@ -15,6 +15,8 @@ export function FeaturedServices({ featured }: FeaturedServicesProps) {
   const categoriesWithServices = featured.filter(cat => cat.services.length > 0)
   const firstTab = categoriesWithServices[0]?.slug || ""
 
+  if (categoriesWithServices.length === 0) return null // Don't show anything if no categories have services
+
   return (
     <section className="py-12">
       <div className="container mx-auto px-4">
