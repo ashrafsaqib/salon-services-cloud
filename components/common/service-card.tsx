@@ -44,7 +44,9 @@ export function ServiceCard( {service}: ServiceCardProps) {
             )}
           </div>
 
-          {description && <p className="text-gray-600 mb-4">{description}</p>}
+          {description && (
+            <div className="text-gray-600 mb-4" dangerouslySetInnerHTML={{ __html: description }} />
+          )}
 
           {(duration || category) && (
             <div className="flex items-center gap-4 mb-4 text-sm text-gray-500">

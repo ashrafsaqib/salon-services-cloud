@@ -131,7 +131,7 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
                 </span>
               </div>
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{serviceData.name}</h1>
-              <p className="text-lg text-gray-600 mb-6">{serviceData.longDescription}</p>
+              <div className="text-lg text-gray-600 mb-6" dangerouslySetInnerHTML={{ __html: serviceData.description }} />
 
               <div className="flex flex-wrap gap-4 mb-6">
                 <div className="flex items-center bg-gray-100 px-4 py-2 rounded-full">
@@ -175,7 +175,7 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="md:col-span-2">
                   <h2 className="text-2xl font-semibold mb-4">Service Details</h2>
-                  <p className="text-gray-600 mb-6">{serviceData.longDescription || serviceData.description}</p>
+                  <div className="text-gray-600 mb-6" dangerouslySetInnerHTML={{ __html: serviceData.longDescription || serviceData.description }} />
 
                   {/* This Package Includes section */}
                   {serviceData.packages && serviceData.packages.length > 0 && (

@@ -58,6 +58,7 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
   const [pendingDateStep, setPendingDateStep] = useState(false)
   const [slotsLoaded, setSlotsLoaded] = useState(false)
   const [totalsError, setTotalsError] = useState<string | null>(null)
+  const [customerValidationErrors, setCustomerValidationErrors] = useState<string[]>([])
   const [slotsError, setSlotsError] = useState<string | null>(null)
   const router = useRouter()
 
@@ -194,21 +195,28 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
   };
 
   // Helper to check if customer details are valid for Next button
+  // Returns array of error messages (empty if valid)
   const isCustomerDetailsValid = () => {
-    return (
-      customerDetails.name?.trim() &&
-      customerDetails.email?.trim() &&
-      isValidPhoneNumber(customerDetails.phone_number) &&
-      isValidPhoneNumber(customerDetails.whatsapp_number) &&
-      customerDetails.gender?.trim() &&
-      customerDetails.building_name?.trim() &&
-      customerDetails.flat_or_villa?.trim() &&
-      customerDetails.street?.trim() &&
-      customerDetails.area?.trim() &&
-      customerDetails.district?.trim() &&
-      customerDetails.landmark?.trim() &&
-      customerDetails.city?.trim()
-    );
+    const errors = [];
+    if (!customerDetails.name?.trim()) errors.push("Name is required.");
+    if (!customerDetails.email?.trim()) {
+      errors.push("Email is required.");
+    } else {
+      // Simple email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(customerDetails.email)) errors.push("Email is not valid.");
+    }
+    if (!isValidPhoneNumber(customerDetails.phone_number)) errors.push("Phone number is missing or invalid.");
+    if (!isValidPhoneNumber(customerDetails.whatsapp_number)) errors.push("Whatsapp number is missing or invalid.");
+    if (!customerDetails.gender?.trim()) errors.push("Gender is required.");
+    if (!customerDetails.building_name?.trim()) errors.push("Building name is required.");
+    if (!customerDetails.flat_or_villa?.trim()) errors.push("Flat or villa is required.");
+    if (!customerDetails.street?.trim()) errors.push("Street is required.");
+    if (!customerDetails.area?.trim()) errors.push("Area is required.");
+    if (!customerDetails.district?.trim()) errors.push("District is required.");
+    if (!customerDetails.landmark?.trim()) errors.push("Landmark is required.");
+    if (!customerDetails.city?.trim()) errors.push("City is required.");
+    return errors;
   }
 
   const buildBookingDataArray = () => {
@@ -391,8 +399,17 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
 
   // Call gettotals API when moving from details to summary
   const handleCustomerDetailsNext = async () => {
-    setIsLoading(true)
-    setTotalsError(null)
+    setIsLoading(true);
+    setTotalsError(null);
+    const errors = isCustomerDetailsValid();
+    if (errors.length > 0) {
+      setCustomerValidationErrors(errors);
+      setTotalsError(null);
+      setIsLoading(false);
+      return;
+    } else {
+      setCustomerValidationErrors([]);
+    }
     try {
       // Build bookingData array for payload
       const bookingDataArr = buildBookingDataArray();
@@ -422,24 +439,24 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
         user_id: getUserIdFromStorage(),
         zone_id: getSelectedZoneId() || undefined,
         bookingData: bookingDataArr
-      }
+      };
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/gettotals`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
-      })
-      const data = await res.json()
+      });
+      const data = await res.json();
       if (data.error) {
-        setTotalsError(typeof data.error === "string" ? data.error : "Unable to calculate totals. Please check your details and try again.")
-        return
+        setTotalsError(typeof data.error === "string" ? data.error : "Unable to calculate totals. Please check your details and try again.");
+        return;
       }
-      if (!res.ok) throw new Error("Failed to get totals")
-      setTotals(data)
-      setCurrentStep(5)
+      if (!res.ok) throw new Error("Failed to get totals");
+      setTotals(data);
+      setCurrentStep(5);
     } catch (err) {
-      setTotalsError("Unable to calculate totals. Please check your details and try again.")
+      setTotalsError("Unable to calculate totals. Please check your details and try again.");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
   }
 
@@ -478,6 +495,13 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
       </Card>
 
       {/* Universal Error Message Section */}
+      {(customerValidationErrors.length > 0) && (
+        <ul className="text-left text-red-600 font-medium mb-2 list-disc list-inside">
+          {customerValidationErrors.map((err, idx) => (
+            <li key={idx}>{err}</li>
+          ))}
+        </ul>
+      )}
       {(totalsError || slotsError) && (
         <div className="text-center text-red-600 font-medium mb-2">
           {totalsError || slotsError}
@@ -516,10 +540,7 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
                 ? handleCustomerDetailsNext
                 : nextStep
             }
-            disabled={
-              !canProceed() ||
-              (currentStep === 4 && !isCustomerDetailsValid())
-            }
+            disabled={!canProceed() || isLoading}
             className="bg-rose-600 hover:bg-rose-700 flex items-center"
           >
             Next

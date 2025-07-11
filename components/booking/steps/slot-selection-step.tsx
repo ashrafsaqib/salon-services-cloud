@@ -49,56 +49,62 @@ export function SlotSelectionStep({
                 </ul>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {(group.slots || []).map((slot: any) =>
-                  (slot.staff || []).map((staff: any) => (
-                    <Button
-                      key={slot.id + "-" + staff.id}
-                      variant={
-                        selected.slot?.id === slot.id &&
-                        selected.staff?.id === staff.id
-                          ? "default"
-                          : "outline"
-                      }
-                      onClick={() => onSlotSelect(idx, slot, staff)}
-                      className={`p-0 h-auto rounded-xl shadow-sm border transition-all flex-col items-stretch text-left overflow-hidden ${
-                        selected.slot?.id === slot.id &&
-                        selected.staff?.id === staff.id
-                          ? "ring-2 ring-rose-500 bg-rose-50"
-                          : "hover:bg-rose-50 hover:border-rose-300"
-                      }`}
-                    >
-                      <div className="flex items-center gap-3 bg-gray-50 px-4 py-3 border-b">
-                        <Image
-                          src={staff.image || "/placeholder-user.jpg"}
-                          alt={staff.name}
-                          width={40}
-                          height={40}
-                          className="rounded-full object-cover border"
-                        />
-                        <div>
-                          <div className="font-semibold text-gray-900 text-base">
-                            {staff.name}
+                {Array.isArray(group.slots) && group.slots.length > 0 && group.slots.every((slot: any) => !slot.staff || slot.staff.length === 0) ? (
+                  <div className="col-span-full text-center text-red-600 font-semibold py-6">
+                    There is no slot available, please select any other date
+                  </div>
+                ) : (
+                  (group.slots || []).map((slot: any) =>
+                    (slot.staff || []).map((staff: any) => (
+                      <Button
+                        key={slot.id + "-" + staff.id}
+                        variant={
+                          selected.slot?.id === slot.id &&
+                          selected.staff?.id === staff.id
+                            ? "default"
+                            : "outline"
+                        }
+                        onClick={() => onSlotSelect(idx, slot, staff)}
+                        className={`p-0 h-auto rounded-xl shadow-sm border transition-all flex-col items-stretch text-left overflow-hidden ${
+                          selected.slot?.id === slot.id &&
+                          selected.staff?.id === staff.id
+                            ? "ring-2 ring-rose-500 bg-rose-50"
+                            : "hover:bg-rose-50 hover:border-rose-300"
+                        }`}
+                      >
+                        <div className="flex items-center gap-3 bg-gray-50 px-4 py-3 border-b">
+                          <Image
+                            src={staff.image || "/placeholder-user.jpg"}
+                            alt={staff.name}
+                            width={40}
+                            height={40}
+                            className="rounded-full object-cover border"
+                          />
+                          <div>
+                            <div className="font-semibold text-gray-900 text-base">
+                              {staff.name}
+                            </div>
+                            {staff.sub_title && (
+                              <div className="text-xs text-gray-500">
+                                {staff.sub_title}
+                              </div>
+                            )}
                           </div>
-                          {staff.sub_title && (
-                            <div className="text-xs text-gray-500">
-                              {staff.sub_title}
-                            </div>
-                          )}
                         </div>
-                      </div>
-                      <div className="flex flex-col items-center justify-center px-4 py-5">
-                        <div className="font-bold text-xl text-gray-900 mb-1">
-                          {slot.time_start}
+                        <div className="flex flex-col items-center justify-center px-4 py-5">
+                          <div className="font-bold text-xl text-gray-900 mb-1">
+                            {slot.time_start}
+                          </div>
+                          {selected.slot?.id === slot.id &&
+                            selected.staff?.id === staff.id && (
+                              <div className="mt-2 text-xs text-rose-600 font-semibold">
+                                Selected
+                              </div>
+                            )}
                         </div>
-                        {selected.slot?.id === slot.id &&
-                          selected.staff?.id === staff.id && (
-                            <div className="mt-2 text-xs text-rose-600 font-semibold">
-                              Selected
-                            </div>
-                          )}
-                      </div>
-                    </Button>
-                  ))
+                      </Button>
+                    ))
+                  )
                 )}
               </div>
             </CardContent>

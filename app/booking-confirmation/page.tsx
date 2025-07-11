@@ -33,6 +33,12 @@ export default function BookingConfirmationPage() {
       .finally(() => setLoading(false))
   }, [ordersParam])
 
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("booking_selected_services");
+    }
+  }, []);
+
   const formatTime = (time: string) => {
     const [hour, minute] = time.split(":")
     const hourNum = Number.parseInt(hour)

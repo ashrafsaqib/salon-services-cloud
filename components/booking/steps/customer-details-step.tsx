@@ -41,7 +41,7 @@ export function CustomerDetailsStep({
     }
     onUpdate({ ...customerDetails, [field]: value })
   }
-// TODO cleanup payload for apply coupon
+  // TODO cleanup payload for apply coupon
   const handleApplyCoupon = async () => {
     const code = (couponInput || customerDetails.coupon_code || "").trim();
     if (!code) return;
@@ -94,7 +94,6 @@ export function CustomerDetailsStep({
     if (isFormValid()) {
       setShowError(false)
       onApplyCoupon(couponInput) // Ensure coupon is always sent to parent
-      onNext()
     } else {
       setShowError(true)
     }
