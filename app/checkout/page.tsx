@@ -8,8 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Header } from "@/components/layout/header"
-import { Footer } from "@/components/layout/footer"
+import Layout from "@/components/layout/layout"
 import { Elements } from "@stripe/react-stripe-js"
 import { loadStripe } from "@stripe/stripe-js"
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js"
@@ -150,7 +149,7 @@ export default function CheckoutPage() {
   if (!ordersParam) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <Header />
+        <Layout>
         <div className="max-w-2xl mx-auto px-4 py-16 text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">Invalid Booking</h1>
           <p className="text-gray-600 mb-6">The order ID(s) are missing or invalid.</p>
@@ -158,7 +157,7 @@ export default function CheckoutPage() {
             Start New Booking
           </Button>
         </div>
-        <Footer />
+        </Layout>
       </div>
     )
   }
@@ -181,7 +180,7 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+      <Layout>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
           <Button
@@ -338,7 +337,7 @@ export default function CheckoutPage() {
           </Card>
         </div>
       </div>
-      <Footer />
+      </Layout>
     </div>
   )
 }

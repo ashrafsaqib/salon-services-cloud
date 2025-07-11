@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { Header } from "@/components/layout/header";
-import { Footer } from "@/components/layout/footer";
+import Layout from "@/components/layout/layout"
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -50,7 +49,7 @@ export default function InfoPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+      <Layout>
       <section className="py-16">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 bg-white rounded-lg shadow-md p-8">
           <h1 className="text-4xl font-bold mb-6">{page.title}</h1>
@@ -66,7 +65,7 @@ export default function InfoPage() {
           />
         </div>
       </section>
-      <Footer />
+      </Layout>
     </div>
   );
 }

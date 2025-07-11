@@ -1,8 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Header } from "@/components/layout/header"
-import { Footer } from "@/components/layout/footer"
+import Layout from "@/components/layout/layout"
 import { FAQSection } from "@/components/sections/faq-section"
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
@@ -45,7 +44,7 @@ export default function FaqsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+      <Layout>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
         <input
           type="text"
@@ -56,7 +55,7 @@ export default function FaqsPage() {
         />
       </div>
       <FAQSection faqs={filteredFaqs} />
-      <Footer />
+      </Layout>
     </div>
   )
 }

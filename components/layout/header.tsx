@@ -37,7 +37,7 @@ function FlashMessage() {
   )
 }
 
-export function Header() {
+export function Header({ topPages = [] }: { topPages?: Array<{ name: string; slug: string }> }) {
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false)
@@ -251,9 +251,12 @@ export function Header() {
                 )}
               </Button>
             </Link>
-            <Link href="/info/contact-us" className="text-gray-600 hover:text-gray-900">
-              Contact
-            </Link>
+            {/* Info pages from topPages */}
+            {topPages.map(page => (
+              <Link key={page.slug} href={`/info/${page.slug}`} className="text-gray-600 hover:text-gray-900 font-medium focus:outline-none">
+                {page.name}
+              </Link>
+            ))}
           </nav>
 
           {/* Hamburger for mobile */}

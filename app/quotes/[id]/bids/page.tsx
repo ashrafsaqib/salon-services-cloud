@@ -1,8 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { Header } from "@/components/layout/header";
-import { Footer } from "@/components/layout/footer";
+import Layout from "@/components/layout/layout"
 import { RefreshCw } from "lucide-react";
 import { BidChatModal } from "@/components/bid-chat-modal";
 
@@ -80,7 +79,7 @@ export default function QuoteBidsPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <Layout>
       <main className="flex-1">
         <div className="max-w-4xl mx-auto p-4 sm:p-6">
           <div className="flex justify-between items-center mb-8">
@@ -184,7 +183,7 @@ export default function QuoteBidsPage() {
           )}
         </div>
       </main>
-      <Footer />
+      </Layout>
       <BidChatModal
         bidId={chatBidId}
         open={!!chatBidId}

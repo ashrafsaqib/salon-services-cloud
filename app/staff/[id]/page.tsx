@@ -2,8 +2,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
-import { Header } from "@/components/layout/header";
-import { Footer } from "@/components/layout/footer";
 import { Youtube, Facebook, Instagram, Star } from "lucide-react";
 import { CategoryCard } from "@/components/ui/category-card";
 import { ServiceCard } from "@/components/common/service-card";
@@ -14,6 +12,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import Layout from "@/components/layout/layout";
 
 interface StaffReview {
   id: number;
@@ -85,7 +84,7 @@ export default function StaffDetailPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      <Header />
+      <Layout>
       <main className="flex-1 py-8 md:py-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Profile Section */}
@@ -428,7 +427,7 @@ export default function StaffDetailPage() {
           </section>
         </div>
       </main>
-      <Footer />
+      </Layout>
     </div>
   );
 }

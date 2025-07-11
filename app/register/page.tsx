@@ -2,8 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Header } from "@/components/layout/header"
-import { Footer } from "@/components/layout/footer"
+import Layout from "@/components/layout/layout"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -68,7 +67,7 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <Layout>
       <main className="flex-1 flex items-center justify-center bg-gray-50 py-12">
         <Card className="w-full max-w-lg mx-auto">
           <CardContent className="p-8">
@@ -138,7 +137,7 @@ export default function RegisterPage() {
           </CardContent>
         </Card>
       </main>
-      <Footer />
+      </Layout>
     </div>
   )
 }

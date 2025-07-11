@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Header } from "@/components/layout/header";
-import { Footer } from "@/components/layout/footer";
+import Layout from "@/components/layout/layout"
 import { StaffCard } from "@/components/ui/staff-card";
 
 interface Staff {
@@ -35,7 +34,7 @@ export default function AllStaffPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      <Header />
+      <Layout>
       <main className="flex-1 py-8 md:py-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight text-center mb-8">
@@ -62,7 +61,7 @@ export default function AllStaffPage() {
           )}
         </div>
       </main>
-      <Footer />
+      </Layout>
     </div>
   );
 }

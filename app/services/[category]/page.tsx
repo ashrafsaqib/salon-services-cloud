@@ -3,8 +3,7 @@
 import { use, useEffect, useState } from "react"
 import { notFound } from "next/navigation"
 import Image from "next/image"
-import { Header } from "@/components/layout/header"
-import { Footer } from "@/components/layout/footer"
+import Layout from "@/components/layout/layout"
 import { CategoryCard } from "@/components/ui/category-card"
 import { ServiceCard } from "@/components/common/service-card"
 import type { CategoryData, Category, Service } from "@/types"
@@ -56,7 +55,7 @@ export default function ServiceCategoryPage({ params }: ServicePageProps) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+      <Layout>
 
       {/* Hero Section */}
       <section className="relative h-96 flex items-center justify-center overflow-hidden">
@@ -103,7 +102,7 @@ export default function ServiceCategoryPage({ params }: ServicePageProps) {
         </div>
       </section>
 
-      <Footer />
+      </Layout>
     </div>
   )
 }

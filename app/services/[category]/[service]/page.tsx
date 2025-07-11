@@ -8,8 +8,7 @@ import { Star, Clock, MapPin, ChevronRight, Info } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Header } from "@/components/layout/header"
-import { Footer } from "@/components/layout/footer"
+import Layout from "@/components/layout/layout"
 import { StaffCard } from "@/components/ui/staff-card"
 import { useRouter } from "next/navigation"
 import { Input } from "@/components/ui/input"
@@ -86,8 +85,8 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
-      <Script src="https://static.addtoany.com/menu/page.js" strategy="afterInteractive" />
+      <Layout>
+        <Script src="https://static.addtoany.com/menu/page.js" strategy="afterInteractive" />
 
       {/* Breadcrumb */}
       <div className="bg-white border-b">
@@ -436,7 +435,7 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
         serviceOptions={serviceData.options || []}
       />
 
-      <Footer />
+      </Layout>
     </div>
   )
 }

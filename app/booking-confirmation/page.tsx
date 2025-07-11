@@ -7,8 +7,7 @@ import { Calendar, Clock, MapPin, Check, Download, Share2, MessageCircle } from 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { Header } from "@/components/layout/header"
-import { Footer } from "@/components/layout/footer"
+import Layout from "@/components/layout/layout"
 
 export default function BookingConfirmationPage() {
   const searchParams = useSearchParams()
@@ -55,7 +54,7 @@ export default function BookingConfirmationPage() {
   if (!ordersParam) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <Header />
+        <Layout>
         <div className="max-w-2xl mx-auto px-4 py-16 text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">Invalid Booking</h1>
           <p className="text-gray-600 mb-6">The order ID(s) are missing or invalid.</p>
@@ -63,7 +62,7 @@ export default function BookingConfirmationPage() {
             Start New Booking
           </Button>
         </div>
-        <Footer />
+        </Layout>
       </div>
     )
   }
@@ -86,7 +85,7 @@ export default function BookingConfirmationPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+      <Layout>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Success Header */}
         <div className="text-center mb-8">
@@ -257,7 +256,7 @@ export default function BookingConfirmationPage() {
         </div>
       </div>
 
-      <Footer />
+      </Layout>
     </div>
   )
 }

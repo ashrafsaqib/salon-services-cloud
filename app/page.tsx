@@ -10,8 +10,7 @@ import { Testimonials } from "@/components/sections/testimonials"
 import { AppPromotion } from "@/components/sections/app-promotion"
 import { FAQSection } from "@/components/sections/faq-section"
 import { Newsletter } from "@/components/sections/newsletter"
-import { Header } from "@/components/layout/header"
-import { Footer } from "@/components/layout/footer"
+import Layout from "@/components/layout/layout"
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
@@ -41,7 +40,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+      <Layout>
       <HeroSection />
       <CategoryCarousel services={data.categoryCarousel} />
       <FeaturedServices featured={data.featuredServices} />
@@ -51,7 +50,7 @@ export default function HomePage() {
       <AppPromotion promotion={data.appPromotion} />
       <FAQSection faqs={data.faqs} />
       <Newsletter newsletter={data.newsletter} />
-      <Footer />
+      </Layout>
     </div>
   )
 }

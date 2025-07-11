@@ -4,8 +4,7 @@
 // TODO show view complaint button if complaint is already submitted
 import React, { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { Header } from "@/components/layout/header"
-import { Footer } from "@/components/layout/footer"
+import Layout from "@/components/layout/layout"
 import { Card, CardContent } from "@/components/ui/card"
 import { ComplaintViewModal } from "@/components/complaint/ComplaintViewModal"
 
@@ -167,7 +166,7 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <Layout>
       <main className="flex-1 bg-gray-50 py-12">
         <div className="max-w-4xl mx-auto px-4">
           <h2 className="text-3xl font-bold mb-8">Dashboard</h2>
@@ -230,7 +229,7 @@ export default function DashboardPage() {
           )}
         </div>
       </main>
-      <Footer />
+      </Layout>
       {showComplaintModal && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md relative">

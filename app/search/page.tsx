@@ -9,8 +9,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Header } from "@/components/layout/header"
-import { Footer } from "@/components/layout/footer"
+import Layout from "@/components/layout/layout"
 import { useDebounce } from "@/hooks/use-debounce"
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
@@ -151,7 +150,7 @@ export default function SearchPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+      <Layout>
 
       {/* Search Header */}
       <div className="bg-white border-b">
@@ -414,7 +413,7 @@ export default function SearchPage() {
         </div>
       </div>
 
-      <Footer />
+      </Layout>
     </div>
   )
 }

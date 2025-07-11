@@ -1,8 +1,7 @@
 "use client"
 
 import React, { useEffect, useState } from "react"
-import { Header } from "@/components/layout/header"
-import { Footer } from "@/components/layout/footer"
+import Layout from "@/components/layout/layout"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ComplaintViewModal } from "@/components/complaint/ComplaintViewModal"
@@ -106,7 +105,7 @@ export default function ComplaintsPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <Layout>
       <main className="flex-1 bg-gray-50 py-12">
         <div className="max-w-3xl mx-auto px-4">
           <h2 className="text-3xl font-bold mb-8">Complaints</h2>
@@ -149,7 +148,7 @@ export default function ComplaintsPage() {
           onClose={() => setSelectedComplaint(null)}
         />
       </main>
-      <Footer />
+      </Layout>
     </div>
   )
 }

@@ -1,7 +1,6 @@
 "use client"
 import { useSearchParams } from "next/navigation"
-import { Header } from "@/components/layout/header"
-import { Footer } from "@/components/layout/footer"
+import Layout from "@/components/layout/layout"
 import { BookingWizard } from "@/components/booking/booking-wizard"
 
 export default function BookingPage() {
@@ -12,7 +11,7 @@ export default function BookingPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+      <Layout>
 
       <div className="py-8">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -29,7 +28,7 @@ export default function BookingPage() {
         </div>
       </div>
 
-      <Footer />
+      </Layout>
     </div>
   )
 }

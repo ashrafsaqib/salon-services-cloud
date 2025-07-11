@@ -1,8 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Header } from "@/components/layout/header"
-import { Footer } from "@/components/layout/footer"
+import Layout from "@/components/layout/layout"
 import { CategoryCard } from "@/components/ui/category-card"
 import type { Category } from "@/types"
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
@@ -20,7 +19,7 @@ export default function ServicesPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+      <Layout>
 
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -44,7 +43,7 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      <Footer />
+      </Layout>
     </div>
   )
 }

@@ -5,7 +5,13 @@ import Link from "next/link";
 import { WhatsappFloatingButton } from "@/components/ui/whatsapp-floating-button";
 
 // TODO remove extra item for footer
-export function Footer() {
+export function Footer({
+  bottomPages = [],
+  bottomCategories = [],
+}: {
+  bottomPages?: Array<{ name: string; slug: string }>;
+  bottomCategories?: Array<{ title: string; slug: string }>;
+}) {
   const [whatsappNumber, setWhatsappNumber] = useState<string | null>(null);
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -15,7 +21,7 @@ export function Footer() {
   return (
     <footer className="bg-gray-900 text-white pt-12 pb-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           <div>
             <div className="mb-4">
               <Image
@@ -23,7 +29,7 @@ export function Footer() {
                 alt="Lipslay Marketplace"
                 width={180}
                 height={40}
-                className="h-8 w-auto brightness-0 invert"
+                className="h-8 w-auto rounded-md shadow-lg bg-white"
               />
             </div>
             <p className="text-gray-400 mb-4">
@@ -89,82 +95,33 @@ export function Footer() {
             )}
           </div>
           <div>
-            <h4 className="font-semibold mb-4">Services</h4>
+            <h4 className="font-semibold mb-4">Categories</h4>
             <ul className="space-y-2">
-              <li>
-                <Link
-                  href="/services/ladies-salon"
-                  className="text-gray-400 hover:text-white"
-                >
-                  Ladies Salon
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/services/gents-salon"
-                  className="text-gray-400 hover:text-white"
-                >
-                  Gents Salon
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/services/beauty-add-on"
-                  className="text-gray-400 hover:text-white"
-                >
-                  Beauty Add-Ons
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/services/package"
-                  className="text-gray-400 hover:text-white"
-                >
-                  Packages
-                </Link>
-              </li>
+              {bottomCategories.map((cat) => (
+                <li key={cat.slug}>
+                  <Link
+                    href={`/services/${cat.slug}`}
+                    className="text-gray-400 hover:text-white"
+                  >
+                    {cat.title}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
           <div>
             <h4 className="font-semibold mb-4">Information</h4>
             <ul className="space-y-2">
-              <li>
-                <Link
-                  href="/info/about-us"
-                  className="text-gray-400 hover:text-white"
-                >
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/info/contact-us"
-                  className="text-gray-400 hover:text-white"
-                >
-                  Contact Us
-                </Link>
-              </li>
-              <li>
-                <Link href="/faq" className="text-gray-400 hover:text-white">
-                  FAQs
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/info/privacy-policy"
-                  className="text-gray-400 hover:text-white"
-                >
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/info/terms-condition"
-                  className="text-gray-400 hover:text-white"
-                >
-                  Terms of Service
-                </Link>
-              </li>
+              {bottomPages.map((page) => (
+                <li key={page.slug}>
+                  <Link
+                    href={`/info/${page.slug}`}
+                    className="text-gray-400 hover:text-white"
+                  >
+                    {page.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
         </div>

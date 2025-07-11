@@ -10,8 +10,7 @@ import {
   Package,
   Info,
 } from "lucide-react";
-import { Header } from "@/components/layout/header";
-import { Footer } from "@/components/layout/footer";
+import Layout from "@/components/layout/layout"
 
 interface QuoteOption {
   id: number;
@@ -65,7 +64,7 @@ export default function QuoteDetailPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      <Header />
+      <Layout>
       <main className="flex-1">
         <div className="max-w-5xl mx-auto p-4 sm:p-6 lg:p-8">
           {loading ? (
@@ -366,7 +365,7 @@ export default function QuoteDetailPage() {
           )}
         </div>
       </main>
-      <Footer />
+      </Layout>
     </div>
   );
 }
