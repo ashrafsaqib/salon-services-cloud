@@ -112,6 +112,11 @@ export function Footer({
           <div>
             <h4 className="font-semibold mb-4">Information</h4>
             <ul className="space-y-2">
+              <li>
+                <Link href="/faq" className="text-gray-400 hover:text-white">
+                  FAQs
+                </Link>
+              </li>
               {bottomPages.map((page) => (
                 <li key={page.slug}>
                   <Link
