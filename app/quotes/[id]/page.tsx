@@ -11,6 +11,8 @@ import {
   Info,
 } from "lucide-react";
 import Layout from "@/components/layout/layout"
+import { checkToken } from "@/lib/auth";
+import { useRouter } from "next/navigation";
 
 interface QuoteOption {
   id: number;
@@ -40,12 +42,14 @@ export default function QuoteDetailPage() {
   const [quote, setQuote] = useState<QuoteDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
+  const router = useRouter();
+  
   useEffect(() => {
     if (!id) return;
+    const token = checkToken(router)
     fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/quote/${id}`, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        Authorization: `Bearer ${token}`,
       },
     })
       .then((res) => {

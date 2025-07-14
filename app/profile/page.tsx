@@ -7,6 +7,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import PhoneInputWithCountry from "@/components/ui/phone-input-with-country"
+import { useRouter } from "next/navigation"
+import { checkToken } from "@/lib/auth"
 
 export default function EditProfilePage() {
   const [form, setForm] = useState({
@@ -20,6 +22,11 @@ export default function EditProfilePage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!checkToken(router)) return;
+  }, [router])
 
   useEffect(() => {
     // Fetch user profile (replace with real API and auth)
@@ -54,6 +61,7 @@ export default function EditProfilePage() {
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
+    if (!checkToken(router)) return;
     e.preventDefault()
     setError("")
     setSuccess("")

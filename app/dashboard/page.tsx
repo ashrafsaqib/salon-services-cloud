@@ -1,12 +1,10 @@
 "use client"
-
-// TODO show complaint button only if complaint is not already submitted
-// TODO show view complaint button if complaint is already submitted
 import React, { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import Layout from "@/components/layout/layout"
 import { Card, CardContent } from "@/components/ui/card"
 import { ComplaintViewModal } from "@/components/complaint/ComplaintViewModal"
+import { checkToken } from "@/lib/auth"
 
 interface Order {
   id: number
@@ -62,11 +60,7 @@ export default function DashboardPage() {
   const router = useRouter()
 
   useEffect(() => {
-    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
-    if (!token) {
-      router.replace("/login")
-      return
-    }
+    const token = checkToken(router)
     const fetchOrders = async () => {
       setLoading(true)
       setError("")
@@ -90,7 +84,7 @@ export default function DashboardPage() {
 
   const handleCancelOrder = async (orderId: number) => {
     if (!window.confirm("Are you sure you want to cancel this order?")) return
-    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
+    const token = checkToken(router)
     if (!token) return
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/order/cancel`, {
@@ -140,7 +134,7 @@ export default function DashboardPage() {
     }
     setComplaintLoading(true)
     setComplaintError("")
-    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
+    const token = checkToken(router)
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/complaints`, {
         method: "POST",

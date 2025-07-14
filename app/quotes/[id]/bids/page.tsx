@@ -1,9 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Layout from "@/components/layout/layout"
 import { RefreshCw } from "lucide-react";
 import { BidChatModal } from "@/components/bid-chat-modal";
+import { checkToken } from "@/lib/auth";
 
 interface Bid {
   id: number;
@@ -23,12 +24,14 @@ export default function QuoteBidsPage() {
   const [error, setError] = useState("");
   const [confirming, setConfirming] = useState<number | null>(null);
   const [chatBidId, setChatBidId] = useState<number | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (!id) return;
+    const token = checkToken(router)
     fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/quote/${id}/bids`, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        Authorization: `Bearer ${token}`,
       },
     })
       .then((res) => {
@@ -47,6 +50,7 @@ export default function QuoteBidsPage() {
 
   const handleConfirm = async (bidId: number) => {
     if (!id) return;
+    const token = checkToken(router)
     setConfirming(bidId);
     try {
       const res = await fetch(
@@ -55,7 +59,7 @@ export default function QuoteBidsPage() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ bid_id: bidId }),
         }
@@ -65,7 +69,7 @@ export default function QuoteBidsPage() {
       const data = await res.json();
       fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/quote/${id}/bids`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${token}`,
         },
       })
         .then((res) => res.json())

@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { WhatsappFloatingButton } from "@/components/ui/whatsapp-floating-button";
 
-// TODO remove extra item for footer
 export function Footer({
   bottomPages = [],
   bottomCategories = [],

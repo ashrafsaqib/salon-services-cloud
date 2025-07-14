@@ -5,6 +5,8 @@ import Layout from "@/components/layout/layout"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ComplaintViewModal } from "@/components/complaint/ComplaintViewModal"
+import { useRouter } from "next/navigation"
+import { checkToken } from "@/lib/auth"
 
 interface Complaint {
   id: number
@@ -17,33 +19,15 @@ interface Complaint {
   updated_at: string
 }
 
-interface ComplaintChat {
-  id: number
-  text: string
-  user_id: number
-  complaint_id: number
-  created_at: string
-  updated_at: string
-  self?: boolean
-}
-
-interface ComplaintDetail extends Complaint {
-  chats: ComplaintChat[]
-}
-
 export default function ComplaintsPage() {
   const [complaints, setComplaints] = useState<Complaint[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   const [selectedComplaint, setSelectedComplaint] = useState<Complaint | null>(null)
-  const [complaintDetail, setComplaintDetail] = useState<ComplaintDetail | null>(null)
-  const [detailLoading, setDetailLoading] = useState(false)
-  const [chatText, setChatText] = useState("")
-  const [chatLoading, setChatLoading] = useState(false)
+  const router = useRouter()
 
   useEffect(() => {
-    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
-    if (!token) return
+    const token = checkToken(router)
     setLoading(true)
     fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/complaints`, {
       headers: { Authorization: `Bearer ${token}` }
@@ -61,47 +45,6 @@ export default function ComplaintsPage() {
       .catch(() => setError("Failed to load complaints"))
       .finally(() => setLoading(false))
   }, [])
-
-  const handleView = (complaint: Complaint) => {
-    setSelectedComplaint(complaint)
-    setDetailLoading(true)
-    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
-    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/complaints/${complaint.id}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-      .then(res => res.json())
-      .then(data => setComplaintDetail(data))
-      .catch(() => setComplaintDetail(null))
-      .finally(() => setDetailLoading(false))
-  }
-
-  const handleSendChat = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!selectedComplaint || !chatText.trim()) return
-    setChatLoading(true)
-    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
-    try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/complaints/chat`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({ complaint_id: selectedComplaint.id, text: chatText })
-      })
-      setChatText("")
-      // Reload complaint detail/chat
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/complaints/${selectedComplaint.id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      const data = await res.json()
-      setComplaintDetail(data)
-    } catch {
-      // Optionally show error
-    } finally {
-      setChatLoading(false)
-    }
-  }
 
   return (
     <div className="min-h-screen flex flex-col">

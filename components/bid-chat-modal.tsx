@@ -1,6 +1,8 @@
 "use client";
 import React, { useEffect, useState, useRef } from "react";
 import { MapPin, Paperclip } from "lucide-react";
+import { checkToken } from "@/lib/auth";
+import { useRouter } from "next/navigation";
 
 interface BidChatModalProps {
   bidId: number | null;
@@ -16,14 +18,16 @@ export function BidChatModal({ bidId, open, onClose }: BidChatModalProps) {
   const [sending, setSending] = useState(false);
   const chatBoxRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
 
   const fetchChat = () => {
     if (!bidId) return;
+    const token = checkToken(router)
     setLoading(true);
     setError("");
     fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/bid/${bidId}/chat`, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        Authorization: `Bearer ${token}`,
       },
     })
       .then((res) => {
@@ -52,6 +56,7 @@ export function BidChatModal({ bidId, open, onClose }: BidChatModalProps) {
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!message.trim() || !bidId) return;
+    const token = checkToken(router)
     setSending(true);
     try {
       const res = await fetch(
@@ -60,7 +65,7 @@ export function BidChatModal({ bidId, open, onClose }: BidChatModalProps) {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ message }),
         }
@@ -81,6 +86,7 @@ export function BidChatModal({ bidId, open, onClose }: BidChatModalProps) {
       alert("Geolocation is not supported by your browser");
       return;
     }
+    const token = checkToken(router)
     setSending(true);
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
@@ -92,7 +98,7 @@ export function BidChatModal({ bidId, open, onClose }: BidChatModalProps) {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
+                Authorization: `Bearer ${token}`,
               },
               body: JSON.stringify({ message: coords, location: 1 }),
             }
@@ -120,6 +126,7 @@ export function BidChatModal({ bidId, open, onClose }: BidChatModalProps) {
     if (!bidId || sending) return;
     const file = e.target.files?.[0];
     if (!file) return;
+    const token = checkToken(router)
     setSending(true);
     const formData = new FormData();
     formData.append("image", file);
@@ -130,7 +137,7 @@ export function BidChatModal({ bidId, open, onClose }: BidChatModalProps) {
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${token}`,
           },
           body: formData,
         }

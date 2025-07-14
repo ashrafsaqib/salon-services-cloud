@@ -6,7 +6,9 @@ import Layout from "@/components/layout/layout"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { checkToken } from "@/lib/auth"
 
+// TODO: Address area dropdown
 export default function AddressesPage() {
   const [addresses, setAddresses] = useState([])
   const [isLoading, setIsLoading] = useState(true)
@@ -44,10 +46,7 @@ export default function AddressesPage() {
   }
 
   useEffect(() => {
-    if (typeof window !== "undefined" && !localStorage.getItem("token")) {
-      router.replace("/login")
-      return
-    }
+    if (!checkToken(router)) return;
     fetchAddresses()
   }, [router])
 
@@ -57,6 +56,7 @@ export default function AddressesPage() {
   }
 
   const handleFormSubmit = async (e: React.FormEvent) => {
+    if (!checkToken(router)) return;
     e.preventDefault()
     setFormError("")
     setFormLoading(true)
@@ -83,7 +83,6 @@ export default function AddressesPage() {
         city: "",
         district: ""
       })
-      // Always refresh addresses from /api/addresses
       await fetchAddresses()
     } catch (err: any) {
       setFormError(err.message || "Failed to save address")
@@ -107,6 +106,7 @@ export default function AddressesPage() {
   }
 
   const handleDelete = async (id: number) => {
+    if (!checkToken(router)) return;
     if (!window.confirm("Are you sure you want to delete this address?")) return
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/deleteaddress`, {
@@ -118,7 +118,6 @@ export default function AddressesPage() {
         body: JSON.stringify({ address_id: id })
       })
       if (!res.ok) throw new Error("Failed to delete address")
-      // Always refresh addresses from /api/addresses after delete
       await fetchAddresses()
     } catch (err: any) {
       alert(err.message || "Failed to delete address")

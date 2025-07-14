@@ -262,10 +262,6 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
         landmark: customerDetails.landmark || undefined,
         city: customerDetails.city || undefined,
         save_data: customerDetails.save_data,
-        staffZone: {
-          extra_charges: 100, // TODO: Replace with real value if available
-          transport_charges: 200 // TODO: Replace with real value if available
-        },
         user_id: getUserIdFromStorage(),
         zone_id: getSelectedZoneId() || undefined,
         bookingData: bookingDataArr
@@ -358,10 +354,6 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
           landmark: customerDetails.landmark || undefined,
           city: customerDetails.city || undefined,
           save_data: customerDetails.save_data,
-          staffZone: {
-            extra_charges: 100, // TODO: Replace with real value if available
-            transport_charges: 200 // TODO: Replace with real value if available
-          },
           user_id: getUserIdFromStorage(),
           zone_id: getSelectedZoneId() || undefined,
           bookingData: bookingDataArr
@@ -432,10 +424,6 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
         landmark: customerDetails.landmark || undefined,
         city: customerDetails.city || undefined,
         save_data: customerDetails.save_data,
-        staffZone: {
-          extra_charges: 100, // TODO: Replace with real value if available
-          transport_charges: 200 // TODO: Replace with real value if available
-        },
         user_id: getUserIdFromStorage(),
         zone_id: getSelectedZoneId() || undefined,
         bookingData: bookingDataArr

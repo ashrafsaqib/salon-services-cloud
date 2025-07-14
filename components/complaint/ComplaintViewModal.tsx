@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
+import { checkToken } from "@/lib/auth"
+import { useRouter } from "next/navigation"
 
 interface Complaint {
   id: number
@@ -39,12 +41,12 @@ export const ComplaintViewModal: React.FC<ComplaintViewModalProps> = ({ complain
   const [loading, setLoading] = useState(false)
   const [chatText, setChatText] = useState("")
   const [chatLoading, setChatLoading] = useState(false)
-
+  const router = useRouter()
   useEffect(() => {
     if (!open || !complaintId) return
     setLoading(true)
     setComplaintDetail(null)
-    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
+    const token = checkToken(router)
     fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/complaints/${complaintId}`,
       { headers: { Authorization: `Bearer ${token}` } })
       .then(res => res.json())
@@ -57,7 +59,7 @@ export const ComplaintViewModal: React.FC<ComplaintViewModalProps> = ({ complain
     e.preventDefault()
     if (!complaintId || !chatText.trim()) return
     setChatLoading(true)
-    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
+    const token = checkToken(router)
     try {
       await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/complaints/chat`, {
         method: "POST",
