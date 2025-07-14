@@ -90,7 +90,7 @@ function StripeCardForm({ bookingId, amount, onPaymentSuccess }: { bookingId: st
         amount: amount,
         currency: "aed",
         description: `Order payment for #${bookingId}`,
-        order_ids: [Number(bookingId)]
+        order_ids: bookingId.split(',').map(id => Number(id))
       })
     })
     if (!res.ok) {
