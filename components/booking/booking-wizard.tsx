@@ -210,13 +210,24 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
     if (!isValidPhoneNumber(customerDetails.phone_number)) errors.push("Phone number is missing or invalid.");
     if (!isValidPhoneNumber(customerDetails.whatsapp_number)) errors.push("Whatsapp number is missing or invalid.");
     if (!customerDetails.gender?.trim()) errors.push("Gender is required.");
-    if (!customerDetails.building_name?.trim()) errors.push("Building name is required.");
-    if (!customerDetails.flat_or_villa?.trim()) errors.push("Flat or villa is required.");
-    if (!customerDetails.street?.trim()) errors.push("Street is required.");
-    if (!customerDetails.area?.trim()) errors.push("Area is required.");
-    if (!customerDetails.district?.trim()) errors.push("District is required.");
-    if (!customerDetails.landmark?.trim()) errors.push("Landmark is required.");
-    if (!customerDetails.city?.trim()) errors.push("City is required.");
+
+    // Address-related fields
+    const addressErrors = [];
+    if (!customerDetails.building_name?.trim()) addressErrors.push("Building name is required.");
+    if (!customerDetails.flat_or_villa?.trim()) addressErrors.push("Flat or villa is required.");
+    if (!customerDetails.street?.trim()) addressErrors.push("Street is required.");
+    if (!customerDetails.area?.trim()) addressErrors.push("Area is required.");
+    if (!customerDetails.district?.trim()) addressErrors.push("District is required.");
+    if (!customerDetails.landmark?.trim()) addressErrors.push("Landmark is required.");
+    if (!customerDetails.city?.trim()) addressErrors.push("City is required.");
+
+    if (addressErrors.length > 0) {
+      if (customerDetails.selected_address_id) {
+        errors.push("There is something missing in your selected address. Please add new or edit that in address list.");
+      } else {
+        errors.push(...addressErrors);
+      }
+    }
     return errors;
   }
 
