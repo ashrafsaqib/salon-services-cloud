@@ -24,9 +24,24 @@ export default function AddressesPage() {
     city: "",
     district: ""
   })
+  const [zones, setZones] = useState<{ id: number; name: string }[]>([])
   const [formError, setFormError] = useState("")
   const [formLoading, setFormLoading] = useState(false)
   const router = useRouter()
+  // Fetch zones for dropdown
+  useEffect(() => {
+    async function fetchZones() {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/zones`)
+        if (!res.ok) throw new Error("Failed to fetch zones")
+        const data = await res.json()
+        setZones(data.zones || [])
+      } catch {
+        setZones([])
+      }
+    }
+    fetchZones()
+  }, [])
 
   // Move fetchAddresses to function scope so it can be reused
   const fetchAddresses = async () => {
@@ -181,7 +196,18 @@ export default function AddressesPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Area</label>
-                  <Input name="area" value={form.area} onChange={handleFormChange} required />
+                  <select
+                    name="area"
+                    value={form.area}
+                    onChange={handleFormChange}
+                    required
+                    className="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-300"
+                  >
+                    <option value="">Select Area</option>
+                    {zones.map(zone => (
+                      <option key={zone.id} value={zone.name}>{zone.name}</option>
+                    ))}
+                  </select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Landmark</label>
