@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
@@ -34,6 +34,58 @@ export function CustomerDetailsStep({
 }: CustomerDetailsStepProps) {
   const [couponInput, setCouponInput] = useState("")
   const [couponError, setCouponError] = useState("")
+  const [zoneName, setZoneName] = useState("");
+  const [addresses, setAddresses] = useState<any[]>([]);
+  const [showAddressForm, setShowAddressForm] = useState(true);
+  const [selectedAddressId, setSelectedAddressId] = useState<number | null>(null);
+  const [hasToken, setHasToken] = useState(false);
+
+  useEffect(() => {
+    // Only fill if save_data is true or you want to always check
+    const name = localStorage.getItem("user_name")
+    const email = localStorage.getItem("user_email")
+    const gender = localStorage.getItem("user_gender")
+    const phone_number = localStorage.getItem("user_number")
+    const whatsapp_number = localStorage.getItem("user_whatsapp")
+    const selectedZoneName = localStorage.getItem("selected_zone_name") || "";
+    setZoneName(selectedZoneName);
+
+
+    // If any data exists, update the form
+    if (name || email || gender || phone_number || whatsapp_number) {
+      onUpdate({
+        ...customerDetails,
+        name: name || customerDetails.name,
+        email: email || customerDetails.email,
+        gender: gender || customerDetails.gender,
+        phone_number: phone_number || customerDetails.phone_number,
+        whatsapp_number: whatsapp_number || customerDetails.whatsapp_number,
+      })
+    }
+
+    // Check for token before fetching addresses
+    const token = localStorage.getItem("token");
+    setHasToken(!!token);
+    if (!token) {
+      setShowAddressForm(true);
+      setAddresses([]);
+      return;
+    }
+    // Fetch addresses from API with token
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/addresses`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then(res => res.json())
+      .then(data => {
+        const filtered = (data || []).filter((a: any) => a.area === selectedZoneName);
+        setAddresses(filtered);
+        if (filtered.length > 0) {
+          setShowAddressForm(false);
+        }
+      });
+  }, []) // Run only once on mount
 
   const handleChange = (field: keyof CustomerInfo, value: string | boolean) => {
     if (field === "coupon_code") {
@@ -108,43 +160,84 @@ export function CustomerDetailsStep({
       {/* Address Section */}
       <div className="bg-gray-50 rounded-lg p-4 border space-y-4">
         <h3 className="text-lg font-semibold mb-2">Address Information</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <Label>Building Name *</Label>
-            <Input value={customerDetails.building_name} onChange={e => handleChange("building_name", e.target.value)} required />
+        {addresses.length > 0 && !showAddressForm ? (
+          <div className="space-y-2">
+            {addresses.map(addr => (
+              <label key={addr.id} className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="address"
+                  checked={selectedAddressId === addr.id}
+                  onChange={() => {
+                    setSelectedAddressId(addr.id);
+                    onUpdate({
+                      ...customerDetails,
+                      building_name: addr.buildingName,
+                      flat_or_villa: addr.flatVilla,
+                      street: addr.street,
+                      area: addr.area,
+                      district: addr.district,
+                      landmark: addr.landmark,
+                      city: addr.city,
+                      selected_address_id: addr.id,
+                    });
+                  }}
+                />
+                {`${addr.buildingName}, ${addr.flatVilla}, ${addr.street}, ${addr.landmark}, ${addr.area}, ${addr.city}, ${addr.district}`}
+              </label>
+            ))}
+            <Button type="button" onClick={() => {
+              setShowAddressForm(true);
+              setSelectedAddressId(null);
+              onUpdate({
+                ...customerDetails,
+                building_name: "",
+                flat_or_villa: "",
+                street: "",
+                district: "",
+                landmark: "",
+                city: "",
+                area: zoneName,
+                selected_address_id: null,
+              });
+            }}>New Address</Button>
           </div>
-          <div>
-            <Label>Flat / Villa *</Label>
-            <Input value={customerDetails.flat_or_villa} onChange={e => handleChange("flat_or_villa", e.target.value)} required />
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label>Building Name *</Label>
+              <Input value={customerDetails.building_name} onChange={e => handleChange("building_name", e.target.value)} required />
+            </div>
+            <div>
+              <Label>Flat / Villa *</Label>
+              <Input value={customerDetails.flat_or_villa} onChange={e => handleChange("flat_or_villa", e.target.value)} required />
+            </div>
+            <div>
+              <Label>Street *</Label>
+              <Input value={customerDetails.street} onChange={e => handleChange("street", e.target.value)} required />
+            </div>
+            <div>
+              <Label>Area *</Label>
+              <Input value={zoneName} disabled />
+            </div>
+            <div>
+              <Label>District *</Label>
+              <Input value={customerDetails.district} onChange={e => handleChange("district", e.target.value)} required />
+            </div>
+            <div>
+              <Label>Landmark *</Label>
+              <Input value={customerDetails.landmark} onChange={e => handleChange("landmark", e.target.value)} required />
+            </div>
+            <div>
+              <Label>City *</Label>
+              <Input value={customerDetails.city} onChange={e => handleChange("city", e.target.value)} required />
+            </div>
+            <div>
+              <Label>Custom Location</Label>
+              <Input value={`${customerDetails.latitude || ""}, ${customerDetails.longitude || ""}`} readOnly />
+            </div>
           </div>
-          <div>
-            <Label>Street *</Label>
-            <Input value={customerDetails.street} onChange={e => handleChange("street", e.target.value)} required />
-          </div>
-          <div>
-            <Label>Area *</Label>
-            <Select value={customerDetails.area} onValueChange={v => handleChange("area", v)} required>
-              <option value="">Select Area</option>
-              {areaOptions.map(area => <option key={area} value={area}>{area}</option>)}
-            </Select>
-          </div>
-          <div>
-            <Label>District *</Label>
-            <Input value={customerDetails.district} onChange={e => handleChange("district", e.target.value)} required />
-          </div>
-          <div>
-            <Label>Landmark *</Label>
-            <Input value={customerDetails.landmark} onChange={e => handleChange("landmark", e.target.value)} required />
-          </div>
-          <div>
-            <Label>City *</Label>
-            <Input value={customerDetails.city} onChange={e => handleChange("city", e.target.value)} required />
-          </div>
-          <div>
-            <Label>Custom Location</Label>
-            <Input value={`${customerDetails.latitude || ""}, ${customerDetails.longitude || ""}`} readOnly />
-          </div>
-        </div>
+        )}
       </div>
       {/* Personal Info Section */}
       <div className="bg-gray-50 rounded-lg p-4 border space-y-4">
@@ -193,10 +286,12 @@ export function CustomerDetailsStep({
             </div>
             <Button type="button" onClick={handleApplyCoupon}>Apply Coupon</Button>
           </div>
-          <div className="flex items-center mt-2 md:col-span-2">
-            <Checkbox checked={customerDetails.save_data} onCheckedChange={v => handleChange("save_data", !!v)} />
-            <Label className="ml-2">Save Data in Profile</Label>
-          </div>
+          {hasToken && (
+            <div className="flex items-center mt-2 md:col-span-2">
+              <Checkbox checked={customerDetails.save_data} onCheckedChange={v => handleChange("save_data", !!v)} />
+              <Label className="ml-2">Save Data in Profile</Label>
+            </div>
+          )}
         </div>
       </div>
       {showError && (

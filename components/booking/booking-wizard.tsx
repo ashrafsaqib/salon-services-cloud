@@ -48,6 +48,7 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
     city: "",
     latitude: "",
     longitude: "",
+    selected_address_id: null,
   })
   // Change selectedSlot to selectedSlots (object: groupIdx -> {slot, staff})
   const [selectedSlots, setSelectedSlots] = useState<{ [groupIdx: number]: { slot: any, staff: any } }>({})
@@ -262,6 +263,7 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
         landmark: customerDetails.landmark || undefined,
         city: customerDetails.city || undefined,
         save_data: customerDetails.save_data,
+        selected_address_id: customerDetails.selected_address_id || null,
         user_id: getUserIdFromStorage(),
         zone_id: getSelectedZoneId() || undefined,
         bookingData: bookingDataArr

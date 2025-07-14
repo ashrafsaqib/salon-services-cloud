@@ -56,8 +56,14 @@ export default function LoginPage() {
         localStorage.setItem("token", data.token)
       }
       if (data.user) {
+        localStorage.setItem("user_name", String(data.user.name))
+        localStorage.setItem("user_email", String(data.user.email))
+        localStorage.setItem("user_gender", String(data.user.gender))
+        localStorage.setItem("user_number", String(data.user.number))
+        localStorage.setItem("user_whatsapp", String(data.user.whatsapp))
         localStorage.setItem("user_id", String(data.user.id))
         localStorage.setItem("user", JSON.stringify(data.user))
+        localStorage.setItem("login_expiry", String(Date.now() + 3600 * 1000));
       }
       router.push("/dashboard")
     } catch (err: any) {

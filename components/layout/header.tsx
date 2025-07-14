@@ -1,5 +1,6 @@
 "use client"
 import React, { useState, useEffect, useRef } from "react"
+import { useAuthExpiry } from "@/hooks/use-auth-expiry"
 import Image from "next/image"
 import Link from "next/link"
 import { ChevronDown, MapPin } from "lucide-react"
@@ -36,10 +37,12 @@ function FlashMessage() {
 }
 
 export function Header({ topPages = [] }: { topPages?: Array<{ name: string; slug: string }> }) {
+  useAuthExpiry();
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false)
   const [zoneName, setZoneName] = useState<string>("Set Location");
+  const prevZoneNameRef = useRef<string>("");
   interface Subcategory {
     id: number
     title: string
@@ -101,6 +104,11 @@ export function Header({ topPages = [] }: { topPages?: Array<{ name: string; slu
 
   const handleLogout = () => {
     localStorage.removeItem("token")
+    localStorage.removeItem("user_name")
+    localStorage.removeItem("user_email")
+    localStorage.removeItem("user_gender")
+    localStorage.removeItem("user_number")
+    localStorage.removeItem("user_whatsapp")
     localStorage.removeItem("user_id")
     localStorage.removeItem("user")
     sessionStorage.setItem("flashMessage", "You have been logged out.")
@@ -138,7 +146,16 @@ export function Header({ topPages = [] }: { topPages?: Array<{ name: string; slu
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      setZoneName(localStorage.getItem("selected_zone_name") || "Set Location");
+      const currentZone = localStorage.getItem("selected_zone_name") || "Set Location";
+      setZoneName(currentZone);
+      // If LocationModal just closed, check for zone change and route
+      if (!isLocationModalOpen) {
+        const prevZone = prevZoneNameRef.current;
+        if (window.location.pathname === "/book" && prevZone && prevZone !== currentZone) {
+          window.location.reload();
+        }
+      }
+      prevZoneNameRef.current = currentZone;
     }
   }, [isLocationModalOpen])
 
@@ -154,14 +171,24 @@ export function Header({ topPages = [] }: { topPages?: Array<{ name: string; slu
             <button
               className="ml-4 flex items-center justify-center bg-lime-300 text-green-900 rounded-full shadow-lg hover:bg-lime-200 hover:scale-105 hover:shadow-lime-400 transition-all duration-200 p-2 border-2 border-green-500"
               title="Set Location"
-              onClick={() => setIsLocationModalOpen(true)}
+              onClick={() => {
+                if (typeof window !== "undefined") {
+                  prevZoneNameRef.current = localStorage.getItem("selected_zone_name") || "Set Location";
+                }
+                setIsLocationModalOpen(true);
+              }}
               style={{ boxShadow: "0 4px 16px 0 rgba(163, 230, 53, 0.2)" }}
             >
               <MapPin className="w-6 h-6 drop-shadow" />
             </button>
             <span
               className="ml-2 px-3 py-1 rounded-full bg-lime-200 text-green-900 font-semibold text-sm shadow border border-green-400 cursor-pointer hover:bg-lime-100 transition"
-              onClick={() => setIsLocationModalOpen(true)}
+              onClick={() => {
+                if (typeof window !== "undefined") {
+                  prevZoneNameRef.current = localStorage.getItem("selected_zone_name") || "Set Location";
+                }
+                setIsLocationModalOpen(true);
+              }}
               style={{ userSelect: "none" }}
             >
               {zoneName}

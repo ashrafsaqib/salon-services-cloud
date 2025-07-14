@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { checkToken } from "@/lib/auth"
 
-// TODO: Address area dropdown
 export default function AddressesPage() {
   const [addresses, setAddresses] = useState([])
   const [isLoading, setIsLoading] = useState(true)
