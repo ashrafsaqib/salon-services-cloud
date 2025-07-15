@@ -10,6 +10,7 @@ interface Order {
   id: number
   date?: string
   currency_symbol?: string
+  currency_rate?: number
   total_amount?: string | number
   status?: string
   payment_method?: string
@@ -181,7 +182,10 @@ export default function DashboardPage() {
                         <div className="text-gray-500 text-sm">{order.date}</div>
                       </div>
                       <div className="text-rose-600 font-bold text-lg">
-                        {order.currency_symbol ? order.currency_symbol : "$"}{order.total_amount}
+                        AED {order.total_amount}
+                        {order.currency_symbol && order.currency_rate && (
+                          <span className="ml-2 text-gray-500 text-base">({order.currency_symbol} {(Number(order.total_amount) * Number(order.currency_rate)).toFixed(2)})</span>
+                        )}
                       </div>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-1 text-gray-700 text-sm mb-2">

@@ -368,7 +368,7 @@ export function BookingSummaryStep({
             !Array.isArray(totals) &&
             Object.keys(totals).length > 0 &&
             totals["Total"] ? (
-            `Confirm Booking - AED ${totals["Total"]}`
+            `Confirm Booking - ${totals["Total"]}`
           ) : (
             `Confirm Booking - $${pricing.total}`
           )}

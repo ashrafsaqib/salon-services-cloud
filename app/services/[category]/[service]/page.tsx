@@ -38,8 +38,12 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
       setLoading(true)
       setError(false)
       try {
+        let zoneId = '';
+        if (typeof window !== 'undefined') {
+          zoneId = localStorage.getItem('selected_zone_id') || '';
+        }
         const res = await fetch(
-          `${API_BASE_URL}/api/service?query=${encodeURIComponent(`${service}`)}`
+          `${API_BASE_URL}/api/service?query=${encodeURIComponent(`${service}`)}${zoneId ? `&zoneId=${encodeURIComponent(zoneId)}` : ''}`
         )
         if (!res.ok) throw new Error("Service not found")
         const data = await res.json()
@@ -143,7 +147,14 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
                   <span>At your location</span>
                 </div>
                 <div className="flex items-center bg-rose-100 px-4 py-2 rounded-full text-rose-700">
-                  <span className="font-semibold">{serviceData.price}</span>
+                  {serviceData.discount ? (
+                    <>
+                      <span className="font-semibold text-gray-400 line-through mr-2">{serviceData.price}</span>
+                      <span className="font-semibold text-rose-700">{serviceData.discount}</span>
+                    </>
+                  ) : (
+                    <span className="font-semibold">{serviceData.price}</span>
+                  )}
                 </div>
               </div>
             </div>
@@ -256,7 +267,7 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
                                           <span className="flex items-center gap-1"><Clock className="w-4 h-4" />{option.option_duration}</span>
                                         )}
                                         {option.option_price && (
-                                          <span className="flex items-center gap-1 text-rose-600 font-medium">AED {option.option_price}</span>
+                                          <span className="flex items-center gap-1 text-rose-600 font-medium">{option.option_price}</span>
                                         )}
                                       </div>
                                     </div>
@@ -289,6 +300,7 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
                                       name: serviceData.name,
                                       image: serviceData.image,
                                       price: serviceData.price,
+                                      discount: serviceData.discount,
                                       duration: serviceData.duration,
                                       // add other fields as needed
                                     },
@@ -354,7 +366,14 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
                             </div>
                             <div className="ml-4 min-w-0">
                               <h4 className="font-medium truncate">{related.name}</h4>
-                              <p className="text-rose-600">{related.price}</p>
+                              {related.discount ? (
+                                <p className="text-rose-600">
+                                  <span className="text-gray-400 line-through mr-2">{related.price}</span>
+                                  <span>{related.discount}</span>
+                                </p>
+                              ) : (
+                                <p className="text-rose-600">{related.price}</p>
+                              )}
                             </div>
                           </Link>
                         </div>

@@ -19,7 +19,11 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/api/home`)
+    let zoneId = '';
+    if (typeof window !== 'undefined') {
+      zoneId = localStorage.getItem('selected_zone_id') || '';
+    }
+    fetch(`${API_BASE_URL}/api/home${zoneId ? `?zoneId=${encodeURIComponent(zoneId)}` : ''}`)
       .then(res => res.json())
       .then((resData) => {
         setData(resData);

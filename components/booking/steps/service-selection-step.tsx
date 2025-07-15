@@ -98,7 +98,11 @@ export function ServiceSelectionStep({ selectedServices = [], onServiceSelect, i
       }
       setIsLoading(true)
       try {
-        let url = `${API_BASE_URL}/api/search?q=${encodeURIComponent(debouncedQuery.trim())}`
+        let zoneId = '';
+        if (typeof window !== 'undefined') {
+          zoneId = localStorage.getItem('selected_zone_id') || '';
+        }
+        let url = `${API_BASE_URL}/api/search?q=${encodeURIComponent(debouncedQuery.trim())}${zoneId ? `&zoneId=${encodeURIComponent(zoneId)}` : ''}`
         const res = await fetch(url)
         if (!res.ok) throw new Error("Failed to fetch search results")
         let data = await res.json()
@@ -142,8 +146,15 @@ export function ServiceSelectionStep({ selectedServices = [], onServiceSelect, i
                         {service.duration && (
                           <span className="flex items-center gap-1"><Clock className="w-4 h-4" />{service.duration}</span>
                         )}
-                        {service.price && (
-                          <span className="flex items-center gap-1 text-rose-600 font-medium">{service.price}</span>
+                        {service.discount ? (
+                          <span className="flex items-center gap-1 text-rose-600 font-medium">
+                            <span className="text-gray-400 line-through mr-2">{service.price}</span>
+                            <span>{service.discount}</span>
+                          </span>
+                        ) : (
+                          service.price && (
+                            <span className="flex items-center gap-1 text-rose-600 font-medium">{service.price}</span>
+                          )
                         )}
                       </div>
                       {/* Show selected options if present */}
@@ -243,12 +254,23 @@ export function ServiceSelectionStep({ selectedServices = [], onServiceSelect, i
                     At your location
                   </div>
                   <div className="flex items-center font-bold text-rose-600">
-                    {service.price}
+                    {service.discount ? (
+                      <>
+                        <span className="text-gray-400 line-through mr-2">{service.price}</span>
+                        <span>{service.discount}</span>
+                      </>
+                    ) : (
+                      service.price
+                    )}
                   </div>
                 </div>
                 <Button
                   className="mt-2 w-full bg-rose-600 hover:bg-rose-700"
                   onClick={e => {
+                    if ((hasOptions || isQuote) && service.slug) {
+                      router.push(`/services/${service.slug}`);
+                      return;
+                    }
                     e.stopPropagation()
                     handleBookService(service)
                   }}

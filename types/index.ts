@@ -2,6 +2,7 @@ export interface Service {
     id: string
   name: string
   price: string
+  discount: string
   rating?: number | null
   image?: string
   slug?: string

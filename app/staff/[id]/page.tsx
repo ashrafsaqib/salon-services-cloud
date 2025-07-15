@@ -57,7 +57,11 @@ export default function StaffDetailPage() {
   useEffect(() => {
     if (!staffId) return;
     setLoading(true);
-    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/staff?staff=${staffId}`)
+    let zoneId = '';
+        if (typeof window !== 'undefined') {
+          zoneId = localStorage.getItem('selected_zone_id') || '';
+        }
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/staff?staff=${staffId}${zoneId ? `&zoneId=${encodeURIComponent(zoneId)}` : ''}`)
       .then((res) => res.json())
       .then((data) => {
         setStaff(data);

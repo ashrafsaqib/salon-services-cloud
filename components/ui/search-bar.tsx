@@ -33,7 +33,11 @@ export function SearchBar({ placeholder = "Search for services...", className = 
   // Mock API call function (replace with real API later)
   const searchServices = async (searchQuery: string): Promise<Service[]> => {
     if (!searchQuery.trim()) return []
-    const res = await fetch(`${API_BASE_URL}/api/search?q=${encodeURIComponent(searchQuery.trim())}`)
+    let zoneId = '';
+          if (typeof window !== 'undefined') {
+            zoneId = localStorage.getItem('selected_zone_id') || '';
+          }
+    const res = await fetch(`${API_BASE_URL}/api/search?q=${encodeURIComponent(searchQuery.trim())}${zoneId ? `&zoneId=${encodeURIComponent(zoneId)}` : ''}`)
     if (!res.ok) throw new Error("Failed to fetch search results")
     const data = await res.json()
     return data.services || []
@@ -177,7 +181,14 @@ export function SearchBar({ placeholder = "Search for services...", className = 
                               At your location
                             </div>
                             <div className="flex items-center font-bold text-rose-600">
-                              {service.price}
+                              {service.discount ? (
+                                <>
+                                  <span className="text-gray-400 line-through mr-2">{service.price}</span>
+                                  <span>{service.discount}</span>
+                                </>
+                              ) : (
+                                service.price
+                              )}
                             </div>
                           </div>
                         </div>

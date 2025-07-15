@@ -68,7 +68,11 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
     const fetchAndSetService = async () => {
       if (initialServiceId) {
         try {
-          const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/search?id=${initialServiceId}`)  
+          let zoneId = '';
+          if (typeof window !== 'undefined') {
+            zoneId = localStorage.getItem('selected_zone_id') || '';
+          }
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/search?id=${initialServiceId}${zoneId ? `&zoneId=${encodeURIComponent(zoneId)}` : ''}`)
           if (!res.ok) throw new Error("Failed to fetch services list")
           const data = await res.json()
           setBookingData((prev) => ({ ...prev, services: data.services}))

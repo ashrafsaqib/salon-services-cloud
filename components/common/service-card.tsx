@@ -14,13 +14,13 @@ export function ServiceCard( {service}: ServiceCardProps) {
   const {
     name,
     price,
+    discount,
     rating,
     image,
     slug,
     category,
     description,
     duration,
-    features
   } = service
   return (
     <Link href={'/services/'+slug}>
@@ -63,7 +63,7 @@ export function ServiceCard( {service}: ServiceCardProps) {
             </div>
           )}
 
-          {features && features.length > 0 && (
+          {/* {features && features.length > 0 && (
             <div className="mb-4">
               <h4 className="font-medium mb-2">What's included:</h4>
               <ul className="text-sm text-gray-600 space-y-1">
@@ -75,18 +75,25 @@ export function ServiceCard( {service}: ServiceCardProps) {
                 ))}
               </ul>
             </div>
-          )}
+          )} */}
 
-          {/* <div className="flex justify-between items-center">
-            <span className="text-2xl font-bold text-rose-600">{price}</span>
-            <BookButton
+          <div className="flex justify-between items-center">
+            {discount ? (
+              <>
+                <span className="text-xl font-semibold text-gray-400 line-through mr-2">{price}</span>
+                <span className="text-2xl font-bold text-rose-600">{discount}</span>
+              </>
+            ) : (
+              <span className="text-2xl font-bold text-rose-600">{price}</span>
+            )}
+            {/* <BookButton
               service={service}
               category={category}
               className="bg-rose-600 hover:bg-rose-700"
             >
               Book Now
-            </BookButton>
-          </div> */}
+            </BookButton> */}
+          </div>
         </CardContent>
       </Card>
     </Link>

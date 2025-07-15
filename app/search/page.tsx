@@ -42,7 +42,11 @@ const sortOptions = [
 // Fetch services from API
 const searchServices = async (searchQuery: string): Promise<Service[]> => {
   if (!searchQuery.trim()) return []
-  const res = await fetch(`${API_BASE_URL}/api/search?q=${encodeURIComponent(searchQuery.trim())}`)
+  let zoneId = '';
+  if (typeof window !== 'undefined') {
+    zoneId = localStorage.getItem('selected_zone_id') || '';
+  }
+  const res = await fetch(`${API_BASE_URL}/api/search?q=${encodeURIComponent(searchQuery.trim())}${zoneId ? `&zoneId=${encodeURIComponent(zoneId)}` : ''}`)
   if (!res.ok) throw new Error("Failed to fetch search results")
   const data = await res.json()
   return data.services || []

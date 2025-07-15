@@ -153,7 +153,7 @@ export function Header({ topPages = [] }: { topPages?: Array<{ name: string; slu
       // If LocationModal just closed, check for zone change and route
       if (!isLocationModalOpen) {
         const prevZone = prevZoneNameRef.current;
-        if (window.location.pathname === "/book" && prevZone && prevZone !== currentZone) {
+        if (prevZone && prevZone !== currentZone) {
           window.location.reload();
         }
       }

@@ -27,7 +27,11 @@ export default function ServiceCategoryPage({ params }: ServicePageProps) {
       setLoading(true)
       setError(false)
       try {
-        const res = await fetch(`${API_BASE_URL}/api/category?category=${encodeURIComponent(category)}`)
+        let zoneId = '';
+        if (typeof window !== 'undefined') {
+          zoneId = localStorage.getItem('selected_zone_id') || '';
+        }
+        const res = await fetch(`${API_BASE_URL}/api/category?category=${encodeURIComponent(category)}${zoneId ? `&zoneId=${encodeURIComponent(zoneId)}` : ''}`)
         if (!res.ok) throw new Error("Category not found")
         const data = await res.json()
         if (!data) throw new Error("No data")
