@@ -30,25 +30,31 @@ const steps = [
 export function BookingWizard({ initialServiceId, initialCategory, initialOptions }: BookingWizardProps) {
   const [currentStep, setCurrentStep] = useState(1)
   const [bookingData, setBookingData] = useState<BookingData>({ services: [] })
-  const [customerDetails, setCustomerDetails] = useState<any>({
-    name: "",
-    email: "",
-    phone_number: "",
-    whatsapp_number: "",
-    gender: "",
-    affiliate_code: "",
-    coupon_code: "",
-    save_data: true,
-    building_name: "",
-    flat_or_villa: "",
-    street: "",
-    area: "Dubai",
-    district: "",
-    landmark: "",
-    city: "",
-    latitude: "",
-    longitude: "",
-    selected_address_id: null,
+  const [customerDetails, setCustomerDetails] = useState<any>(() => {
+    let couponCode = "";
+    if (typeof window !== "undefined") {
+      couponCode = localStorage.getItem("applied_coupon") || "";
+    }
+    return {
+      name: "",
+      email: "",
+      phone_number: "",
+      whatsapp_number: "",
+      gender: "",
+      affiliate_code: "",
+      coupon_code: couponCode,
+      save_data: true,
+      building_name: "",
+      flat_or_villa: "",
+      street: "",
+      area: "Dubai",
+      district: "",
+      landmark: "",
+      city: "",
+      latitude: "",
+      longitude: "",
+      selected_address_id: null,
+    };
   })
   // Change selectedSlot to selectedSlots (object: groupIdx -> {slot, staff})
   const [selectedSlots, setSelectedSlots] = useState<{ [groupIdx: number]: { slot: any, staff: any } }>({})

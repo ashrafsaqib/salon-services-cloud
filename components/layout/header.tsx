@@ -257,6 +257,9 @@ export function Header({ topPages = [] }: { topPages?: Array<{ name: string; slu
                       <Link href="/addresses" className="block px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50">
                         Address Book
                       </Link>
+                      <Link href="/coupons" className="block px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50">
+                        My Coupons
+                      </Link>
                       <Link href="/complaints" className="block px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50">
                         Complaints
                       </Link>

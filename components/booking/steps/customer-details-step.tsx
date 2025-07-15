@@ -113,10 +113,17 @@ export function CustomerDetailsStep({
         setCouponError("");
         onApplyCoupon(code);
       } else {
+
         setCouponError("Invalid coupon code");
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('applied_coupon');
+        }
       }
     } catch {
       setCouponError("Invalid coupon code");
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('applied_coupon');
+      }
     }
   }
 
