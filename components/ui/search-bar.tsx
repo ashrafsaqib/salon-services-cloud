@@ -134,20 +134,20 @@ export function SearchBar({ placeholder = "Search for services...", className = 
 
       {/* Search Results Dropdown */}
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-50 max-h-96 overflow-y-auto">
+        <div className="absolute to p-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-50" style={{maxHeight: '24rem'}}>
           {isLoading ? (
             <div className="p-6 text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-rose-500 mx-auto"></div>
               <p className="text-gray-500 mt-2">Searching...</p>
             </div>
           ) : results.length > 0 ? (
-            <>
+            <div className="relative" style={{height: '24rem'}}>
               <div className="p-4 border-b border-gray-100">
                 <p className="text-sm text-gray-500">
                   Found {results.length} service{results.length !== 1 ? "s" : ""} for "{query}"
                 </p>
               </div>
-              <div className="divide-y divide-gray-100">
+              <div className="divide-y divide-gray-100 overflow-y-auto" style={{maxHeight: '18rem', paddingBottom: '4.5rem'}}>
                 {results.map((service) => (
                   <div key={service.id} className="block hover:bg-gray-50 transition-colors">
                     <div className="p-4 flex items-center space-x-4">
@@ -186,14 +186,14 @@ export function SearchBar({ placeholder = "Search for services...", className = 
                   </div>
                 ))}
               </div>
-              <div className="p-4 border-t border-gray-100 bg-gray-50">
+              <div className="absolute left-0 right-0 bottom-0 p-4 border-t border-gray-100 bg-gray-50">
                 <Link href={`/search?q=${encodeURIComponent(query)}`} onClick={handleResultClick}>
                   <Button variant="outline" className="w-full">
                     View all results for "{query}"
                   </Button>
                 </Link>
               </div>
-            </>
+            </div>
           ) : query.trim() && !isLoading ? (
             <div className="p-6 text-center">
               <div className="text-gray-400 mb-2">

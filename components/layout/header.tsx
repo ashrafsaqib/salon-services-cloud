@@ -3,11 +3,11 @@ import React, { useState, useEffect, useRef } from "react"
 import { useAuthExpiry } from "@/hooks/use-auth-expiry"
 import Image from "next/image"
 import Link from "next/link"
-import { ChevronDown, MapPin } from "lucide-react"
+import { ChevronDown, MapPin, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { LocationModal } from "@/components/location-modal"
+import { SearchBar } from "@/components/ui/search-bar"
 // TODO loading after every ajax call
-// TODO search bar in header
 // TODO filters services
 function FlashMessage() {
   const [message, setMessage] = useState("")
@@ -43,6 +43,8 @@ export function Header({ topPages = [] }: { topPages?: Array<{ name: string; slu
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false)
   const [zoneName, setZoneName] = useState<string>("Set Location");
   const prevZoneNameRef = useRef<string>("");
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const searchBarRef = useRef<HTMLDivElement>(null)
   interface Subcategory {
     id: number
     title: string
@@ -159,6 +161,17 @@ export function Header({ topPages = [] }: { topPages?: Array<{ name: string; slu
     }
   }, [isLocationModalOpen])
 
+  useEffect(() => {
+    if (!isSearchOpen) return;
+    function handleClickOutside(event: MouseEvent) {
+      if (searchBarRef.current && !searchBarRef.current.contains(event.target as Node)) {
+        setIsSearchOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isSearchOpen]);
+
   return (
     <header className="bg-white shadow-sm border-b sticky top-0 z-50">
       <FlashMessage />
@@ -169,7 +182,7 @@ export function Header({ topPages = [] }: { topPages?: Array<{ name: string; slu
               <Image src="/logo.png" alt="Lipslay Marketplace" width={180} height={40} className="h-8 w-auto" />
             </Link>
             <button
-              className="ml-4 flex items-center justify-center bg-lime-300 text-green-900 rounded-full shadow-lg hover:bg-lime-200 hover:scale-105 hover:shadow-lime-400 transition-all duration-200 p-2 border-2 border-green-500"
+              className="ml-3 flex items-center gap-1 bg-white text-rose-600 rounded-full shadow-sm hover:bg-rose-50 hover:text-rose-700 transition-all duration-200 px-2 py-1 border border-rose-200 focus:outline-none focus:ring-1 focus:ring-rose-200"
               title="Set Location"
               onClick={() => {
                 if (typeof window !== "undefined") {
@@ -177,22 +190,18 @@ export function Header({ topPages = [] }: { topPages?: Array<{ name: string; slu
                 }
                 setIsLocationModalOpen(true);
               }}
-              style={{ boxShadow: "0 4px 16px 0 rgba(163, 230, 53, 0.2)" }}
+              style={{ boxShadow: "0 3px 10px 0 rgba(255, 64, 129, 0.06)", userSelect: "none" }}
             >
-              <MapPin className="w-6 h-6 drop-shadow" />
+              <MapPin className="w-5 h-5 mr-1" />
+              <span className="truncate max-w-[80px] font-medium text-sm">{zoneName}</span>
             </button>
-            <span
-              className="ml-2 px-3 py-1 rounded-full bg-lime-200 text-green-900 font-semibold text-sm shadow border border-green-400 cursor-pointer hover:bg-lime-100 transition"
-              onClick={() => {
-                if (typeof window !== "undefined") {
-                  prevZoneNameRef.current = localStorage.getItem("selected_zone_name") || "Set Location";
-                }
-                setIsLocationModalOpen(true);
-              }}
-              style={{ userSelect: "none" }}
+            <button
+              className="ml-4 flex items-center justify-center bg-gradient-to-tr from-white to-gray-100 text-gray-700 rounded-full shadow-lg hover:scale-110 hover:bg-gray-50 transition-all duration-200 p-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300"
+              title="Search"
+              onClick={() => setIsSearchOpen(true)}
             >
-              {zoneName}
-            </span>
+              <Search className="w-5 h-5" />
+            </button>
           </div>
 
           <nav className="hidden md:flex items-center space-x-6">
@@ -391,6 +400,13 @@ export function Header({ topPages = [] }: { topPages?: Array<{ name: string; slu
         </div>
       </div>
       <LocationModal isOpen={isLocationModalOpen} onClose={() => setIsLocationModalOpen(false)} />
+      {isSearchOpen && (
+        <div className="fixed inset-0 z-[200] flex items-start justify-center bg-black bg-opacity-30">
+          <div ref={searchBarRef} className="mt-20 w-full max-w-2xl px-4">
+            <SearchBar placeholder="Search for haircuts, facials, car wash, and more..." className="max-w-2xl" />
+          </div>
+        </div>
+      )}
     </header>
   )
 }
