@@ -78,6 +78,9 @@ export function LocationModal({ isOpen, onClose }: LocationModalProps) {
               ))}
             </SelectContent>
           </Select>
+          <div className="text-xs text-gray-500 mt-2">
+            <strong>Note:</strong> Changing your location will remove all items from your cart.
+          </div>
         </div>
       </DialogContent>
     </Dialog>

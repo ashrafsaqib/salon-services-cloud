@@ -154,6 +154,8 @@ export function Header({ topPages = [] }: { topPages?: Array<{ name: string; slu
       if (!isLocationModalOpen) {
         const prevZone = prevZoneNameRef.current;
         if (prevZone && prevZone !== currentZone) {
+          // Remove cart items on zone change
+          localStorage.removeItem("booking_selected_services");
           window.location.reload();
         }
       }
