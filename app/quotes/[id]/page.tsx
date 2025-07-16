@@ -13,6 +13,7 @@ import {
 import Layout from "@/components/layout/layout"
 import { checkToken } from "@/lib/auth";
 import { useRouter } from "next/navigation";
+import Loading from "@/app/loading";
 
 interface QuoteOption {
   id: number;
@@ -66,16 +67,15 @@ export default function QuoteDetailPage() {
       });
   }, [id]);
 
+  if (loading) {
+    return <Loading />
+  }
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Layout>
       <main className="flex-1">
         <div className="max-w-5xl mx-auto p-4 sm:p-6 lg:p-8">
-          {loading ? (
-            <div className="text-gray-500 text-center py-16">
-              Loading your quote...
-            </div>
-          ) : error ? (
+          {error ? (
             <div className="bg-white rounded-xl p-8 text-center shadow-sm border border-rose-100">
               <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-rose-100 mb-4">
                 <span className="text-rose-600">⚠️</span>

@@ -11,6 +11,7 @@ import { AppPromotion } from "@/components/sections/app-promotion"
 import { FAQSection } from "@/components/sections/faq-section"
 import { Newsletter } from "@/components/sections/newsletter"
 import Layout from "@/components/layout/layout"
+import Loading from "./loading"
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
@@ -35,7 +36,7 @@ export default function HomePage() {
   }, [])
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>
+    return <Loading />
   }
 
   if (!data) {

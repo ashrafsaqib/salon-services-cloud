@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { checkToken } from "@/lib/auth"
 import { useRouter } from "next/navigation"
+import Loading from "@/app/loading"
 
 interface Complaint {
   id: number
@@ -85,6 +86,10 @@ export const ComplaintViewModal: React.FC<ComplaintViewModalProps> = ({ complain
 
   if (!open) return null
 
+  if (loading) {
+    return <Loading />
+  }
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-lg relative max-h-[90vh] overflow-y-auto">
@@ -95,9 +100,7 @@ export const ComplaintViewModal: React.FC<ComplaintViewModalProps> = ({ complain
         >
           &times;
         </button>
-        {loading ? (
-          <div className="text-gray-500">Loading complaint...</div>
-        ) : complaintDetail ? (
+        { complaintDetail ? (
           <>
             <h3 className="text-xl font-bold mb-2">{complaintDetail.title}</h3>
             <div className="mb-2 text-gray-700">{complaintDetail.description}</div>

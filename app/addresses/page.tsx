@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { checkToken } from "@/lib/auth"
+import Loading from "../loading"
 
 export default function AddressesPage() {
   const [addresses, setAddresses] = useState([])
@@ -138,6 +139,10 @@ export default function AddressesPage() {
     }
   }
 
+  if (isLoading) {
+    return <Loading />
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
       <Layout>
@@ -148,9 +153,7 @@ export default function AddressesPage() {
               <h2 className="text-2xl font-bold">Saved Addresses</h2>
               <Button onClick={() => { setShowForm(true); setEditingId(null); setForm({ buildingName: "", area: "", landmark: "", flatVilla: "", street: "", city: "", district: "" }) }} className="bg-rose-600 hover:bg-rose-700">Add Address</Button>
             </div>
-            {isLoading ? (
-              <div>Loading...</div>
-            ) : error ? (
+            {error ? (
               <div className="text-red-600">{error}</div>
             ) : addresses.length === 0 ? (
               <div className="text-gray-500">No addresses saved yet.</div>

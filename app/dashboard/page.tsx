@@ -5,6 +5,7 @@ import Layout from "@/components/layout/layout"
 import { Card, CardContent } from "@/components/ui/card"
 import { ComplaintViewModal } from "@/components/complaint/ComplaintViewModal"
 import { checkToken } from "@/lib/auth"
+import Loading from "../loading"
 
 interface Order {
   id: number
@@ -159,15 +160,17 @@ export default function DashboardPage() {
     }
   }
 
+  if (loading) {
+    return <Loading />
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
       <Layout>
       <main className="flex-1 bg-gray-50 py-12">
         <div className="max-w-4xl mx-auto px-4">
           <h2 className="text-3xl font-bold mb-8">Dashboard</h2>
-          {loading ? (
-            <div className="text-gray-500 text-lg">Loading orders...</div>
-          ) : error ? (
+          {error ? (
             <div className="text-red-600 text-lg">{error}</div>
           ) : orders.length === 0 ? (
             <div className="text-gray-600">No orders found.</div>

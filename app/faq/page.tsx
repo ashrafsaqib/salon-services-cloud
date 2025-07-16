@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import Layout from "@/components/layout/layout"
 import { FAQSection } from "@/components/sections/faq-section"
+import Loading from "../loading"
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
@@ -35,7 +36,7 @@ export default function FaqsPage() {
   )
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>
+    return <Loading />
   }
 
   if (error) {

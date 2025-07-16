@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Header } from "./header";
 import { Footer } from "./footer";
+import Loading from "@/app/loading";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [infoPages, setInfoPages] = useState({
@@ -12,7 +13,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/information-pages`)
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/layout-data`)
       .then((res) => res.json())
       .then((data) => {
         setInfoPages(data);
@@ -21,7 +22,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   }, []);
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return <Loading />
   }
 
   return (

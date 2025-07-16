@@ -147,6 +147,7 @@ export default function SearchPage() {
     setSelectedCategories(["all"])
     setSelectedPriceRange("all")
     setSortBy("relevance")
+    setQuery("")
   }
 
   const activeFiltersCount =

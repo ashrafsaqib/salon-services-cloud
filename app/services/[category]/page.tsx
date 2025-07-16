@@ -7,6 +7,7 @@ import Layout from "@/components/layout/layout"
 import { CategoryCard } from "@/components/ui/category-card"
 import { ServiceCard } from "@/components/common/service-card"
 import type { CategoryData, Category, Service } from "@/types"
+import Loading from "@/app/loading"
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
@@ -46,11 +47,7 @@ export default function ServiceCategoryPage({ params }: ServicePageProps) {
   }, [category])
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <span className="text-gray-500 text-lg">Loading category...</span>
-      </div>
-    )
+    return <Loading />
   }
 
   if (error || !categoryData) {

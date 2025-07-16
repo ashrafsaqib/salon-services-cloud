@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { ComplaintViewModal } from "@/components/complaint/ComplaintViewModal"
 import { useRouter } from "next/navigation"
 import { checkToken } from "@/lib/auth"
+import Loading from "../loading"
 
 interface Complaint {
   id: number
@@ -46,15 +47,17 @@ export default function ComplaintsPage() {
       .finally(() => setLoading(false))
   }, [])
 
+  if (loading) {
+    return <Loading />
+  }
+    
   return (
     <div className="min-h-screen flex flex-col">
       <Layout>
       <main className="flex-1 bg-gray-50 py-12">
         <div className="max-w-3xl mx-auto px-4">
           <h2 className="text-3xl font-bold mb-8">Complaints</h2>
-          {loading ? (
-            <div className="text-gray-500">Loading complaints...</div>
-          ) : error ? (
+          {error ? (
             <div className="text-red-600">{error}</div>
           ) : complaints.length === 0 ? (
             <div className="text-center py-12">

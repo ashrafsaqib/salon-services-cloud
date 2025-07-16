@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation"
 import { Input } from "@/components/ui/input"
 import { QuoteRequestModal } from "@/components/quote/QuoteRequestModal"
 import Script from "next/script"
+import Loading from "@/app/loading"
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
 interface ServiceDetailPageProps {
@@ -59,11 +60,7 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
   }, [category, service])
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <span className="text-gray-500 text-lg">Loading service details...</span>
-      </div>
-    )
+    return <Loading />
   }
 
   if (error || !serviceData) {

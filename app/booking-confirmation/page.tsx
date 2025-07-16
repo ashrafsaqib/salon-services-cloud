@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import Layout from "@/components/layout/layout"
+import Loading from "../loading"
 
 export default function BookingConfirmationPage() {
   const searchParams = useSearchParams()
@@ -74,11 +75,7 @@ export default function BookingConfirmationPage() {
   }
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <span className="text-gray-500 text-lg">Loading booking details...</span>
-      </div>
-    )
+    return <Loading />
   }
 
   if (error) {

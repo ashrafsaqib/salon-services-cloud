@@ -18,6 +18,7 @@ import Layout from "@/components/layout/layout";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import Loading from "../loading";
 
 // Load your Stripe publishable key
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_KEY!);
@@ -220,11 +221,7 @@ export default function CheckoutPage() {
   }
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <span className="text-gray-500 text-lg">Loading order details...</span>
-      </div>
-    );
+    return <Loading />
   }
 
   if (error) {

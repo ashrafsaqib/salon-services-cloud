@@ -3,6 +3,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { MapPin, Paperclip } from "lucide-react";
 import { checkToken } from "@/lib/auth";
 import { useRouter } from "next/navigation";
+import Loading from "@/app/loading";
 
 interface BidChatModalProps {
   bidId: number | null;
@@ -196,7 +197,7 @@ export function BidChatModal({ bidId, open, onClose }: BidChatModalProps) {
           style={{ minHeight: "300px" }}
         >
           {loading ? (
-            <div className="text-center py-8">Loading chat...</div>
+            <Loading />
           ) : error ? (
             <div className="text-center text-rose-500 py-8">{error}</div>
           ) : data ? (

@@ -13,6 +13,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Layout from "@/components/layout/layout";
+import Loading from "@/app/loading";
 
 interface StaffReview {
   id: number;
@@ -73,12 +74,9 @@ export default function StaffDetailPage() {
       });
   }, [staffId]);
 
-  if (loading)
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        Loading...
-      </div>
-    );
+  if (loading) {
+    return <Loading />
+  }
   if (error || !staff)
     return (
       <div className="min-h-screen flex items-center justify-center text-red-500">

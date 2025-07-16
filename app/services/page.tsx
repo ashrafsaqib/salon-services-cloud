@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import Layout from "@/components/layout/layout"
 import { CategoryCard } from "@/components/ui/category-card"
 import type { Category } from "@/types"
+import Loading from "../loading"
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
 export default function ServicesPage() {
@@ -17,6 +18,10 @@ export default function ServicesPage() {
       .finally(() => setLoading(false))
   }, [])
 
+  if (loading) {
+    return <Loading />
+  }
+  
   return (
     <div className="min-h-screen bg-gray-50">
       <Layout>
@@ -29,17 +34,13 @@ export default function ServicesPage() {
               Browse our complete range of professional services
             </p>
           </div>
-          {loading ? (
-            <div className="text-center text-gray-500">Loading...</div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {categories.map(category => (
-              <div key={category.id} className="mb-4">
-                <CategoryCard cat={category} />
-              </div>
-              ))}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {categories.map(category => (
+            <div key={category.id} className="mb-4">
+              <CategoryCard cat={category} />
             </div>
-          )}
+            ))}
+          </div>
         </div>
       </section>
 

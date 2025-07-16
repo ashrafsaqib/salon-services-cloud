@@ -5,6 +5,7 @@ import Layout from "@/components/layout/layout"
 import { RefreshCw } from "lucide-react";
 import { BidChatModal } from "@/components/bid-chat-modal";
 import { checkToken } from "@/lib/auth";
+import Loading from "@/app/loading";
 
 interface Bid {
   id: number;
@@ -81,6 +82,10 @@ export default function QuoteBidsPage() {
     }
   };
 
+  if (loading) {
+    return <Loading />
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
       <Layout>
@@ -94,11 +99,7 @@ export default function QuoteBidsPage() {
               {bids.length} {bids.length === 1 ? "bid" : "bids"}
             </span>
           </div>
-          {loading ? (
-            <div className="text-gray-500 text-center py-16">
-              Loading bids...
-            </div>
-          ) : error ? (
+          {error ? (
             <div className="p-8 text-center text-rose-500">
               <p>⚠️ {error}</p>
               <button
@@ -107,10 +108,6 @@ export default function QuoteBidsPage() {
               >
                 Try Again
               </button>
-            </div>
-          ) : loading ? (
-            <div className="text-gray-500 text-center py-16">
-              Loading bids...
             </div>
           ) : bids.length === 0 ? (
             <div className="text-center py-12">

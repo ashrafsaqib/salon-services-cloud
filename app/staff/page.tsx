@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import Layout from "@/components/layout/layout"
 import { StaffCard } from "@/components/ui/staff-card";
+import Loading from "../loading";
 
 interface Staff {
   id: string | number;
@@ -32,6 +33,10 @@ export default function AllStaffPage() {
       });
   }, []);
 
+  if (loading) {
+    return <Loading />
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Layout>
@@ -40,11 +45,7 @@ export default function AllStaffPage() {
           <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight text-center mb-8">
             All Staff
           </h1>
-          {loading ? (
-            <div className="flex justify-center items-center min-h-[200px]">
-              Loading...
-            </div>
-          ) : error ? (
+          {error ? (
             <div className="flex justify-center items-center min-h-[200px] text-red-500">
               Failed to load staff.
             </div>

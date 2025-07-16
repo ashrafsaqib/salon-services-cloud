@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Layout from "@/components/layout/layout";
 import { Card, CardContent } from "@/components/ui/card";
+import Loading from "../loading";
 
 interface Coupon {
   id: number;
@@ -85,15 +86,16 @@ const CouponListPage: React.FC = () => {
     }
   };
 
+  if (loading) {
+    return <Loading />
+  }
+  
   return (
     <Layout>
       <main className="min-h-screen bg-white py-12">
         <div className="max-w-3xl mx-auto px-4">
           <h1 className="text-3xl font-bold mb-6 text-center">🎁 My Coupons</h1>
 
-          {loading && (
-            <p className="text-gray-500 text-center">Loading coupons...</p>
-          )}
           {error && <p className="text-red-500 text-center">{error}</p>}
           {!loading && !error && coupons.length === 0 && (
             <p className="text-gray-500 text-center">No coupons available.</p>

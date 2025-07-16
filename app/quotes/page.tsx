@@ -4,6 +4,7 @@ import Image from "next/image";
 import Layout from "@/components/layout/layout"
 import { checkToken } from "@/lib/auth";
 import { useRouter } from "next/navigation";
+import Loading from "../loading";
 
 interface Quote {
   id: number;
@@ -41,16 +42,15 @@ export default function QuotesPage() {
       });
   }, []);
 
+  if (loading) {
+    return <Loading />
+  }
   return (
     <div className="min-h-screen flex flex-col">
       <Layout>
       <main className="flex-1">
         <div className="max-w-4xl mx-auto p-4 sm:p-6">
-          {loading ? (
-            <div className="text-gray-500 text-center py-16">
-              Loading quotes...
-            </div>
-          ) : error ? (
+          {error ? (
             <div className="p-8 text-center text-rose-500">
               <p>⚠️ {error}</p>
               <button
