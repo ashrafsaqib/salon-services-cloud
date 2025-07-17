@@ -234,63 +234,92 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
                 <div>
                   <Card>
                     <CardContent className="p-6">
-                      <h3 className="text-xl font-semibold mb-4">Book This Service</h3>
+                      <h3 className="text-xl font-semibold mb-6">Book This Service</h3>
 
-                      <div className="space-y-4">
-                        {/* Options Section (moved here) */}
+                      <div className="space-y-6">
+                        {/* Options Section with Scroll */}
                         {serviceData.options && serviceData.options.length > 0 && (
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Select Options</label>
-                            <div className="space-y-3">
+                            <div className="flex items-center justify-between mb-3">
+                              <h4 className="text-sm font-medium text-gray-700">Customize your service</h4>
+                              {selectedOptions.length > 0 && (
+                                <span className="text-xs text-rose-600 font-medium">
+                                  {selectedOptions.length} selected
+                                </span>
+                              )}
+                            </div>
+                            
+                            <div 
+                              className="space-y-3 max-h-[300px] overflow-y-auto pr-2 -mr-2"
+                              style={{
+                                scrollbarWidth: 'thin',
+                                scrollbarColor: '#f43f5e #f9fafb'
+                              }}
+                            >
                               {serviceData.options.map((option: any) => (
-                                <label key={option.id} className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 cursor-pointer">
-                                  <div className="flex items-center gap-3">
-                                    <Input
-                                      type="checkbox"
-                                      checked={selectedOptions.some((o) => o.id === option.id)}
-                                      onChange={e => {
-                                        if (e.target.checked) {
-                                          setSelectedOptions(prev => [...prev, option])
-                                        } else {
-                                          setSelectedOptions(prev => prev.filter(o => o.id !== option.id))
-                                        }
-                                      }}
-                                      className="w-5 h-5 mr-2"
-                                    />
-                                    <div>
-                                      <div className="font-medium text-gray-900">{option.option_name}</div>
-                                      <div className="flex gap-4 text-sm text-gray-600 mt-1">
+                                <div 
+                                  key={option.id} 
+                                  className={`relative p-4 rounded-lg transition-all cursor-pointer border 
+                                    ${selectedOptions.some(o => o.id === option.id) 
+                                      ? 'border-rose-300 bg-rose-50 shadow-sm' 
+                                      : 'border-gray-200 hover:border-gray-300'}`}
+                                  onClick={() => {
+                                    setSelectedOptions(prev => 
+                                      prev.some(o => o.id === option.id) 
+                                        ? prev.filter(o => o.id !== option.id) 
+                                        : [...prev, option]
+                                    )
+                                  }}
+                                >
+                                  <div className="flex items-start gap-3">
+                                    <div className="flex items-center h-5 mt-0.5">
+                                      <input
+                                        type="checkbox"
+                                        checked={selectedOptions.some(o => o.id === option.id)}
+                                        onChange={() => {}}
+                                        className="w-4 h-4 text-rose-600 border-gray-300 rounded focus:ring-rose-500"
+                                      />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <div className="font-medium text-gray-900 truncate">{option.option_name}</div>
+                                      <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-gray-600 mt-1">
                                         {option.option_duration && (
-                                          <span className="flex items-center gap-1"><Clock className="w-4 h-4" />{option.option_duration}</span>
+                                          <span className="flex items-center gap-1.5">
+                                            <Clock className="w-3.5 h-3.5 text-gray-500 flex-shrink-0" />
+                                            <span className="truncate">{option.option_duration}</span>
+                                          </span>
                                         )}
                                         {option.option_price && (
-                                          <span className="flex items-center gap-1 text-rose-600 font-medium">{option.option_price}</span>
+                                          <span className="flex items-center gap-1 font-medium text-rose-600">
+                                            {option.option_price}
+                                          </span>
                                         )}
                                       </div>
                                     </div>
                                   </div>
-                                </label>
+                                </div>
                               ))}
                             </div>
                           </div>
                         )}
-                        <div className="pt-4">
+
+                        {/* Sticky Book Button */}
+                        <div className="sticky bottom-0 bg-white pt-4 pb-2 -mx-6 px-6 border-t border-gray-100">
                           {serviceData.quote === true ? (
                             <Button
-                              className="w-full bg-yellow-400 hover:bg-yellow-300 text-black"
+                              className="w-full bg-yellow-400 hover:bg-yellow-500 text-black transition-colors shadow-sm hover:shadow-md"
                               onClick={() => setQuoteModalOpen(true)}
                             >
                               Request a Quote
                             </Button>
                           ) : (
                             <Button
-                              className="w-full bg-rose-600 hover:bg-rose-700"
-                              disabled={serviceData.options && serviceData.options.length > 0 && selectedOptions.length === 0}
+                              className="w-full bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-700 hover:to-rose-600 text-white transition-all shadow-sm hover:shadow-md"
+                              disabled={serviceData.options?.length > 0 && selectedOptions.length === 0}
                               onClick={() => {
-                                if (serviceData && serviceData.id) {
-                                  // Store in localStorage for multi-service booking
-                                  const stored = getStoredServices()
-                                  const idx = stored.findIndex((s: any) => s.service.id === serviceData.id)
+                                if (serviceData?.id) {
+                                  const stored = getStoredServices();
+                                  const idx = stored.findIndex((s: any) => s.service.id === serviceData.id);
                                   const newEntry = {
                                     service: {
                                       id: serviceData.id,
@@ -299,23 +328,25 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
                                       price: serviceData.price,
                                       discount: serviceData.discount,
                                       duration: serviceData.duration,
-                                      // add other fields as needed
                                     },
-                                    options: selectedOptions.map(o => ({ id: o.id, name: o.option_name })), // Save option id and name
+                                    options: selectedOptions.map(o => ({ id: o.id, name: o.option_name })),
                                     addOns: selectedAddOns
-                                  }
-                                  if (idx > -1) {
-                                    stored[idx] = newEntry
-                                  } else {
-                                    stored.push(newEntry)
-                                  }
-                                  setStoredServices(stored)
-                                  // Redirect to booking wizard
-                                  router.push("/book")
+                                  };
+                                  
+                                  const updatedServices = idx > -1 
+                                    ? stored.map((s, i) => i === idx ? newEntry : s)
+                                    : [...stored, newEntry];
+                                    
+                                  setStoredServices(updatedServices);
+                                  router.push("/book");
                                 }
                               }}
                             >
-                              Book This Service
+                              {serviceData.options?.length > 0 
+                                ? selectedOptions.length > 0 
+                                  ? `Book ${selectedOptions.length} Selected Option${selectedOptions.length > 1 ? 's' : ''}` 
+                                  : `Select Options to Continue`
+                                : `Book Now`}
                             </Button>
                           )}
                         </div>
