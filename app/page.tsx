@@ -54,7 +54,7 @@ export default function HomePage() {
       <Testimonials testimonials={data.testimonials} />
       <AppPromotion promotion={data.appPromotion} />
       <FAQSection faqs={data.faqs} />
-      <Newsletter newsletter={data.newsletter} />
+      {/* <Newsletter newsletter={data.newsletter} /> */}
       </Layout>
     </div>
   )
