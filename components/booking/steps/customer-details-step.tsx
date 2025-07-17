@@ -39,6 +39,7 @@ export function CustomerDetailsStep({
   const [showAddressForm, setShowAddressForm] = useState(true);
   const [selectedAddressId, setSelectedAddressId] = useState<number | null>(null);
   const [hasToken, setHasToken] = useState(false);
+  const [showAreaMsg, setShowAreaMsg] = useState(false);
 
   useEffect(() => {
     // Only fill if save_data is true or you want to always check
@@ -225,7 +226,24 @@ export function CustomerDetailsStep({
             </div>
             <div>
               <Label>Area *</Label>
-              <Input value={zoneName} disabled />
+              <Input
+                value={zoneName}
+                readOnly
+                tabIndex={0}
+                style={{
+                  cursor: 'pointer',
+                  backgroundColor: '#f3f4f6',
+                  color: '#9ca3af',
+                  pointerEvents: 'auto',
+                  opacity: 1
+                }}
+                aria-disabled="true"
+                onClick={() => setShowAreaMsg(true)}
+                onBlur={() => setShowAreaMsg(false)}
+              />
+              {showAreaMsg && (
+                <div className="text-xs text-rose-500 mt-1">To change Area, click on the header location button.</div>
+              )}
             </div>
             <div>
               <Label>District *</Label>
