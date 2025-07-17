@@ -52,7 +52,7 @@ export default function HomePage() {
       <HowItWorks />
       <StaffCarousel staff={data.staffMembers} />
       <Testimonials testimonials={data.testimonials} />
-      <AppPromotion promotion={data.appPromotion} />
+      <AppPromotion />
       <FAQSection faqs={data.faqs} />
       {/* <Newsletter newsletter={data.newsletter} /> */}
       </Layout>
