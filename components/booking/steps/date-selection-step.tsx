@@ -81,14 +81,15 @@ export function DateSelectionStep({ selectedDate, service, onDateSelect, holiday
     for (let day = 1; day <= daysInMonth; day++) {
       const currentDate = new Date(year, month, day)
       const dateString = toLocalYYYYMMDD(currentDate)
-      const isAvailable = !holidays.includes(dateString)
+      const isPast = currentDate < new Date(new Date().toDateString())
+      const isAvailable = !holidays.includes(dateString) && !isPast
       const isSelected = selectedDate === dateString
       const isToday = dateString === toLocalYYYYMMDD(new Date())
 
       days.push(
         <button
           key={day}
-          onClick={() => onDateSelect(dateString)}
+          onClick={() => isAvailable && onDateSelect(dateString)}
           disabled={!isAvailable}
           className={`h-12 w-full rounded-lg text-sm font-medium transition-colors ${
             isSelected
