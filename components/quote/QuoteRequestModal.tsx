@@ -89,11 +89,15 @@ export const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
   React.useEffect(() => {
     const userId = getUserIdFromStorage();
     const zone = localStorage.getItem("selected_zone_name") || "";
+    const phone = localStorage.getItem("user_number") || "";
+    const whatsapp = localStorage.getItem("user_whatsapp") || "";
     setZoneName(zone);
     setHasUserId(!!userId);
     setForm((prev) => ({
       ...prev,
       user_id: userId || "",
+      phone: phone,
+      whatsapp: whatsapp,
     }));
   }, [open]);
 

@@ -83,6 +83,11 @@ export default function EditProfilePage() {
         })
       })
       if (!res.ok) throw new Error("Profile update failed")
+        localStorage.setItem("user_name", String(form.name));
+        localStorage.setItem("user_email", String(form.email));
+        localStorage.setItem("user_gender", String(form.gender));
+        localStorage.setItem("user_number", String(form.phone));
+        localStorage.setItem("user_whatsapp", String(form.whatsapp));
       setSuccess("Profile updated successfully!")
     } catch (err: any) {
       setError(err.message || "Profile update failed")
