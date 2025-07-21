@@ -6,13 +6,14 @@ import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ServiceCard } from "@/components/common/service-card"
 import type { FeaturedCategory } from "@/types"
+
 interface FeaturedServicesProps {
   featured: FeaturedCategory[]
 }
 
 export function FeaturedServices({ featured }: FeaturedServicesProps) {
   // Only show tabs for categories with at least one service
-  const categoriesWithServices = featured.filter(cat => cat.services.length > 0)
+  const categoriesWithServices = featured.filter((cat) => cat.services.length > 0)
   const firstTab = categoriesWithServices[0]?.slug || ""
 
   if (categoriesWithServices.length === 0) return null // Don't show anything if no categories have services
@@ -22,20 +23,20 @@ export function FeaturedServices({ featured }: FeaturedServicesProps) {
       <div className="container mx-auto px-4">
         <h2 className="text-3xl font-semibold text-center text-gray-800 mb-8">Featured Services</h2>
         <Tabs defaultValue={firstTab} className="w-full">
-          <TabsList className="justify-center">
-            {categoriesWithServices.map(cat => (
-              <TabsTrigger key={cat.slug} value={cat.slug}>
-                {cat.name}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-          {categoriesWithServices.map(cat => (
+          <div className="overflow-x-auto scrollbar-hide mb-6">
+            <TabsList className="inline-flex min-w-max mx-auto">
+              {categoriesWithServices.map((cat) => (
+                <TabsTrigger key={cat.slug} value={cat.slug} className="whitespace-nowrap px-4 py-2">
+                  {cat.name}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </div>
+          {categoriesWithServices.map((cat) => (
             <TabsContent key={cat.slug} value={cat.slug} className="mt-0">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {cat.services.map((service, index) => (
-                  <ServiceCard
-                    key={index} service={service}
-                  />
+                  <ServiceCard key={index} service={service} />
                 ))}
               </div>
             </TabsContent>

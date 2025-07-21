@@ -28,7 +28,10 @@ export function CategoryCarousel({ services }: CategoryCarouselProps) {
             onClick={() => {
               const container = document.getElementById("services-carousel")
               if (container) {
-                container.scrollBy({ left: -320, behavior: "smooth" })
+                const cardWidth = container.querySelector(".category-card")?.getBoundingClientRect().width || 280
+                const gap = 24 // 6 * 4px (gap-6)
+                const scrollAmount = cardWidth + gap
+                container.scrollBy({ left: -scrollAmount, behavior: "smooth" })
               }
             }}
             className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-3 hover:bg-gray-50 transition-colors border"
@@ -42,7 +45,10 @@ export function CategoryCarousel({ services }: CategoryCarouselProps) {
             onClick={() => {
               const container = document.getElementById("services-carousel")
               if (container) {
-                container.scrollBy({ left: 320, behavior: "smooth" })
+                const cardWidth = container.querySelector(".category-card")?.getBoundingClientRect().width || 280
+                const gap = 24 // 6 * 4px (gap-6)
+                const scrollAmount = cardWidth + gap
+                container.scrollBy({ left: scrollAmount, behavior: "smooth" })
               }
             }}
             className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-3 hover:bg-gray-50 transition-colors border"
@@ -63,7 +69,9 @@ export function CategoryCarousel({ services }: CategoryCarouselProps) {
               }}
             >
               {services.map((service, index) => (
-                <CategoryCard key={index} cat={service} />
+                <div key={index} className="category-card">
+                  <CategoryCard cat={service} />
+                </div>
               ))}
             </div>
           </div>
