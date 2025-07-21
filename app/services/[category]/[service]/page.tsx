@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input"
 import { QuoteRequestModal } from "@/components/quote/QuoteRequestModal"
 import Script from "next/script"
 import Loading from "@/app/loading"
+import ReviewAddModal from "@/components/review-add-modal"
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
 interface ServiceDetailPageProps {
@@ -32,6 +33,38 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
   const [selectedOptions, setSelectedOptions] = useState<any[]>([])
   const [selectedAddOns, setSelectedAddOns] = useState<number[]>([])
   const [quoteModalOpen, setQuoteModalOpen] = useState(false)
+  const [showReviewModal, setShowReviewModal] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setIsLoggedIn(!!localStorage.getItem('token'))
+    }
+  }, [])
+
+  const handleReviewSubmit = async (formData: FormData) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/review`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token') || ''}`
+        },
+        body: formData
+      })
+      const data = await res.json().catch(() => ({}))
+      if (res.status === 200) {
+        sessionStorage.setItem("flashMessage", data?.message || "Your review was submitted successfully.")
+        setShowReviewModal(false);
+        setTimeout(() => {
+          window.location.reload();
+        }, 200);
+      } else {
+        alert(data?.message || "Failed to submit review.")
+      }
+    } catch (err: any) {
+      alert(err.message || "Failed to submit review.")
+    }
+  }
   const router = useRouter()
 
   useEffect(() => {
@@ -423,6 +456,22 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
 
             <TabsContent value="reviews" className="mt-6">
               <h2 className="text-2xl font-semibold mb-6">Customer Reviews</h2>
+              {isLoggedIn && (
+                <div className="mb-6">
+                  <button
+                    className="px-4 py-2 bg-amber-600 text-white rounded hover:bg-amber-700 transition-colors"
+                    onClick={() => setShowReviewModal(true)}
+                  >
+                    Add Your Review
+                  </button>
+                  <ReviewAddModal
+                    isOpen={showReviewModal}
+                    onClose={() => setShowReviewModal(false)}
+                    onSubmit={handleReviewSubmit}
+                    service_id={serviceData.id}
+                  />
+                </div>
+              )}
               <div className="space-y-6">
                 {serviceData.reviews.map((review: any, index: number) => (
                   <div key={index} className="border-b pb-6 last:border-b-0">
@@ -449,6 +498,21 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
                           ))}
                         </div>
                         <p className="text-gray-600">{review.comment}</p>
+                        {/* Show review images if present */}
+                        {review.images && review.images.length > 0 && (
+                          <div className="flex gap-2 mt-2">
+                            {review.images.map((img: string, idx: number) => (
+                              <div key={idx} className="relative h-16 w-16 rounded overflow-hidden">
+                                <Image
+                                  src={img || "/placeholder.svg"}
+                                  alt={`review image ${idx + 1}`}
+                                  fill
+                                  className="object-cover"
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>

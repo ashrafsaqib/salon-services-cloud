@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation"
 import Layout from "@/components/layout/layout"
 import { Card, CardContent } from "@/components/ui/card"
 import { ComplaintViewModal } from "@/components/complaint/ComplaintViewModal"
+import ReviewAddModal from "@/components/review-add-modal"
 import { checkToken } from "@/lib/auth"
 import Loading from "../loading"
 
@@ -17,6 +18,7 @@ interface Order {
   payment_method?: string
   customer_name?: string
   staff_name?: string
+  service_staff_id?: number | null
   time_slot_value?: string
   complaint_id?: number | null
 }
@@ -56,9 +58,11 @@ export default function DashboardPage() {
   const [complaintDescription, setComplaintDescription] = useState("")
   const [complaintLoading, setComplaintLoading] = useState(false)
   const [complaintError, setComplaintError] = useState("")
-  // New state for viewing complaint
   const [viewComplaintId, setViewComplaintId] = useState<number | null>(null)
-  // Remove viewComplaintDetail, viewComplaintLoading, chatText, chatLoading
+  const [showReviewModal, setShowReviewModal] = useState(false)
+  const [reviewOrderId, setReviewOrderId] = useState<number | null>(null)
+  const [reviewStaffId, setReviewStaffId] = useState<number | null>(null)
+
   const router = useRouter()
 
   useEffect(() => {
@@ -83,6 +87,32 @@ export default function DashboardPage() {
     }
     fetchOrders()
   }, [router])
+
+  const handleReviewSubmit = async (formData: FormData) => {
+
+    const token = checkToken(router)
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/review`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        body: formData
+      })
+      const data = await res.json().catch(() => ({}))
+      if (res.status === 200) {
+        sessionStorage.setItem("flashMessage", data?.message || "Your review was submitted successfully.")
+        setShowReviewModal(false);
+        setTimeout(() => {
+          window.location.reload();
+        }, 200);
+      } else {
+        alert(data?.message || "Failed to submit review.")
+      }
+    } catch (err: any) {
+      alert(err.message || "Failed to submit review.")
+    }
+  }
 
   const handleCancelOrder = async (orderId: number) => {
     if (!window.confirm("Are you sure you want to cancel this order?")) return
@@ -207,7 +237,6 @@ export default function DashboardPage() {
                         Cancel Order
                       </button>
                     )}
-                    {/* Complaint Button Logic */}
                     {order.complaint_id == null ? (
                       <button
                         className="mt-2 ml-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
@@ -221,6 +250,18 @@ export default function DashboardPage() {
                         onClick={() => setViewComplaintId(order.complaint_id!)}
                       >
                         View Complaint
+                      </button>
+                    )}
+                    {order.status === "Complete" && (
+                      <button
+                        className="mt-2 ml-2 px-4 py-2 bg-amber-600 text-white rounded hover:bg-amber-700 transition-colors"
+                        onClick={() => {
+                          setReviewOrderId(order.id)
+                          setReviewStaffId(order.service_staff_id)
+                          setShowReviewModal(true)
+                        }}
+                      >
+                        Add Review
                       </button>
                     )}
                   </CardContent>
@@ -276,11 +317,21 @@ export default function DashboardPage() {
           </div>
         </div>
       )}
-      {/* View Complaint Modal */}
       <ComplaintViewModal
         complaintId={viewComplaintId}
         open={!!viewComplaintId}
         onClose={() => setViewComplaintId(null)}
+      />
+      <ReviewAddModal
+        isOpen={showReviewModal}
+        onClose={() => {
+          setShowReviewModal(false)
+          setReviewOrderId(null)
+          setReviewStaffId(null)
+        }}
+        onSubmit={handleReviewSubmit}
+        order_id={reviewOrderId}
+        staff_id={reviewStaffId}
       />
     </div>
   )

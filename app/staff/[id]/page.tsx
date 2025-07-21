@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/carousel";
 import Layout from "@/components/layout/layout";
 import Loading from "@/app/loading";
+import ReviewAddModal from "@/components/review-add-modal";
 
 interface StaffReview {
   id: number;
@@ -54,6 +55,38 @@ export default function StaffDetailPage() {
   const [error, setError] = useState(false);
   const [shownServices, setShownServices] = useState(20);
   const [shownReviews, setShownReviews] = useState(5);
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setIsLoggedIn(!!localStorage.getItem('token'));
+    }
+  }, []);
+
+  const handleReviewSubmit = async (formData: FormData) => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/review`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token') || ''}`
+        },
+        body: formData
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 200) {
+        sessionStorage.setItem("flashMessage", data?.message || "Your review was submitted successfully.");
+        setShowReviewModal(false);
+        setTimeout(() => {
+          window.location.reload();
+        }, 200);
+      } else {
+        alert(data?.message || "Failed to submit review.");
+      }
+    } catch (err: any) {
+      alert(err.message || "Failed to submit review.");
+    }
+  };
 
   useEffect(() => {
     if (!staffId) return;
@@ -355,18 +388,35 @@ export default function StaffDetailPage() {
             <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight text-center mb-6">
               Customer Reviews
             </h2>
-
+            {isLoggedIn && (
+              <div className="mb-6 flex justify-center">
+                <button
+                  className="px-4 py-2 bg-amber-600 text-white rounded hover:bg-amber-700 transition-colors"
+                  onClick={() => setShowReviewModal(true)}
+                >
+                  Add Your Review
+                </button>
+                <ReviewAddModal
+                  isOpen={showReviewModal}
+                  onClose={() => setShowReviewModal(false)}
+                  onSubmit={handleReviewSubmit}
+                  staff_id={staff.id}
+                />
+              </div>
+            )}
             {staff.reviews && staff.reviews.length > 0 ? (
               <>
                 <div className="space-y-4">
-                  {staff.reviews.slice(0, shownReviews).map((review) => (
+                  {staff.reviews.slice(0, shownReviews).map((review, idx) => (
                     <div
-                      key={review.id}
+                      key={review.id ? `review-${review.id}` : `review-fallback-${idx}`}
                       className="bg-white rounded-lg shadow-sm p-6"
                     >
                       <div className="flex items-start">
                         <div className="flex-shrink-0 bg-gray-100 rounded-full h-10 w-10 flex items-center justify-center text-gray-500">
-                          {review.user_name.charAt(0).toUpperCase()}
+                          {typeof review.user_name === 'string' && review.user_name.length > 0
+                            ? review.user_name.charAt(0).toUpperCase()
+                            : '?'}
                         </div>
                         <div className="ml-4">
                           <div className="flex items-center">
