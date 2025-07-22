@@ -3,19 +3,32 @@
 import { useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ServiceCard } from "@/components/common/service-card"
-import type { Service } from "@/types"
 
-interface FeaturedServicesProps {
-  featured: {
-    [category: string]: Service[]
-  }
+interface Service {
+  name: string;
+  price: string;
+  discount: string | null;
+  rating: number | null;
+  image: string;
+  description: string;
+  duration: string | null;
+  slug: string;
 }
 
-export function FeaturedServices({ featured }: FeaturedServicesProps) {
-  const categories = Object.keys(featured || {})
-  const [activeTab, setActiveTab] = useState(categories[0] || "")
+interface FeaturedCategory {
+  name: string;
+  slug: string;
+  services: Service[];
+}
 
-  if (!featured || categories.length === 0) return null
+interface FeaturedServicesProps {
+  featured: FeaturedCategory[];
+}
+
+
+export function FeaturedServices({ featured }: FeaturedServicesProps) {
+  if (!featured || featured.length === 0) return null;
+  const [activeTab, setActiveTab] = useState(featured[0]?.slug || "");
 
   return (
     <section className="py-16 bg-gray-50">
@@ -29,29 +42,29 @@ export function FeaturedServices({ featured }: FeaturedServicesProps) {
           {/* Mobile-friendly tabs with horizontal scroll */}
           <div className="overflow-x-auto scrollbar-hide mb-8">
             <TabsList className="inline-flex min-w-max mx-auto bg-white border border-gray-200 p-1 rounded-lg">
-              {categories.map((category) => (
+              {featured.map((category) => (
                 <TabsTrigger
-                  key={category}
-                  value={category}
+                  key={category.slug}
+                  value={category.slug}
                   className="px-4 py-2 text-sm font-medium whitespace-nowrap data-[state=active]:bg-rose-600 data-[state=active]:text-white"
                 >
-                  {category}
+                  {category.name}
                 </TabsTrigger>
               ))}
             </TabsList>
           </div>
 
-          {categories.map((category) => (
-            <TabsContent key={category} value={category} className="mt-0">
+          {featured.map((category) => (
+            <TabsContent key={category.slug} value={category.slug} className="mt-0">
               <div
                 className={`grid gap-6 ${
-                  featured[category].length === 1
+                  category.services.length === 1
                     ? "grid-cols-1 justify-items-center max-w-md mx-auto"
                     : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
                 }`}
               >
-                {featured[category].services.map((service, index) => (
-                  <ServiceCard key={index} service={service} />
+                {category.services.map((service, index) => (
+                  <ServiceCard key={service.slug || index} service={service} />
                 ))}
               </div>
             </TabsContent>
@@ -59,5 +72,5 @@ export function FeaturedServices({ featured }: FeaturedServicesProps) {
         </Tabs>
       </div>
     </section>
-  )
+  );
 }
