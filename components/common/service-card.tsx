@@ -18,7 +18,6 @@ export function ServiceCard( {service}: ServiceCardProps) {
     rating,
     image,
     slug,
-    category,
     description,
     duration,
   } = service
@@ -48,7 +47,7 @@ export function ServiceCard( {service}: ServiceCardProps) {
             <div className="text-gray-600 mb-4" dangerouslySetInnerHTML={{ __html: description }} />
           )}
 
-          {(duration || category) && (
+          {(duration) && (
             <div className="flex items-center gap-4 mb-4 text-sm text-gray-500">
               {duration && (
                 <div className="flex items-center">
@@ -88,7 +87,6 @@ export function ServiceCard( {service}: ServiceCardProps) {
             )}
             <BookButton
               service={service}
-              category={category}
               className="bg-rose-600 hover:bg-rose-700"
             >
               Book Now

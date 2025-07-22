@@ -201,14 +201,12 @@ export function ServiceSelectionStep({ selectedServices = [], onServiceSelect, i
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {services.map((service) => {
           const isSelected = selectedServices.some((s) => s.id === service.id)
-          const hasOptions = Array.isArray((service as any).options) && (service as any).options.length > 0;
-          const isQuote = Boolean((service as any).quote);
           return (
             <Card
               key={service.id}
               className={`cursor-pointer transition-all hover:shadow-lg ${isSelected ? "ring-2 ring-rose-500 bg-rose-50" : "hover:shadow-md"}`}
               onClick={() => {
-                if ((hasOptions || isQuote) && service.slug) {
+                if ((service.hasOptionsOrQuote) && service.slug) {
                   router.push(`/services/${service.slug}`);
                   return;
                 }
