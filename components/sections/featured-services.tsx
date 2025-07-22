@@ -50,7 +50,7 @@ export function FeaturedServices({ featured }: FeaturedServicesProps) {
                     : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
                 }`}
               >
-                {featured[category].map((service, index) => (
+                {featured[category].services.map((service, index) => (
                   <ServiceCard key={index} service={service} />
                 ))}
               </div>
