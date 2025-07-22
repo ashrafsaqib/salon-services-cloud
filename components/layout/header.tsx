@@ -215,10 +215,10 @@ export function Header({ topPages = [] }: { topPages?: Array<{ name: string; slu
             </button>
             {/* Slide-in Categories Menu (desktop trigger) */}
             {/* ...existing nav links... */}
-            <Link href="/services/package" className="text-gray-600 hover:text-gray-900">
+            <Link href="/category/package" className="text-gray-600 hover:text-gray-900">
               Packages
             </Link>
-            <Link href="/services/beauty-add-on" className="text-gray-600 hover:text-gray-900">
+            <Link href="/category/beauty-add-on" className="text-gray-600 hover:text-gray-900">
               Beauty Add-Ons
             </Link>
             <div
@@ -340,14 +340,14 @@ export function Header({ topPages = [] }: { topPages?: Array<{ name: string; slu
       <ul className="space-y-4">
         {categories.map((cat) => (
           <li key={cat.id}>
-            <Link href={`/services/${cat.slug}`} className="flex items-center gap-3 group">
+            <Link href={`/category/${cat.slug}`} className="flex items-center gap-3 group">
               <span className="font-medium text-gray-900 group-hover:text-rose-600">{cat.title}</span>
             </Link>
             {cat.subcategories && cat.subcategories.length > 0 && (
               <ul className="ml-8 mt-2 space-y-2">
                 {cat.subcategories.map((sub) => (
                   <li key={sub.id}>
-                    <Link href={`/services/${sub.href}`} className="flex items-center gap-2 text-sm text-gray-700 hover:text-rose-600">
+                    <Link href={`/category/${sub.href}`} className="flex items-center gap-2 text-sm text-gray-700 hover:text-rose-600">
                       {sub.title}
                     </Link>
                   </li>
@@ -362,8 +362,8 @@ export function Header({ topPages = [] }: { topPages?: Array<{ name: string; slu
     {/* Mobile-only nav links */}
     {isMobile && (
       <div className="mt-8 border-t pt-6 space-y-4">
-        <Link href="/services/package" className="block text-gray-600 hover:text-gray-900 text-lg">Packages</Link>
-        <Link href="/services/beauty-add-on" className="block text-gray-600 hover:text-gray-900 text-lg">Beauty Add-Ons</Link>
+        <Link href="/category/package" className="block text-gray-600 hover:text-gray-900 text-lg">Packages</Link>
+        <Link href="/category/beauty-add-on" className="block text-gray-600 hover:text-gray-900 text-lg">Beauty Add-Ons</Link>
         <Link href="/faq" className="block text-gray-600 hover:text-gray-900 text-lg">FAQs</Link>
         <Link href="/book" className="block text-gray-600 hover:text-gray-900 text-lg">Book Now</Link>
         <Link href="/info/contact-us" className="block text-gray-600 hover:text-gray-900 text-lg">Contact</Link>

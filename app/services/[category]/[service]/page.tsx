@@ -130,11 +130,11 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
               Home
             </Link>
             <ChevronRight className="h-4 w-4 mx-1" />
-            <Link href="/services" className="hover:text-gray-900">
+            <Link href="/category" className="hover:text-gray-900">
               Services
             </Link>
             <ChevronRight className="h-4 w-4 mx-1" />
-            <Link href={`/services/${category}`} className="hover:text-gray-900">
+            <Link href={`/category/${category}`} className="hover:text-gray-900">
               {category
                 .split("-")
                 .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
@@ -416,7 +416,7 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
                               }
                             }}
                           /> */}
-                          <Link href={`/services/${category}/${related.slug}`} className="flex items-center flex-1 min-w-0">
+                          <Link href={`/service/${related.slug}`} className="flex items-center flex-1 min-w-0">
                             <div className="relative h-16 w-16 rounded overflow-hidden flex-shrink-0">
                               <Image
                                 src={related.image || "/placeholder.svg"}

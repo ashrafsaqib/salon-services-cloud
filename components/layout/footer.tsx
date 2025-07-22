@@ -99,7 +99,7 @@ export function Footer({
               {bottomCategories.map((cat) => (
                 <li key={cat.slug}>
                   <Link
-                    href={`/services/${cat.slug}`}
+                    href={`/category/${cat.slug}`}
                     className="text-gray-400 hover:text-white"
                   >
                     {cat.title}

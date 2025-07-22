@@ -207,7 +207,7 @@ export function ServiceSelectionStep({ selectedServices = [], onServiceSelect, i
               className={`cursor-pointer transition-all hover:shadow-lg ${isSelected ? "ring-2 ring-rose-500 bg-rose-50" : "hover:shadow-md"}`}
               onClick={() => {
                 if ((service.hasOptionsOrQuote) && service.slug) {
-                  router.push(`/services/${service.slug}`);
+                  router.push(`/service/${service.slug}`);
                   return;
                 }
                 handleServiceToggle(service);
@@ -266,7 +266,7 @@ export function ServiceSelectionStep({ selectedServices = [], onServiceSelect, i
                   className="mt-2 w-full bg-rose-600 hover:bg-rose-700"
                   onClick={e => {
                     if ((hasOptions || isQuote) && service.slug) {
-                      router.push(`/services/${service.slug}`);
+                      router.push(`/service/${service.slug}`);
                       return;
                     }
                     e.stopPropagation()

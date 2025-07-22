@@ -12,7 +12,7 @@ export function CategoryCard({ cat }: CategoryCardProps) {
 
   return (
     <Card className="flex-shrink-0 w-80 hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
-      <Link href={'/services/'+href}>
+      <Link href={'/category/'+href}>
         <div className="h-48 bg-gray-200 relative">
           <Image src={image || "/placeholder.svg"} alt={title} fill className="object-cover" />
           {popular && (
