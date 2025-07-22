@@ -376,8 +376,6 @@ export function Header({ topPages = [] }: { topPages?: Array<{ name: string; slu
             <>
               <Link href="/login" className="block px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50">Login</Link>
               <Link href="/register" className="block px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50">Create Account</Link>
-              <Link href="https://partner.lipslay.com/customer-login" className="block px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50">Affiliate</Link>
-              <Link href="https://partner.lipslay.com/customer-login" className="block px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50">Partner</Link>
             </>
           ) : (
             <>
