@@ -156,7 +156,7 @@ export function SearchBar({ placeholder = "Search for services...", className = 
                   <div key={service.id} className="block hover:bg-gray-50 transition-colors">
                     <div className="p-4 flex items-center space-x-4">
                       <Link
-                        href={`/services/${service.slug}`}
+                        href={`/service/${service.slug}`}
                         onClick={handleResultClick}
                         className="flex items-center space-x-4 flex-1 min-w-0"
                       >

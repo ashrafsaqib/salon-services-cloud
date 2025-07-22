@@ -22,7 +22,7 @@ export function ServiceCard( {service}: ServiceCardProps) {
     duration,
   } = service
   return (
-    <Link href={'/services/'+slug}>
+    <Link href={'/service/'+slug}>
       <Card className="hover:shadow-lg transition-shadow h-full cursor-pointer">
         <div className="h-48 bg-gray-200 relative">
           <Image

@@ -76,30 +76,13 @@ export function HeroSection() {
                 Book Your Service
               </Button>
             </Link>
-            <Link href="/services">
+            <Link href="/category">
               <Button className="bg-white/20 backdrop-blur-sm border-2 border-white/40 text-white hover:bg-white/30 hover:border-white/60 h-14 px-8 text-lg font-semibold rounded-full transition-all duration-300">
                 <span className="mr-2">🔍</span>
                 Browse Services
               </Button>
             </Link>
           </div>
-
-          {/* Service Categories Preview */}
-          {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
-            {[
-              { icon: "💇‍♀️", name: "Hair & Beauty", href: "/services/ladies-salon" },
-              { icon: "🧔‍♂️", name: "Men's Grooming", href: "/services/gents-salon" },
-              { icon: "🚗", name: "Auto Care", href: "/services/automotive" },
-              { icon: "💆‍♀️", name: "Spa & Wellness", href: "/services/spa-wellness" },
-            ].map((service, index) => (
-              <Link href={service.href} key={index}>
-                <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 text-center hover:bg-white/20 transition-all duration-300 cursor-pointer">
-                  <div className="text-2xl mb-2">{service.icon}</div>
-                  <div className="text-white text-sm font-medium">{service.name}</div>
-                </div>
-              </Link>
-            ))}
-          </div> */}
         </div>
       </div>
 

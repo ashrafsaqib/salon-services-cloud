@@ -81,7 +81,7 @@ export function CategoryCarousel({ services }: CategoryCarouselProps) {
         </div>
 
         <div className="text-center mt-10">
-          <Link href="/services">
+          <Link href="/category">
             <Button className="bg-rose-600 hover:bg-rose-700">
               View All Services
               <ChevronRight className="ml-2 h-4 w-4" />

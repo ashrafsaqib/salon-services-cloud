@@ -37,7 +37,7 @@ export function StaffCard({ id, name, role, experience, rating, specialties, ima
             </span>
           ))}
         </div>
-        <Link href={`/staff/${id}`} passHref legacyBehavior>
+        <Link href={`/staffProfile/${id}`} passHref legacyBehavior>
           <Button variant="outline" className="text-rose-600 border-rose-600 hover:bg-rose-50 w-full" asChild>
             <a>View Profile</a>
           </Button>
