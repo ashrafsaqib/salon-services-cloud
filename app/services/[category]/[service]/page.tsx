@@ -365,40 +365,11 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
                                     options: selectedOptions.map(o => ({ id: o.id, name: o.option_name })),
                                     addOns: selectedAddOns
                                   };
-
-                                  // Add selected add-ons as separate entries
-                                  let addOnEntries: any[] = [];
-                                  if (serviceData.addOns && Array.isArray(serviceData.addOns) && selectedAddOns.length > 0) {
-                                    addOnEntries = serviceData.addOns
-                                      .filter((related: any) => selectedAddOns.includes(related.id))
-                                      .map((related: any) => ({
-                                        service: {
-                                          id: related.id,
-                                          name: related.name,
-                                          image: related.image,
-                                          price: related.price,
-                                          discount: related.discount,
-                                          duration: related.duration,
-                                        },
-                                        options: [],
-                                        addOns: []
-                                      }));
-                                  }
-
-                                  // Remove any previous entries for these add-ons to avoid duplicates
-                                  const addOnIds = addOnEntries.map(e => e.service.id);
-                                  let filteredStored = stored.filter((s: any) =>
-                                    s.service.id !== serviceData.id && !addOnIds.includes(s.service.id)
-                                  );
-
-                                  // Add/replace main service entry
-                                  filteredStored = idx > -1
-                                    ? filteredStored.concat([newEntry])
-                                    : filteredStored.concat([newEntry]);
-
-                                  // Add add-on entries
-                                  const updatedServices = filteredStored.concat(addOnEntries);
-
+                                  
+                                  const updatedServices = idx > -1 
+                                    ? stored.map((s, i) => i === idx ? newEntry : s)
+                                    : [...stored, newEntry];
+                                    
                                   setStoredServices(updatedServices);
                                   router.push("/book");
                                 }
@@ -433,21 +404,18 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
                       <div className="space-y-4">
                       {serviceData.addOns.map((related: any) => (
                         <div key={related.id} className="flex items-center p-3 border rounded-lg hover:shadow-md transition-shadow">
-                          {/* Only show checkbox if not quote and add-on does not have options or quote */}
-                          {serviceData.quote !== true && !related.hasOptionsOrQuote && (
-                            <input
-                              type="checkbox"
-                              className="mr-3 w-5 h-5 accent-rose-600"
-                              checked={selectedAddOns.includes(related.id)}
-                              onChange={e => {
-                                if (e.target.checked) {
-                                  setSelectedAddOns(prev => [...prev, related.id])
-                                } else {
-                                  setSelectedAddOns(prev => prev.filter(id => id !== related.id))
-                                }
-                              }}
-                            />
-                          )}
+                          {/* <input
+                            type="checkbox"
+                            className="mr-3 w-5 h-5 accent-rose-600"
+                            checked={selectedAddOns.includes(related.id)}
+                            onChange={e => {
+                              if (e.target.checked) {
+                                setSelectedAddOns(prev => [...prev, related.id])
+                              } else {
+                                setSelectedAddOns(prev => prev.filter(id => id !== related.id))
+                              }
+                            }}
+                          /> */}
                           <Link href={`/services/${category}/${related.slug}`} className="flex items-center flex-1 min-w-0">
                             <div className="relative h-16 w-16 rounded overflow-hidden flex-shrink-0">
                               <Image

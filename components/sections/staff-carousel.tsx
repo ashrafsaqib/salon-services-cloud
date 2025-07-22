@@ -10,7 +10,23 @@ interface StaffCarouselProps {
 }
 
 export function StaffCarousel({ staff }: StaffCarouselProps) {
-  if (!staff || staff.length === 0) return null // Don't show if no staff
+  const scrollContainer = (direction: "left" | "right") => {
+    const container = document.getElementById("staff-carousel")
+    if (container) {
+      const firstCard = container.querySelector(".staff-card-wrapper") as HTMLElement
+      if (firstCard) {
+        const cardWidth = firstCard.offsetWidth
+        const gap = 24 // gap-6 = 24px
+        const scrollAmount = cardWidth + gap
+        container.scrollBy({
+          left: direction === "left" ? -scrollAmount : scrollAmount,
+          behavior: "smooth",
+        })
+      }
+    }
+  }
+
+  if (!staff || staff.length === 0) return null
 
   return (
     <section className="py-16 bg-gray-50">
@@ -24,47 +40,40 @@ export function StaffCarousel({ staff }: StaffCarouselProps) {
 
         {/* Carousel Container */}
         <div className="relative">
-          {/* Left Arrow */}
+          {/* Left Arrow - Hidden on mobile when not needed */}
           <button
-            onClick={() => {
-              const container = document.getElementById("staff-carousel")
-              if (container) {
-                container.scrollBy({ left: -320, behavior: "smooth" })
-              }
-            }}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-3 hover:bg-gray-50 transition-colors border"
+            onClick={() => scrollContainer("left")}
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-2 sm:p-3 hover:bg-gray-50 transition-colors border hidden sm:block"
             aria-label="Previous staff"
           >
-            <ChevronLeft className="w-6 h-6 text-gray-600" />
+            <ChevronLeft className="w-4 h-4 sm:w-6 sm:h-6 text-gray-600" />
           </button>
 
-          {/* Right Arrow */}
+          {/* Right Arrow - Hidden on mobile when not needed */}
           <button
-            onClick={() => {
-              const container = document.getElementById("staff-carousel")
-              if (container) {
-                container.scrollBy({ left: 320, behavior: "smooth" })
-              }
-            }}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-3 hover:bg-gray-50 transition-colors border"
+            onClick={() => scrollContainer("right")}
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-2 sm:p-3 hover:bg-gray-50 transition-colors border hidden sm:block"
             aria-label="Next staff"
           >
-            <ChevronRight className="w-6 h-6 text-gray-600" />
+            <ChevronRight className="w-4 h-4 sm:w-6 sm:h-6 text-gray-600" />
           </button>
 
           {/* Scrolling Container */}
-          <div className="mx-12">
+          <div className="sm:mx-12">
             <div
               id="staff-carousel"
-              className="flex overflow-x-auto scrollbar-hide gap-6 pb-4 scroll-smooth"
+              className={`flex overflow-x-auto scrollbar-hide gap-6 pb-4 scroll-smooth ${
+                staff.length === 1 ? "justify-center" : "justify-start"
+              }`}
               style={{
                 scrollbarWidth: "none",
                 msOverflowStyle: "none",
-                WebkitScrollbar: { display: "none" },
               }}
             >
               {staff.map((staffMember, index) => (
-                <StaffCard key={index} {...staffMember} />
+                <div key={index} className="staff-card-wrapper flex-shrink-0">
+                  <StaffCard {...staffMember} />
+                </div>
               ))}
             </div>
           </div>
