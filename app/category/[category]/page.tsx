@@ -10,9 +10,9 @@ export async function generateMetadata({ params }: { params: { category: string 
   const categoryData = await res.json()
   
   return {
-    title: `${categoryData.meta_title || categoryData.title} | Lipslay Marketplace`,
-    description: categoryData.meta_description || categoryData.description,
-    keywords: categoryData.meta_keywords || undefined,
+    title: `${categoryData.meta_title ?? categoryData.title} | Lipslay Marketplace`,
+    description: categoryData.meta_description ?? categoryData.description,
+    keywords: categoryData.meta_keywords ?? undefined,
   }
 }
 
