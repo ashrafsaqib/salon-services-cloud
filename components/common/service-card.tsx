@@ -1,9 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
-import { Star, Clock, MapPin, Shield } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Star, Clock, MapPin } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
-import { BookButton } from "@/components/ui/book-button"
 import type { Service } from "@/types"
 
 export interface ServiceCardProps {
@@ -62,36 +60,6 @@ export function ServiceCard( {service}: ServiceCardProps) {
             </div>
           )}
 
-          {/* {features && features.length > 0 && (
-            <div className="mb-4">
-              <h4 className="font-medium mb-2">What's included:</h4>
-              <ul className="text-sm text-gray-600 space-y-1">
-                {features.map((feature, idx) => (
-                  <li key={idx} className="flex items-center">
-                    <Shield className="h-3 w-3 text-green-500 mr-2" />
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )} */}
-
-          {/* <div className="flex justify-between items-center">
-            {discount ? (
-              <>
-                <span className="text-xl font-semibold text-gray-400 line-through mr-2">{price}</span>
-                <span className="text-2xl font-bold text-rose-600">{discount}</span>
-              </>
-            ) : (
-              <span className="text-2xl font-bold text-rose-600">{price}</span>
-            )}
-            <BookButton
-              service={service}
-              className="bg-rose-600 hover:bg-rose-700"
-            >
-              Book Now
-            </BookButton>
-          </div> */}
         </CardContent>
       </Card>
     </Link>
