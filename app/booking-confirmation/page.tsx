@@ -187,7 +187,7 @@ export default function BookingConfirmationPage() {
         ))}
 
         {/* Action Buttons */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <Button variant="outline" className="flex items-center justify-center">
             <Download className="h-4 w-4 mr-2" />
             Download Receipt
@@ -200,7 +200,7 @@ export default function BookingConfirmationPage() {
             <MessageCircle className="h-4 w-4 mr-2" />
             Contact Support
           </Button>
-        </div>
+        </div> */}
 
         {/* Next Steps */}
         <Card>
