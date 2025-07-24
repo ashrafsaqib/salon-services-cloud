@@ -214,7 +214,13 @@ export const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-md sm:max-w-lg w-full">
+      <DialogContent
+        className="max-w-md sm:max-w-lg w-full"
+        style={{
+          maxHeight: '90vh',
+          overflowY: 'auto',
+        }}
+      >
         <DialogHeader>
           <DialogTitle className="text-xl font-bold text-gray-800">
             Request a Quote
