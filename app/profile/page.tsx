@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import PhoneInputWithCountry from "@/components/ui/phone-input-with-country"
 import { useRouter } from "next/navigation"
-import { checkToken } from "@/lib/auth"
+import { useAuthExpiry } from "@/hooks/use-auth-expiry"
 
 export default function EditProfilePage() {
   const [form, setForm] = useState({
@@ -25,10 +25,6 @@ export default function EditProfilePage() {
   const router = useRouter()
 
   useEffect(() => {
-    if (!checkToken(router)) return;
-  }, [router])
-
-  useEffect(() => {
     // Fetch user profile (replace with real API and auth)
     const fetchProfile = async () => {
       setIsLoading(true)
@@ -36,6 +32,9 @@ export default function EditProfilePage() {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/getprofile`, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
         })
+        if (res.status === 401 || res.status === 403) {
+          useAuthExpiry(router);
+        }
         if (!res.ok) throw new Error("Failed to fetch profile")
         const data = await res.json()
         setForm({
@@ -61,7 +60,6 @@ export default function EditProfilePage() {
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    if (!checkToken(router)) return;
     e.preventDefault()
     setError("")
     setSuccess("")
@@ -82,6 +80,9 @@ export default function EditProfilePage() {
           gender: form.gender
         })
       })
+      if (res.status === 401 || res.status === 403) {
+        useAuthExpiry(router);
+      }
       if (!res.ok) throw new Error("Profile update failed")
         localStorage.setItem("user_name", String(form.name));
         localStorage.setItem("user_email", String(form.email));

@@ -63,7 +63,6 @@ export default function LoginPage() {
         localStorage.setItem("user_whatsapp", String(data.user.whatsapp))
         localStorage.setItem("user_id", String(data.user.id))
         localStorage.setItem("user", JSON.stringify(data.user))
-        localStorage.setItem("login_expiry", String(Date.now() + 3600 * 1000));
       }
       router.push("/dashboard")
     } catch (err: any) {

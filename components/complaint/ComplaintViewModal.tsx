@@ -2,9 +2,9 @@
 
 import React, { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
-import { checkToken } from "@/lib/auth"
 import { useRouter } from "next/navigation"
 import Loading from "@/app/loading"
+import { useAuthExpiry } from "@/hooks/use-auth-expiry"
 
 interface Complaint {
   id: number
@@ -43,14 +43,19 @@ export const ComplaintViewModal: React.FC<ComplaintViewModalProps> = ({ complain
   const [chatText, setChatText] = useState("")
   const [chatLoading, setChatLoading] = useState(false)
   const router = useRouter()
+
   useEffect(() => {
     if (!open || !complaintId) return
     setLoading(true)
     setComplaintDetail(null)
-    const token = checkToken(router)
     fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/complaints/${complaintId}`,
-      { headers: { Authorization: `Bearer ${token}` } })
-      .then(res => res.json())
+      { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } })
+      .then(res => {
+        if (res.status === 401 || res.status === 403) {
+          useAuthExpiry(router)
+        }
+        return res.json();
+      })
       .then(data => setComplaintDetail(data))
       .catch(() => setComplaintDetail(null))
       .finally(() => setLoading(false))
@@ -60,9 +65,9 @@ export const ComplaintViewModal: React.FC<ComplaintViewModalProps> = ({ complain
     e.preventDefault()
     if (!complaintId || !chatText.trim()) return
     setChatLoading(true)
-    const token = checkToken(router)
+    const token = localStorage.getItem("token")
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/complaints/chat`, {
+      const chatRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/complaints/chat`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -70,11 +75,19 @@ export const ComplaintViewModal: React.FC<ComplaintViewModalProps> = ({ complain
         },
         body: JSON.stringify({ complaint_id: complaintId, text: chatText })
       })
+      if (chatRes.status === 401 || chatRes.status === 403) {
+        useAuthExpiry(router)
+        return
+      }
       setChatText("")
       // Reload complaint detail/chat
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/complaints/${complaintId}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
+      if (res.status === 401 || res.status === 403) {
+        useAuthExpiry(router)
+        return
+      }
       const data = await res.json()
       setComplaintDetail(data)
     } catch {

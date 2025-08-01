@@ -6,8 +6,8 @@ import Layout from "@/components/layout/layout"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { checkToken } from "@/lib/auth"
 import Loading from "../loading"
+import { useAuthExpiry } from "@/hooks/use-auth-expiry"
 
 export default function AddressesPage() {
   const [addresses, setAddresses] = useState([])
@@ -50,6 +50,9 @@ export default function AddressesPage() {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/addresses`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       })
+      if (res.status === 401 || res.status === 403) {
+        useAuthExpiry(router);
+      }
       if (!res.ok) throw new Error("Failed to fetch addresses")
       const data = await res.json()
       setAddresses(data)
@@ -61,7 +64,6 @@ export default function AddressesPage() {
   }
 
   useEffect(() => {
-    if (!checkToken(router)) return;
     fetchAddresses()
   }, [router])
 
@@ -71,7 +73,6 @@ export default function AddressesPage() {
   }
 
   const handleFormSubmit = async (e: React.FormEvent) => {
-    if (!checkToken(router)) return;
     e.preventDefault()
     setFormError("")
     setFormLoading(true)
@@ -86,6 +87,9 @@ export default function AddressesPage() {
         },
         body: JSON.stringify(payload)
       })
+      if (res.status === 401 || res.status === 403) {
+        useAuthExpiry(router);
+      }
       if (!res.ok) throw new Error("Failed to save address")
       setShowForm(false)
       setEditingId(null)
@@ -121,7 +125,6 @@ export default function AddressesPage() {
   }
 
   const handleDelete = async (id: number) => {
-    if (!checkToken(router)) return;
     if (!window.confirm("Are you sure you want to delete this address?")) return
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/deleteaddress`, {
@@ -132,6 +135,9 @@ export default function AddressesPage() {
         },
         body: JSON.stringify({ address_id: id })
       })
+      if (res.status === 401 || res.status === 403) {
+        useAuthExpiry(router);
+      }
       if (!res.ok) throw new Error("Failed to delete address")
       await fetchAddresses()
     } catch (err: any) {

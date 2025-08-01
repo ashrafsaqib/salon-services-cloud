@@ -11,9 +11,9 @@ import {
   Info,
 } from "lucide-react";
 import Layout from "@/components/layout/layout"
-import { checkToken } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import Loading from "@/app/loading";
+import { useAuthExpiry } from "@/hooks/use-auth-expiry";
 
 interface QuoteOption {
   id: number;
@@ -47,13 +47,15 @@ export default function QuoteDetailPage() {
   
   useEffect(() => {
     if (!id) return;
-    const token = checkToken(router)
     fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/quote/${id}`, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     })
       .then((res) => {
+        if (res.status === 401 || res.status === 403) {
+          useAuthExpiry(router);
+        }
         if (!res.ok) throw new Error("Failed to fetch quote detail");
         return res.json();
       })

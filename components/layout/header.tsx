@@ -1,6 +1,5 @@
 "use client"
 import React, { useState, useEffect, useRef } from "react"
-import { useAuthExpiry } from "@/hooks/use-auth-expiry"
 import Image from "next/image"
 import Link from "next/link"
 import { ChevronDown, MapPin, Search } from "lucide-react"
@@ -37,7 +36,6 @@ function FlashMessage() {
 }
 
 export function Header({ topPages = [] }: { topPages?: Array<{ name: string; slug: string }> }) {
-  useAuthExpiry();
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false)

@@ -1,9 +1,9 @@
 "use client";
 import React, { useEffect, useState, useRef } from "react";
 import { MapPin, Paperclip } from "lucide-react";
-import { checkToken } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import Loading from "@/app/loading";
+import { useAuthExpiry } from "@/hooks/use-auth-expiry";
 
 interface BidChatModalProps {
   bidId: number | null;
@@ -23,15 +23,17 @@ export function BidChatModal({ bidId, open, onClose }: BidChatModalProps) {
 
   const fetchChat = () => {
     if (!bidId) return;
-    const token = checkToken(router)
     setLoading(true);
     setError("");
     fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/bid/${bidId}/chat`, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     })
       .then((res) => {
+        if (res.status === 401 || res.status === 403) {
+          useAuthExpiry(router);
+        }
         if (!res.ok) throw new Error("Failed to fetch chat");
         return res.json();
       })
@@ -57,7 +59,6 @@ export function BidChatModal({ bidId, open, onClose }: BidChatModalProps) {
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!message.trim() || !bidId) return;
-    const token = checkToken(router)
     setSending(true);
     try {
       const res = await fetch(
@@ -66,11 +67,14 @@ export function BidChatModal({ bidId, open, onClose }: BidChatModalProps) {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
           body: JSON.stringify({ message }),
         }
       );
+      if (res.status === 401 || res.status === 403) {
+        useAuthExpiry(router);
+      }
       if (!res.ok) throw new Error("Failed to send message");
       setMessage("");
       fetchChat();
@@ -87,7 +91,6 @@ export function BidChatModal({ bidId, open, onClose }: BidChatModalProps) {
       alert("Geolocation is not supported by your browser");
       return;
     }
-    const token = checkToken(router)
     setSending(true);
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
@@ -99,11 +102,14 @@ export function BidChatModal({ bidId, open, onClose }: BidChatModalProps) {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
               },
               body: JSON.stringify({ message: coords, location: 1 }),
             }
           );
+          if (res.status === 401 || res.status === 403) {
+            useAuthExpiry(router);
+          }
           if (!res.ok) throw new Error("Failed to send location");
           fetchChat();
         } catch (err: any) {
@@ -127,7 +133,6 @@ export function BidChatModal({ bidId, open, onClose }: BidChatModalProps) {
     if (!bidId || sending) return;
     const file = e.target.files?.[0];
     if (!file) return;
-    const token = checkToken(router)
     setSending(true);
     const formData = new FormData();
     formData.append("image", file);
@@ -138,11 +143,14 @@ export function BidChatModal({ bidId, open, onClose }: BidChatModalProps) {
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
           body: formData,
         }
       );
+      if (res.status === 401 || res.status === 403) {
+        useAuthExpiry(router);
+      }
       if (!res.ok) throw new Error("Failed to send image");
       fetchChat();
     } catch (err: any) {

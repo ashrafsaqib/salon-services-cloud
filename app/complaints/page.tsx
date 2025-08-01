@@ -6,8 +6,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ComplaintViewModal } from "@/components/complaint/ComplaintViewModal"
 import { useRouter } from "next/navigation"
-import { checkToken } from "@/lib/auth"
 import Loading from "../loading"
+import { useAuthExpiry } from "@/hooks/use-auth-expiry"
 
 interface Complaint {
   id: number
@@ -28,12 +28,17 @@ export default function ComplaintsPage() {
   const router = useRouter()
 
   useEffect(() => {
-    const token = checkToken(router)
     setLoading(true)
     fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/complaints`, {
-      headers: { Authorization: `Bearer ${token}` }
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
     })
-      .then(res => res.json())
+      .then(res => {
+        if (res.status === 401 || res.status === 403) {
+          useAuthExpiry(router);
+        }
+        if (!res.ok) throw new Error("Failed to load complaints");
+        return res.json();
+      })
       .then(data => {
         if (Array.isArray(data)) {
           setComplaints(data)

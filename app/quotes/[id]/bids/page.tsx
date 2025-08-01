@@ -4,8 +4,8 @@ import { useParams, useRouter } from "next/navigation";
 import Layout from "@/components/layout/layout"
 import { RefreshCw } from "lucide-react";
 import { BidChatModal } from "@/components/bid-chat-modal";
-import { checkToken } from "@/lib/auth";
 import Loading from "@/app/loading";
+import { useAuthExpiry } from "@/hooks/use-auth-expiry";
 
 interface Bid {
   id: number;
@@ -29,13 +29,15 @@ export default function QuoteBidsPage() {
 
   useEffect(() => {
     if (!id) return;
-    const token = checkToken(router)
     fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/quote/${id}/bids`, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     })
       .then((res) => {
+        if (res.status === 401 || res.status === 403) {
+          useAuthExpiry(router);
+        }
         if (!res.ok) throw new Error("Failed to fetch bids");
         return res.json();
       })
@@ -51,7 +53,7 @@ export default function QuoteBidsPage() {
 
   const handleConfirm = async (bidId: number) => {
     if (!id) return;
-    const token = checkToken(router)
+    const token = localStorage.getItem("token");
     setConfirming(bidId);
     try {
       const res = await fetch(
@@ -65,6 +67,9 @@ export default function QuoteBidsPage() {
           body: JSON.stringify({ bid_id: bidId }),
         }
       );
+      if (res.status === 401 || res.status === 403) {
+        useAuthExpiry(router);
+      }
       if (!res.ok) throw new Error("Failed to confirm bid");
       // Refresh bids after confirmation
       const data = await res.json();

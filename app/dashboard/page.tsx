@@ -5,8 +5,8 @@ import Layout from "@/components/layout/layout"
 import { Card, CardContent } from "@/components/ui/card"
 import { ComplaintViewModal } from "@/components/complaint/ComplaintViewModal"
 import ReviewAddModal from "@/components/review-add-modal"
-import { checkToken } from "@/lib/auth"
 import Loading from "../loading"
+import { useAuthExpiry } from "@/hooks/use-auth-expiry"
 
 interface Order {
   id: number
@@ -66,16 +66,18 @@ export default function DashboardPage() {
   const router = useRouter()
 
   useEffect(() => {
-    const token = checkToken(router)
     const fetchOrders = async () => {
       setLoading(true)
       setError("")
       try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/orders`, {
           headers: {
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${localStorage.getItem("token")}`
           }
         })
+        if (res.status === 401 || res.status === 403) {
+          useAuthExpiry(router);
+        }
         if (!res.ok) throw new Error("Failed to fetch orders")
         const data = await res.json()
         setOrders(data.orders || [])
@@ -90,12 +92,11 @@ export default function DashboardPage() {
 
   const handleReviewSubmit = async (formData: FormData) => {
 
-    const token = checkToken(router)
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/review`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${localStorage.getItem("token")}`
         },
         body: formData
       })
@@ -116,24 +117,28 @@ export default function DashboardPage() {
 
   const handleCancelOrder = async (orderId: number) => {
     if (!window.confirm("Are you sure you want to cancel this order?")) return
-    const token = checkToken(router)
-    if (!token) return
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/order/cancel`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${localStorage.getItem("token")}`
         },
         body: JSON.stringify({ orderId })
       })
+      if (res.status === 401 || res.status === 403) {
+        useAuthExpiry(router);
+      }
       if (!res.ok) throw new Error("Failed to cancel order")
       // Reload orders
       setLoading(true)
       setError("")
       const ordersRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/orders`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       })
+      if (ordersRes.status === 401 || ordersRes.status === 403) {
+        useAuthExpiry(router);
+      }
       if (!ordersRes.ok) throw new Error("Failed to fetch orders")
       const data = await ordersRes.json()
       setOrders(data.orders || [])
@@ -166,13 +171,12 @@ export default function DashboardPage() {
     }
     setComplaintLoading(true)
     setComplaintError("")
-    const token = checkToken(router)
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/complaints`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${localStorage.getItem("token")}`
         },
         body: JSON.stringify({
           title: complaintTitle,
@@ -180,6 +184,9 @@ export default function DashboardPage() {
           order_id: complaintOrderId
         })
       })
+      if (res.status === 401 || res.status === 403) {
+        useAuthExpiry(router);
+      }
       if (!res.ok) throw new Error("Failed to submit complaint")
       sessionStorage.setItem("flashMessage", "Your complaint has been submitted successfully.")
       router.push("/complaints")
