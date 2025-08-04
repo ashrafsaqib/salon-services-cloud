@@ -59,6 +59,7 @@ export function Header({ topPages = [] }: { topPages?: Array<{ name: string; slu
   }
 
   const [categories, setCategories] = useState<Category[]>([])
+  const [expandedCategoryIds, setExpandedCategoryIds] = useState<number[]>([])
   const [isCategoriesMenuOpen, setIsCategoriesMenuOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const categoriesMenuRef = useRef<HTMLDivElement>(null)
@@ -336,24 +337,48 @@ export function Header({ topPages = [] }: { topPages?: Array<{ name: string; slu
       <div className="text-gray-500">Loading...</div>
     ) : (
       <ul className="space-y-4">
-        {categories.map((cat) => (
-          <li key={cat.id}>
-            <Link href={`/category/${cat.slug}`} className="flex items-center gap-3 group">
-              <span className="font-medium text-gray-900 group-hover:text-rose-600">{cat.title}</span>
-            </Link>
-            {cat.subcategories && cat.subcategories.length > 0 && (
-              <ul className="ml-8 mt-2 space-y-2">
-                {cat.subcategories.map((sub) => (
-                  <li key={sub.id}>
-                    <Link href={`/category/${sub.href}`} className="flex items-center gap-2 text-sm text-gray-700 hover:text-rose-600">
-                      {sub.title}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </li>
-        ))}
+        {categories.map((cat) => {
+          const isExpanded = expandedCategoryIds.includes(cat.id);
+          return (
+            <li key={cat.id}>
+              <div className="flex items-center gap-3 group">
+                <Link href={`/category/${cat.slug}`} className="font-medium text-gray-900 group-hover:text-rose-600">
+                  {cat.title}
+                </Link>
+                {cat.subcategories && cat.subcategories.length > 0 && (
+                  <button
+                    type="button"
+                    aria-label={isExpanded ? "Hide subcategories" : "Show subcategories"}
+                    className={`ml-2 p-1 rounded-full border border-gray-300 bg-white hover:bg-gray-100 transition-colors ${isExpanded ? "text-rose-600" : "text-gray-500"}`}
+                    onClick={() => {
+                      setExpandedCategoryIds(prev =>
+                        isExpanded
+                          ? prev.filter(id => id !== cat.id)
+                          : [...prev, cat.id]
+                      );
+                    }}
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-plus">
+                      <line x1="12" y1="5" x2="12" y2="19" />
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                  </button>
+                )}
+              </div>
+              {isExpanded && cat.subcategories && cat.subcategories.length > 0 && (
+                <ul className="ml-8 mt-2 space-y-2">
+                  {cat.subcategories.map((sub) => (
+                    <li key={sub.id}>
+                      <Link href={`/category/${sub.href}`} className="flex items-center gap-2 text-sm text-gray-700 hover:text-rose-600">
+                        {sub.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          );
+        })}
       </ul>
     )}
 
