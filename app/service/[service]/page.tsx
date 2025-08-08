@@ -4,10 +4,24 @@ import ClientPage from "./client-page"
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
 export async function generateMetadata({ params }: { params: { service: string } }): Promise<Metadata> {
-  const res = await fetch(`${API_BASE_URL}/api/service?query=${encodeURIComponent(params.service)}`)
-  if (!res.ok) return {}
-
-  const serviceData = await res.json()
+  let serviceData = null
+  let zoneId = ''
+  if (typeof window !== 'undefined') {
+    zoneId = localStorage.getItem('selected_zone_id') || ''
+  }
+  try {
+    const jsonFileName = zoneId ? `${params.service}_${zoneId}.json` : `${params.service}.json`
+    const localRes = await fetch(`/jsonCache/services/${jsonFileName}`)
+    if (localRes.ok) {
+      serviceData = await localRes.json()
+    } else {
+      const apiRes = await fetch(`${API_BASE_URL}/api/service?query=${encodeURIComponent(`${params.service}`)}${zoneId ? `&zoneId=${encodeURIComponent(zoneId)}` : ''}`)
+      if (!apiRes.ok) return {}
+      serviceData = await apiRes.json()
+    }
+  } catch {
+    return {}
+  }
 
   return {
     title: `${serviceData.meta_title ?? serviceData.name} | Lipslay Marketplace`,

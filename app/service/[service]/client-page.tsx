@@ -71,15 +71,23 @@ export default function ClientPage({ params }: ServiceDetailPageProps) {
       setLoading(true)
       setError(false)
       try {
-        let zoneId = '';
+        let zoneId = ''
         if (typeof window !== 'undefined') {
-          zoneId = localStorage.getItem('selected_zone_id') || '';
+          zoneId = localStorage.getItem('selected_zone_id') || ''
         }
-        const res = await fetch(
-          `${API_BASE_URL}/api/service?query=${encodeURIComponent(`${service}`)}${zoneId ? `&zoneId=${encodeURIComponent(zoneId)}` : ''}`
-        )
-        if (!res.ok) throw new Error("Service not found")
-        const data = await res.json()
+        let data = null
+        try {
+          const jsonFileName = zoneId ? `${service}_${zoneId}.json` : `${service}.json`
+          const localRes = await fetch(`/jsonCache/services/${jsonFileName}`)
+          if (!localRes.ok) throw new Error('Not found')
+          data = await localRes.json()
+        } catch {
+          const apiRes = await fetch(
+            `${API_BASE_URL}/api/service?query=${encodeURIComponent(`${service}`)}${zoneId ? `&zoneId=${encodeURIComponent(zoneId)}` : ''}`
+          )
+          if (!apiRes.ok) throw new Error("Service not found")
+          data = await apiRes.json()
+        }
         if (!data) throw new Error("No data")
         setServiceData(data)
       } catch (err) {
