@@ -78,7 +78,7 @@ export default function ClientPage({ params }: ServiceDetailPageProps) {
         let data = null
         try {
           const jsonFileName = zoneId ? `${service}_${zoneId}.json` : `${service}.json`
-          const localRes = await fetch(`/jsonCache/services/${jsonFileName}`)
+          const localRes = await fetch(`https://partner.lipslay.com/jsonCache/services/${jsonFileName}`)
           if (!localRes.ok) throw new Error('Not found')
           data = await localRes.json()
         } catch {
