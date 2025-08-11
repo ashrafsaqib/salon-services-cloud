@@ -59,7 +59,16 @@ export function ServiceCard( {service}: ServiceCardProps) {
               </div>
             </div>
           )}
-
+          <div className="flex justify-between items-center">
+            {discount ? (
+              <>
+                <span className="text-xl font-semibold text-gray-400 line-through mr-2">{price}</span>
+                <span className="text-2xl font-bold text-rose-600">{discount}</span>
+              </>
+            ) : (
+              <span className="text-2xl font-bold text-rose-600">{price}</span>
+            )}
+          </div>
         </CardContent>
       </Card>
     </Link>
