@@ -34,6 +34,8 @@ export default function ClientPage({ params }: ServiceDetailPageProps) {
   const [quoteModalOpen, setQuoteModalOpen] = useState(false)
   const [showReviewModal, setShowReviewModal] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [hoveredImage, setHoveredImage] = useState<string | null>(null);
+  const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -266,8 +268,29 @@ export default function ClientPage({ params }: ServiceDetailPageProps) {
 
                 <div>
                   <Card>
-                    <CardContent className="p-6">
+                    <CardContent className="p-6 relative">
                       <h3 className="text-xl font-semibold mb-6">Book This Service</h3>
+                      {hoveredImage && (
+                        <div
+                          className="absolute top-0 left-[-340px] z-50 flex items-center justify-center"
+                          style={{ width: 320, height: 320 }}
+                          onMouseEnter={() => {
+                            if (hoverTimeout) clearTimeout(hoverTimeout);
+                          }}
+                          onMouseLeave={() => {
+                            setHoveredImage(null);
+                          }}
+                        >
+                          <div className="relative w-full h-full bg-white rounded-lg overflow-hidden border-2 border-rose-400 shadow-2xl animate-fade-in pointer-events-auto">
+                            <Image
+                              src={hoveredImage}
+                              alt="Preview"
+                              fill
+                              className="object-contain"
+                            />
+                          </div>
+                        </div>
+                      )}
 
                       <div className="space-y-6">
                         {/* Options Section with Scroll */}
@@ -313,6 +336,31 @@ export default function ClientPage({ params }: ServiceDetailPageProps) {
                                         className="w-4 h-4 text-rose-600 border-gray-300 rounded focus:ring-rose-500"
                                       />
                                     </div>
+                                    {(option.image && option.image !== "null") && (
+                                      <div 
+                                        className="relative group h-10 w-10 flex items-center justify-center rounded overflow-hidden flex-shrink-0 mr-2"
+                                        onMouseEnter={() => {
+                                          if (hoverTimeout) clearTimeout(hoverTimeout);
+                                          setHoveredImage(option.image);
+                                        }}
+                                        onMouseLeave={() => {
+                                          // Add a small delay to allow cursor to move to modal
+                                          const timeout = setTimeout(() => {
+                                            setHoveredImage(null);
+                                          }, 200);
+                                          setHoverTimeout(timeout);
+                                        }}
+                                      >
+                                        <div className="flex items-center justify-center h-full w-full">
+                                          <Image
+                                            src={option.image}
+                                            alt={option.option_name}
+                                            fill
+                                            className="object-cover cursor-pointer transition-transform duration-200 group-hover:scale-105"
+                                          />
+                                        </div>
+                                      </div>
+                                    )}
                                     <div className="flex-1 min-w-0">
                                       <div className="font-medium text-gray-900 truncate">{option.option_name}</div>
                                       <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-gray-600 mt-1">
@@ -328,6 +376,11 @@ export default function ClientPage({ params }: ServiceDetailPageProps) {
                                           </span>
                                         )}
                                       </div>
+                                      {option.option_description && (
+                                        <div className="text-sm text-gray-500">
+                                          {option.option_description}
+                                        </div>
+                                      )}
                                     </div>
                                   </div>
                                 </div>
