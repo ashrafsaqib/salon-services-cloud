@@ -253,9 +253,9 @@ export default function StaffDetailPage() {
           </div>
 
           {/* Available Time Slots Section */}
-          {staff.available_time_slots && staff.available_time_slots.length > 0 && (
-            <div className="mt-4 mb-4">
-              <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight text-center mb-6">Available Time Slots</h2>
+          <div className="mt-4 mb-4">
+            <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight text-center mb-6">Today Available Slots</h2>
+            {staff.available_time_slots && staff.available_time_slots.length > 0 ? (
               <div className="flex flex-wrap gap-4 justify-center py-2">
                 {staff.available_time_slots.map(slot => (
                   <div
@@ -270,8 +270,10 @@ export default function StaffDetailPage() {
                   </div>
                 ))}
               </div>
-            </div>
-          )}
+            ) : (
+              <div className="text-center text-gray-500 text-base py-6">No available timeslot today</div>
+            )}
+          </div>
 
           {/* About Section */}
           {staff.about && (
