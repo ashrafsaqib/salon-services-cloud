@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { Youtube, Facebook, Instagram, Star } from "lucide-react";
 import { CategoryCard } from "@/components/ui/category-card";
@@ -45,11 +45,27 @@ interface StaffDetail {
   images?: string[];
   youtube_videos?: string[];
   order_count?: number;
+  min_order_value?: number; // <-- add this
+  nationality?: string;     // <-- add this
+  available_time_slots?: {
+    id: number;
+    name: string;
+    time_start: string;
+    time_end: string;
+    type: string;
+    date: string | null;
+    status: number;
+    seat: number;
+    end_time_to_sec: number;
+    start_time_to_sec: number;
+  }[];
 }
 
 export default function StaffDetailPage() {
   const params = useParams();
-  const staffId = params?.id;
+  const searchParams = useSearchParams();
+  // Get id from query string
+  const staffId = searchParams.get("id");
   const [staff, setStaff] = useState<StaffDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -161,6 +177,16 @@ export default function StaffDetailPage() {
                     Delivered Orders: {staff.order_count}
                   </span>
                 )}
+                {typeof staff.min_order_value !== "undefined" && (
+                  <span className="inline-block bg-yellow-100 text-yellow-700 px-2 py-1 rounded text-xs">
+                    Min Order: AED {staff.min_order_value}
+                  </span>
+                )}
+                {staff.nationality && (
+                  <span className="inline-block bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs">
+                    Nationality: {staff.nationality}
+                  </span>
+                )}
               </div>
               <div className="flex gap-3 mt-2">
                 {staff.facebook && (
@@ -225,6 +251,27 @@ export default function StaffDetailPage() {
               </div>
             </div>
           </div>
+
+          {/* Available Time Slots Section */}
+          {staff.available_time_slots && staff.available_time_slots.length > 0 && (
+            <div className="mt-4 mb-4">
+              <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight text-center mb-6">Available Time Slots</h2>
+              <div className="flex flex-wrap gap-4 justify-center py-2">
+                {staff.available_time_slots.map(slot => (
+                  <div
+                    key={slot.id}
+                    className="transition-all duration-200 hover:scale-105 hover:shadow-lg bg-gradient-to-br from-blue-50 via-white to-rose-50 border border-blue-200 rounded-xl px-4 py-2 flex flex-col items-center justify-center min-w-[90px] text-xs font-semibold text-blue-700 cursor-pointer"
+                  >
+                    <span className="text-base font-bold text-gray-900 mb-1">{slot.time_start}</span>
+                    <span className="text-[10px] text-gray-500 mb-1">{slot.name}</span>
+                    {slot.type === "Specific" && slot.date ? (
+                      <span className="text-[10px] text-rose-600">{slot.date}</span>
+                    ) : null}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* About Section */}
           {staff.about && (

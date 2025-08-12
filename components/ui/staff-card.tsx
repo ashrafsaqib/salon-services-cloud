@@ -15,7 +15,16 @@ interface StaffCardProps {
   charges?: string
 }
 
+// Utility to slugify staff name
+function slugify(text: string) {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 export function StaffCard({ id, name, role, experience, rating, specialties, image, charges }: StaffCardProps) {
+  const staffSlug = slugify(name);
   return (
     <Card className="flex-shrink-0 w-80 hover:shadow-lg transition-shadow overflow-hidden">
       <div className="h-64 bg-gray-200 relative">
@@ -37,7 +46,7 @@ export function StaffCard({ id, name, role, experience, rating, specialties, ima
             </span>
           ))}
         </div>
-        <Link href={`/staffProfile/${id}`} passHref legacyBehavior>
+        <Link href={`/staffProfile/${staffSlug}?id=${id}`} passHref legacyBehavior>
           <Button variant="outline" className="text-rose-600 border-rose-600 hover:bg-rose-50 w-full" asChild>
             <a>View Profile</a>
           </Button>
