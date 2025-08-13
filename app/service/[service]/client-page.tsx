@@ -34,6 +34,7 @@ export default function ClientPage({ params }: ServiceDetailPageProps) {
   const [quoteModalOpen, setQuoteModalOpen] = useState(false)
   const [showReviewModal, setShowReviewModal] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [additionalImage, setAdditionalImage] = useState<string | null>(null);
   const [hoveredImage, setHoveredImage] = useState<string | null>(null);
   const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout | null>(null);
 
@@ -151,8 +152,9 @@ export default function ClientPage({ params }: ServiceDetailPageProps) {
       {/* Service Hero */}
       <section className="bg-white py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-            <div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+            {/* Service Info Section - now 1/3 width */}
+            <div className="md:col-span-1">
               <div className="flex items-center mb-2">
                 <div className="flex">
                   {[...Array(5)].map((_, i) => (
@@ -191,13 +193,68 @@ export default function ClientPage({ params }: ServiceDetailPageProps) {
               </div>
             </div>
 
-            <div className="relative h-80 rounded-lg overflow-hidden">
-              <Image
-                src={serviceData.image || "/placeholder.svg"}
-                alt={serviceData.name}
-                fill
-                className="object-cover"
-              />
+            {/* Image & Gallery Section - now 2/3 width */}
+            <div className="md:col-span-2 relative flex flex-col md:flex-row h-auto md:h-[36rem]">
+              {/* Main Image */}
+              <div className="relative w-full h-64 md:h-[36rem] rounded-lg overflow-hidden">
+                <Image
+                  src={additionalImage || serviceData.image || "/placeholder.svg"}
+                  alt={serviceData.name}
+                  fill
+                  className="object-cover transition-all duration-200"
+                />
+              </div>
+              {/* Gallery column - moved to right side on desktop, below on mobile */}
+              {serviceData.gallery && serviceData.gallery.length > 0 && (
+                <div className="flex flex-row md:flex-col items-center md:ml-6 w-full md:w-auto h-32 md:h-[36rem] mt-4 md:mt-0">
+                  {/* Scroll Up Button (hidden on mobile) */}
+                  <button
+                    className="hidden md:block mb-2 p-1 rounded-full bg-rose-100 text-rose-700 hover:bg-rose-200 shadow"
+                    onClick={() => {
+                      const el = document.getElementById("gallery-scroll");
+                      if (el) el.scrollBy({ top: -80, behavior: "smooth" });
+                    }}
+                    aria-label="Scroll Up"
+                  >
+                    ▲
+                  </button>
+                  {/* Gallery Images */}
+                  <div
+                    id="gallery-scroll"
+                    className="flex flex-row md:flex-col gap-2 md:gap-4 overflow-x-auto md:overflow-y-auto h-full md:h-[calc(100%-48px)] scrollbar-hide"
+                  >
+                    {[
+                      serviceData.image, // Main image first
+                      ...serviceData.gallery.filter((img: string) => img !== serviceData.image)
+                    ].map((img: string, idx: number) => (
+                      <div
+                        key={idx}
+                        className="relative w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden flex-shrink-0 cursor-pointer transition-all hover:border-2 hover:border-rose-500"
+                        onClick={() => setAdditionalImage(img)}
+                        style={{ background: "#fff" }}
+                      >
+                        <Image
+                          src={img || "/placeholder.svg"}
+                          alt={`Gallery ${idx + 1}`}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  {/* Scroll Down Button (hidden on mobile) */}
+                  <button
+                    className="hidden md:block mt-2 p-1 rounded-full bg-rose-100 text-rose-700 hover:bg-rose-200 shadow"
+                    onClick={() => {
+                      const el = document.getElementById("gallery-scroll");
+                      if (el) el.scrollBy({ top: 80, behavior: "smooth" });
+                    }}
+                    aria-label="Scroll Down"
+                  >
+                    ▼
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -244,25 +301,6 @@ export default function ClientPage({ params }: ServiceDetailPageProps) {
                         ))}
                       </div>
                     </div>
-                  )}
-
-                  {/* Service Gallery section, only if images exist */}
-                  {serviceData.gallery && serviceData.gallery.length > 0 && (
-                    <>
-                      <h3 className="text-xl font-semibold mb-3">Service Gallery</h3>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-                        {serviceData.gallery.map((image: string, index: number) => (
-                          <div key={index} className="relative h-40 rounded-lg overflow-hidden">
-                            <Image
-                              src={image || "/placeholder.svg"}
-                              alt={`${serviceData.name} gallery image ${index + 1}`}
-                              fill
-                              className="object-cover"
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    </>
                   )}
                 </div>
 
