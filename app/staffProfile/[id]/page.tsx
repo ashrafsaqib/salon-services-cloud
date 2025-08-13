@@ -73,6 +73,8 @@ export default function StaffDetailPage() {
   const [shownReviews, setShownReviews] = useState(5);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [galleryModalOpen, setGalleryModalOpen] = useState(false);
+  const [galleryIndex, setGalleryIndex] = useState(0);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -305,28 +307,104 @@ export default function StaffDetailPage() {
               <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight text-center mb-6">
                 Gallery
               </h2>
-              <Carousel className="w-full max-w-5xl mx-auto">
-                <CarouselContent>
-                  {staff.images.map((img, idx) => (
-                    <CarouselItem
-                      key={idx}
-                      className="flex items-center justify-center lg:basis-1/3 md:basis-1/2 basis-full p-2"
+              <div className="flex gap-4 overflow-x-auto pb-4 px-2 custom-scrollbar">
+                {staff.images.map((img, idx) => (
+                  <button
+                    key={idx}
+                    className="flex-shrink-0 relative group overflow-hidden rounded-xl border border-gray-200 shadow-md w-40 h-32"
+                    onClick={() => {
+                      setGalleryIndex(idx);
+                      setGalleryModalOpen(true);
+                    }}
+                  >
+                    <Image
+                      src={img}
+                      alt={`Staff Image ${idx + 1}`}
+                      fill
+                      className="object-cover rounded-xl transform group-hover:scale-110 transition-transform duration-500 ease-out"
+                    />
+                    {/* Glow overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  </button>
+                ))}
+              </div>
+
+              {/* Modal for full image gallery */}
+              {galleryModalOpen && (
+                <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+                  <div className="relative bg-white rounded-2xl shadow-2xl max-w-4xl w-full flex flex-col items-center p-6 animate-fadeIn">
+                    <button
+                      className="absolute top-3 right-3 text-gray-300 hover:text-black text-3xl transition"
+                      onClick={() => setGalleryModalOpen(false)}
                     >
-                      <Image
-                        src={img}
-                        alt={`Staff Image ${idx + 1}`}
-                        width={600}
-                        height={400}
-                        className="rounded-lg object-contain max-h-[350px] w-full"
-                      />
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-                <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 flex bg-white border border-gray-200 shadow-md hover:bg-gray-100 transition rounded-full w-10 h-10 items-center justify-center z-10" />
-                <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 flex bg-white border border-gray-200 shadow-md hover:bg-gray-100 transition rounded-full w-10 h-10 items-center justify-center z-10" />
-              </Carousel>
+                      &times;
+                    </button>
+
+                    {/* Navigation */}
+                    <div className="flex items-center justify-between w-full mb-4">
+                      <button
+                        className="p-3 rounded-full transition disabled:opacity-40"
+                        onClick={() => setGalleryIndex((galleryIndex - 1 + staff.images.length) % staff.images.length)}
+                        disabled={galleryIndex === 0}
+                      >
+                        &#8592;
+                      </button>
+                      <span className="text-white text-sm font-semibold">
+                        {galleryIndex + 1} / {staff.images.length}
+                      </span>
+                      <button
+                        className="p-3 rounded-full transition disabled:opacity-40"
+                        onClick={() => setGalleryIndex((galleryIndex + 1) % staff.images.length)}
+                        disabled={galleryIndex === staff.images.length - 1}
+                      >
+                        &#8594;
+                      </button>
+                    </div>
+
+                    <Image
+                      src={staff.images[galleryIndex]}
+                      alt={`Staff Image ${galleryIndex + 1}`}
+                      width={800}
+                      height={500}
+                      className="rounded-lg object-contain max-h-[70vh] w-full shadow-lg transition-all duration-300"
+                    />
+
+                    {/* Thumbnails */}
+                    <div
+                      className="mt-6 w-full flex justify-center"
+                    >
+                      <div
+                        className="flex gap-2 overflow-x-auto max-w-[600px] px-2 py-1 custom-scrollbar"
+                        style={{ minHeight: 60 }}
+                      >
+                        {staff.images.map((img, idx) => (
+                          <button
+                            key={idx}
+                            className={`focus:outline-none border-2 rounded-lg overflow-hidden transition-all duration-200 flex-shrink-0 w-[70px] h-[50px] ${
+                              idx === galleryIndex
+                                ? "border-pink-500 shadow-lg"
+                                : "border-transparent opacity-70 hover:opacity-100"
+                            }`}
+                            onClick={() => setGalleryIndex(idx)}
+                            style={{ width: 70, height: 50 }}
+                          >
+                            <Image
+                              src={img}
+                              alt={`Thumbnail ${idx + 1}`}
+                              width={70}
+                              height={50}
+                              className="rounded-lg object-cover w-full h-full"
+                            />
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </section>
           )}
+
 
           {/* Media Videos Section */}
           {Array.isArray(staff.youtube_videos) &&
