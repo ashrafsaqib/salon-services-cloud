@@ -7,6 +7,13 @@ interface CategoryCardProps {
   cat: Category
 }
 
+// Helper to trim description to 20 words
+function trimWords(text: string, count: number) {
+  const words = text.split(/\s+/)
+  if (words.length <= count) return text
+  return words.slice(0, count).join(" ") + "…"
+}
+
 export function CategoryCard({ cat }: CategoryCardProps) {
   const { title, description, image, popular, href } = cat
 
@@ -23,7 +30,7 @@ export function CategoryCard({ cat }: CategoryCardProps) {
         </div>
         <CardContent className="p-6 text-center">
           <h3 className="text-xl font-semibold text-gray-800 mb-2">{title}</h3>
-          <p className="text-gray-600 mb-4 text-sm">{description}</p>
+          <p className="text-gray-600 mb-4 text-sm">{trimWords(description, 15)}</p>
         </CardContent>
       </Link>
     </Card>
