@@ -26,6 +26,7 @@ interface StaffReview {
 
 interface StaffDetail {
   id: number;
+  user_id: number;
   name: string;
   image: string;
   sub_title?: string;
@@ -51,13 +52,8 @@ interface StaffDetail {
     id: number;
     name: string;
     time_start: string;
-    time_end: string;
     type: string;
     date: string | null;
-    status: number;
-    seat: number;
-    end_time_to_sec: number;
-    start_time_to_sec: number;
   }[];
 }
 
@@ -75,6 +71,7 @@ export default function StaffDetailPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [galleryModalOpen, setGalleryModalOpen] = useState(false);
   const [galleryIndex, setGalleryIndex] = useState(0);
+  const [availableTimeSlots, setAvailableTimeSlots] = useState<any[]>([]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -109,21 +106,47 @@ export default function StaffDetailPage() {
   useEffect(() => {
     if (!staffId) return;
     setLoading(true);
+    setError(false);
     let zoneId = '';
-        if (typeof window !== 'undefined') {
-          zoneId = localStorage.getItem('selected_zone_id') || '';
-        }
-    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/staff?staff=${staffId}${zoneId ? `&zoneId=${encodeURIComponent(zoneId)}` : ''}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setStaff(data);
-        setLoading(false);
-      })
-      .catch(() => {
-        setError(true);
-        setLoading(false);
-      });
+    if (typeof window !== 'undefined') {
+      zoneId = localStorage.getItem('selected_zone_id') || '';
+    }
+    const fetchStaff = async () => {
+      let data = null;
+      try {
+        const jsonFileName = zoneId ? `${staffId}_${zoneId}.json` : `${staffId}.json`;
+        const localRes = await fetch(`https://partner.lipslay.com/jsonCache/staff/${jsonFileName}`);
+        if (!localRes.ok) throw new Error('Not found');
+        data = await localRes.json();
+      } catch {
+        const apiRes = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/staff?staff=${staffId}${zoneId ? `&zoneId=${encodeURIComponent(zoneId)}` : ''}`
+        );
+        if (!apiRes.ok) throw new Error("Staff not found");
+        data = await apiRes.json();
+      }
+      if (!data) throw new Error("No data");
+      setStaff(data);
+      setLoading(false);
+    };
+    fetchStaff().catch(() => {
+      setError(true);
+      setLoading(false);
+    });
   }, [staffId]);
+
+  useEffect(() => {
+    if (staff && staff.user_id) {
+      fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/staff/available-slots?staffId=${staff.user_id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setAvailableTimeSlots(Array.isArray(data?.slots) ? data.slots : []);
+        })
+        .catch(() => {
+          setAvailableTimeSlots([]);
+        });
+    }
+  }, [staff]);
 
   if (loading) {
     return <Loading />
@@ -257,9 +280,9 @@ export default function StaffDetailPage() {
           {/* Available Time Slots Section */}
           <div className="mt-4 mb-4">
             <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight text-center mb-6">Today Available Slots</h2>
-            {staff.available_time_slots && staff.available_time_slots.length > 0 ? (
+            {availableTimeSlots && availableTimeSlots.length > 0 ? (
               <div className="flex flex-wrap gap-4 justify-center py-2">
-                {staff.available_time_slots.map(slot => (
+                {availableTimeSlots.map(slot => (
                   <div
                     key={slot.id}
                     className="transition-all duration-200 hover:scale-105 hover:shadow-lg bg-gradient-to-br from-blue-50 via-white to-rose-50 border border-blue-200 rounded-xl px-4 py-2 flex flex-col items-center justify-center min-w-[90px] text-xs font-semibold text-blue-700 cursor-pointer"
