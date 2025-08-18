@@ -141,6 +141,9 @@ export default function RegisterPage() {
                 {isLoading ? "Registering..." : "Register"}
               </Button>
             </form>
+            <div className="mt-6 flex flex-col items-center">
+              <a href="/login" className="text-sm text-blue-600 hover:underline">Already have an account? Login</a>
+            </div>
           </CardContent>
         </Card>
       </main>

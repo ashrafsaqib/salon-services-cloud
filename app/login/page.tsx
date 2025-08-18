@@ -110,6 +110,10 @@ export default function LoginPage() {
                   {isLoading ? "Logging in..." : "Login"}
                 </Button>
               </form>
+              <div className="mt-6 flex flex-col items-center">
+                <a href="/password/forgot" className="text-sm text-rose-600 hover:underline mb-2">Forgot Password?</a>
+                <a href="/register" className="text-sm text-rose-600 hover:underline">Create Account</a>
+              </div>
             </CardContent>
           </Card>
         </main>
