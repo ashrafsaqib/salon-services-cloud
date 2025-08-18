@@ -20,6 +20,8 @@ export default function RegisterPage() {
     affiliate: "",
     gender: "Male"
   })
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirm, setShowConfirm] = useState(false);
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
@@ -88,14 +90,50 @@ export default function RegisterPage() {
                 <label className="block text-sm font-medium mb-1 text-rose-600">*Email Address</label>
                 <Input name="email" type="email" value={form.email} onChange={handleChange} required />
               </div>
-              <div>
-                <label className="block text-sm font-medium mb-1 text-rose-600">*Password</label>
-                <Input name="password" type="password" value={form.password} onChange={handleChange} required />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1 text-rose-600">*Confirm Password</label>
-                <Input name="confirmPassword" type="password" value={form.confirmPassword} onChange={handleChange} required />
-              </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1 text-rose-600">*Password</label>
+                  <div className="relative">
+                    <Input
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      value={form.password}
+                      onChange={handleChange}
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 px-2 py-1"
+                      onClick={() => setShowPassword(v => !v)}
+                      tabIndex={-1}
+                    >
+                      <span className="material-icons" style={{ fontSize: 20 }}>
+                        {showPassword ? "visibility_off" : "visibility"}
+                      </span>
+                    </button>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1 text-rose-600">*Confirm Password</label>
+                  <div className="relative">
+                    <Input
+                      name="confirmPassword"
+                      type={showConfirm ? "text" : "password"}
+                      value={form.confirmPassword}
+                      onChange={handleChange}
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 px-2 py-1"
+                      onClick={() => setShowConfirm(v => !v)}
+                      tabIndex={-1}
+                    >
+                      <span className="material-icons" style={{ fontSize: 20 }}>
+                        {showConfirm ? "visibility_off" : "visibility"}
+                      </span>
+                    </button>
+                  </div>
+                </div>
               <div>
                 <label className="block text-sm font-medium mb-1 text-rose-600">*Phone Number</label>
                 <div className="flex gap-2">
@@ -137,7 +175,7 @@ export default function RegisterPage() {
               </div>
               {error && <div className="text-red-600 text-sm font-medium text-center">{error}</div>}
               {success && <div className="text-green-600 text-sm font-medium text-center">{success}</div>}
-              <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 h-12 text-lg" disabled={isLoading}>
+              <Button type="submit" className="w-full bg-rose-600 hover:bg-rose-700 h-12 text-lg" disabled={isLoading}>
                 {isLoading ? "Registering..." : "Register"}
               </Button>
             </form>

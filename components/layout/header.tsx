@@ -267,6 +267,9 @@ export function Header({ topPages = [] }: { topPages?: Array<{ name: string; slu
                       <Link href="/quotes" className="block px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50">
                         Quotes
                       </Link>
+                      <Link href="/password/change" className="block px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50">
+                        Change Password
+                      </Link>
                       <button
                         onClick={handleLogout}
                         className="block w-full text-left px-4 py-2 text-gray-600 hover:text-rose-600 hover:bg-gray-50"

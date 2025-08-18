@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button"
 export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [loginMessage, setLoginMessage] = useState("")
@@ -97,13 +98,25 @@ export default function LoginPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Password</label>
-                  <Input
-                    type="password"
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    required
-                  />
+                  <div className="relative">
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={e => setPassword(e.target.value)}
+                      placeholder="••••••••"
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 px-2 py-1"
+                      onClick={() => setShowPassword(v => !v)}
+                      tabIndex={-1}
+                    >
+                      <span className="material-icons" style={{ fontSize: 20 }}>
+                        {showPassword ? "visibility_off" : "visibility"}
+                      </span>
+                    </button>
+                  </div>
                 </div>
                 {error && <div className="text-red-600 text-sm font-medium text-center">{error}</div>}
                 <Button type="submit" className="w-full bg-rose-600 hover:bg-rose-700 h-12 text-lg" disabled={isLoading}>
@@ -111,8 +124,8 @@ export default function LoginPage() {
                 </Button>
               </form>
               <div className="mt-6 flex flex-col items-center">
-                <a href="/password/forgot" className="text-sm text-rose-600 hover:underline mb-2">Forgot Password?</a>
-                <a href="/register" className="text-sm text-rose-600 hover:underline">Create Account</a>
+                <a href="/password/forgot" className="text-sm text-blue-600 hover:underline mb-2">Forgot Password?</a>
+                <a href="/register" className="text-sm text-blue-600 hover:underline">Create Account</a>
               </div>
             </CardContent>
           </Card>
