@@ -47,16 +47,15 @@ const searchServices = async (
 export default function SearchPage() {
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get("q") || "";
+  const initialCategory = searchParams.get("category") || "";
 
   const [query, setQuery] = useState(initialQuery);
   const [isLoading, setIsLoading] = useState(false);
   const [allResults, setAllResults] = useState<Service[]>([]);
   const [visibleCount, setVisibleCount] = useState(20);
 
-  const [category, setCategory] = useState("");
-  const [categories, setCategories] = useState<{ id: string; title: string }[]>(
-    []
-  );
+  const [category, setCategory] = useState(initialCategory);
+  const [categories, setCategories] = useState<{ id: string; title: string }[]>([]);
   const [categorySearch, setCategorySearch] = useState("");
 
   const [priceRange, setPriceRange] = useState<[number, number]>([50, 500]);
@@ -83,6 +82,15 @@ export default function SearchPage() {
     };
     fetchCategories();
   }, []);
+
+  useEffect(() => {
+    if (initialCategory && categories.length > 0) {
+      const found = categories.find((c) => c.id === initialCategory);
+      if (found) {
+        setCategory(initialCategory);
+      }
+    }
+  }, [categories, initialCategory]);
 
   useEffect(() => {
     const fetchResults = async () => {
@@ -204,7 +212,7 @@ export default function SearchPage() {
                     >
                       <span>
                         {category
-                          ? categories.find((c) => c.id === category)?.title ||
+                          ? categories.find((c) => String(c.id) === String(category))?.title ||
                             "Select category"
                           : "Select category"}
                       </span>
