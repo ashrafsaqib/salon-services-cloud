@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import Loading from "../loading"
 import { useAuthExpiry } from "@/hooks/use-auth-expiry"
+import Select from "react-select"
 
 export default function AddressesPage() {
   const [addresses, setAddresses] = useState([])
@@ -24,23 +25,27 @@ export default function AddressesPage() {
     city: "",
     district: ""
   })
-  const [zones, setZones] = useState<{ id: number; name: string }[]>([])
+  const [zones, setZones] = useState<{ id: number; name: string; country_id: number | null }[]>([])
+  const [countries, setCountries] = useState<{ id: number; name: string }[]>([])
   const [formError, setFormError] = useState("")
   const [formLoading, setFormLoading] = useState(false)
+  const [selectedCountry, setSelectedCountry] = useState<string>("")
   const router = useRouter()
   // Fetch zones for dropdown
   useEffect(() => {
-    async function fetchZones() {
+    async function fetchZonesAndCountries() {
       try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/zones`)
         if (!res.ok) throw new Error("Failed to fetch zones")
         const data = await res.json()
         setZones(data.zones || [])
+        setCountries(data.countries || [])
       } catch {
         setZones([])
+        setCountries([])
       }
     }
-    fetchZones()
+    fetchZonesAndCountries()
   }, [])
 
   // Move fetchAddresses to function scope so it can be reused
@@ -66,6 +71,11 @@ export default function AddressesPage() {
   useEffect(() => {
     fetchAddresses()
   }, [router])
+
+  const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedCountry(e.target.value)
+    setForm(prev => ({ ...prev, area: "" }))
+  }
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -111,6 +121,8 @@ export default function AddressesPage() {
   }
 
   const handleEdit = (addr: any) => {
+    const zone = zones.find(z => z.name === addr.area)
+    setSelectedCountry(zone ? String(zone.country_id) : "")
     setEditingId(addr.id)
     setForm({
       buildingName: addr.buildingName || "",
@@ -145,6 +157,15 @@ export default function AddressesPage() {
     }
   }
 
+  const zoneOptions = zones.map(zone => ({ value: zone.name, label: zone.name, country_id: zone.country_id }));
+  const countryOptions = countries.map(country => ({ value: String(country.id), label: country.name }));
+
+  const filteredZoneOptions = zoneOptions.filter(
+    zone => zone.country_id === Number(selectedCountry)
+  );
+
+  const selectedZone = zoneOptions.find(z => z.value === form.area) || null;
+
   if (isLoading) {
     return <Loading />
   }
@@ -157,7 +178,25 @@ export default function AddressesPage() {
           <CardContent className="p-8">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold">Saved Addresses</h2>
-              <Button onClick={() => { setShowForm(true); setEditingId(null); setForm({ buildingName: "", area: "", landmark: "", flatVilla: "", street: "", city: "", district: "" }) }} className="bg-rose-600 hover:bg-rose-700">Add Address</Button>
+              <Button
+                onClick={() => {
+                  setShowForm(true)
+                  setEditingId(null)
+                  setSelectedCountry("")
+                  setForm({
+                    buildingName: "",
+                    area: "",
+                    landmark: "",
+                    flatVilla: "",
+                    street: "",
+                    city: "",
+                    district: ""
+                  })
+                }}
+                className="bg-rose-600 hover:bg-rose-700"
+              >
+                Add Address
+              </Button>
             </div>
             {error ? (
               <div className="text-red-600">{error}</div>
@@ -187,8 +226,8 @@ export default function AddressesPage() {
 
         {/* Popup Form */}
         {showForm && (
-          <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md relative">
+          <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 overflow-y-auto">
+            <div className="bg-white rounded-lg shadow-lg p-4 sm:p-8 w-full max-w-md sm:max-w-md mx-2 sm:mx-0 relative max-h-[90vh] overflow-y-auto scrollbar-hide">
               <button
                 className="absolute top-2 right-2 text-gray-400 hover:text-gray-700"
                 onClick={() => { setShowForm(false); setEditingId(null); }}
@@ -203,19 +242,34 @@ export default function AddressesPage() {
                   <Input name="buildingName" value={form.buildingName} onChange={handleFormChange} required />
                 </div>
                 <div>
+                  <label className="block text-sm font-medium mb-1">Country</label>
+                  <Select
+                    options={countryOptions}
+                    value={countryOptions.find(opt => opt.value === selectedCountry) || null}
+                    onChange={option => {
+                      setSelectedCountry(option ? option.value : "");
+                      setForm(prev => ({ ...prev, area: "" }));
+                    }}
+                    isClearable={false}
+                    isSearchable
+                    placeholder="Select Country"
+                    classNamePrefix="react-select"
+                  />
+                </div>
+                <div>
                   <label className="block text-sm font-medium mb-1">Area</label>
-                  <select
-                    name="area"
-                    value={form.area}
-                    onChange={handleFormChange}
-                    required
-                    className="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-300"
-                  >
-                    <option value="">Select Area</option>
-                    {zones.map(zone => (
-                      <option key={zone.id} value={zone.name}>{zone.name}</option>
-                    ))}
-                  </select>
+                  <Select
+                    options={selectedCountry ? filteredZoneOptions : []}
+                    value={selectedZone}
+                    onChange={option => {
+                      setForm(prev => ({ ...prev, area: option ? option.value : "" }));
+                    }}
+                    isLoading={zones.length === 0}
+                    isClearable={false}
+                    placeholder={zones.length === 0 ? "Loading..." : selectedCountry ? "-- Select Zone --" : "Select country first"}
+                    noOptionsMessage={() => "No zones found"}
+                    classNamePrefix="react-select"
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Landmark</label>

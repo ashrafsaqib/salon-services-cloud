@@ -52,9 +52,13 @@ export const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [hasUserId, setHasUserId] = useState(false);
   const [zoneName, setZoneName] = useState<string>("");
-  const [zoneList, setZoneList] = useState<{ value: string; label: string }[]>(
+  const [zoneList, setZoneList] = useState<{ value: string; label: string; country_id: number | null }[]>(
     []
   );
+  const [countries, setCountries] = useState<{ value: string; label: string }[]>(
+    []
+  );
+  const [selectedCountry, setSelectedCountry] = useState<string>("");
 
   // Helper to add images without duplicates (by name)
   const addImages = (files: FileList | File[]) => {
@@ -106,7 +110,7 @@ export const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
     if (!open) resetForm();
   }, [open]);
 
-  // Fetch zones on load
+  // Fetch zones and countries on load
   React.useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/zones`)
       .then((res) => res.json())
@@ -116,14 +120,26 @@ export const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
             data.zones.map((z: any) => ({
               value: z.id,
               label: z.name,
+              country_id: z.country_id,
             }))
           );
-          // If zoneName exists, set form.zone to the matching zone id
-          if (zoneName) {
-            const found = data.zones.find((z: any) => z.name === zoneName);
-            if (found) {
-              setForm((prev) => ({ ...prev, zone: found.id }));
-            }
+        }
+        if (Array.isArray(data.countries)) {
+          setCountries(
+            data.countries.map((c: any) => ({
+              value: String(c.id),
+              label: c.name,
+            }))
+          );
+        }
+        // Restore from localStorage
+        const storedCountry = localStorage.getItem("selectedCountryId") || "";
+        setSelectedCountry(storedCountry);
+        const storedZoneName = localStorage.getItem("selected_zone_name") || "";
+        if (storedZoneName) {
+          const found = data.zones.find((z: any) => z.name === storedZoneName);
+          if (found) {
+            setForm((prev) => ({ ...prev, zone: found.id }));
           }
         }
       });
@@ -334,31 +350,57 @@ export const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="text-gray-700">Location</Label>
-              <Input
-                name="location"
-                value={form.location}
-                onChange={handleChange}
+              <Label className="text-gray-700">Country <span className="text-red-500">*</span></Label>
+              <Select
+                options={countries}
+                value={countries.find((c) => c.value === selectedCountry) || null}
+                onChange={(selected) => {
+                  setSelectedCountry(selected ? selected.value : "");
+                  setForm((prev) => ({ ...prev, zone: "" }));
+                }}
+                isClearable={true}
+                classNamePrefix="react-select"
+                placeholder="Select country..."
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-gray-700">Zone/Area</Label>
-              <Select
-                options={zoneList}
-                value={zoneList.find((z) => z.value === form.zone) || null}
-                onChange={(selected) =>
-                  setForm((prev) => ({
-                    ...prev,
-                    zone: selected ? selected.value : "",
-                  }))
+            <Label className="text-gray-700">Zone/Area <span className="text-red-500">*</span></Label>
+            <Select
+              options={
+                selectedCountry
+                  ? zoneList.filter((z) => String(z.country_id) === selectedCountry)
+                  : []
+              }
+              value={zoneList.find((z) => String(z.value) === String(form.zone)) || null}
+              onChange={(selected) => {
+                setForm((prev) => ({
+                  ...prev,
+                  zone: selected ? selected.value : "",
+                }));
+                if (selected) {
+                  localStorage.setItem("selected_zone_id", selected.value);
+                  localStorage.setItem("selected_zone_name", selected.label);
                 }
-                // isDisabled={!!zoneName}
-                classNamePrefix="react-select"
-                placeholder="Select zone/area..."
-              />
-            </div>
+              }}
+              isClearable={true}
+              classNamePrefix="react-select"
+              placeholder={selectedCountry ? "Select zone/area..." : "Select country first"}
+              required
+            />
           </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label className="text-gray-700">Complete Address</Label>
+            <Input
+              name="location"
+              value={form.location}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">

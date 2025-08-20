@@ -13,16 +13,23 @@ interface LocationModalProps {
 }
 
 export function LocationModal({ isOpen, onClose }: LocationModalProps) {
-  const [zones, setZones] = useState<{ id: number; name: string }[]>([])
+  const [zones, setZones] = useState<{ id: number; name: string; country_id: number | null }[]>([])
+  const [countries, setCountries] = useState<{ id: number; name: string }[]>([])
   const [selectedZone, setSelectedZone] = useState<{ value: string; label: string } | null>(null)
+  const [selectedCountry, setSelectedCountry] = useState<string>("")
   const [loadingZones, setLoadingZones] = useState(false)
   const zoneOptions = zones.map(zone => ({ value: String(zone.id), label: zone.name }))
+  const countryOptions = countries.map(country => ({
+    value: String(country.id),
+    label: country.name
+  }))
 
-  // Fetch zones when modal opens
+  // Fetch zones and countries when modal opens
   useEffect(() => {
     if (isOpen) {
       setLoadingZones(true)
-      // Set selected zone from localStorage if exists
+      const storedCountryId = localStorage.getItem("selectedCountryId") || ""
+      setSelectedCountry(storedCountryId)
       const storedZoneId = localStorage.getItem("selected_zone_id")
       const storedZoneName = localStorage.getItem("selected_zone_name")
       if (storedZoneId && storedZoneName) {
@@ -32,13 +39,24 @@ export function LocationModal({ isOpen, onClose }: LocationModalProps) {
       }
       fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/zones`)
         .then(res => res.json())
-        .then(data => setZones(data.zones || []))
-        .catch(() => setZones([]))
+        .then(data => {
+          setZones(data.zones || [])
+          setCountries(data.countries || [])
+        })
+        .catch(() => {
+          setZones([])
+          setCountries([])
+        })
         .finally(() => setLoadingZones(false))
     }
   }, [isOpen])
 
-  // No need for search input focus logic with react-select
+  const filteredZoneOptions = zoneOptions.filter(
+    zone => {
+      const zoneObj = zones.find(z => String(z.id) === zone.value)
+      return zoneObj && zoneObj.country_id === Number(selectedCountry)
+    }
+  )
 
   // Handle zone select
   const handleZoneSelect = (option: { value: string; label: string } | null) => {
@@ -46,6 +64,7 @@ export function LocationModal({ isOpen, onClose }: LocationModalProps) {
     if (option) {
       localStorage.setItem("selected_zone_id", option.value)
       localStorage.setItem("selected_zone_name", option.label)
+      localStorage.setItem("selectedCountryId", selectedCountry)
       onClose()
     }
   }
@@ -60,12 +79,24 @@ export function LocationModal({ isOpen, onClose }: LocationModalProps) {
         </DialogHeader>
         <div className="space-y-4">
           <Select
-            options={zoneOptions}
+            options={countryOptions}
+            value={countryOptions.find(opt => opt.value === selectedCountry) || null}
+            onChange={option => {
+              setSelectedCountry(option ? option.value : "")
+              setSelectedZone(null)
+            }}
+            isClearable
+            isSearchable
+            placeholder="Select Country"
+            classNamePrefix="react-select"
+          />
+          <Select
+            options={selectedCountry ? filteredZoneOptions : []}
             value={selectedZone}
             onChange={handleZoneSelect}
             isLoading={loadingZones}
             isClearable
-            placeholder={loadingZones ? "Loading..." : "-- Select Zone --"}
+            placeholder={loadingZones ? "Loading..." : selectedCountry ? "-- Select Zone --" : "Select country first"}
             noOptionsMessage={() => "No zones found"}
             classNamePrefix="react-select"
           />
