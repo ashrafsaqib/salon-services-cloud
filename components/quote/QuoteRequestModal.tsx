@@ -378,10 +378,6 @@ export const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
                   ...prev,
                   zone: selected ? selected.value : "",
                 }));
-                if (selected) {
-                  localStorage.setItem("selected_zone_id", selected.value);
-                  localStorage.setItem("selected_zone_name", selected.label);
-                }
               }}
               isClearable={true}
               classNamePrefix="react-select"
