@@ -30,6 +30,8 @@ const steps = [
 export function BookingWizard({ initialServiceId, initialCategory, initialOptions }: BookingWizardProps) {
   const [currentStep, setCurrentStep] = useState(1)
   const [bookingData, setBookingData] = useState<BookingData>({ services: [] })
+  const zoneName = localStorage.getItem("selected_zone_name") || "";
+
   const [customerDetails, setCustomerDetails] = useState<any>(() => {
     let couponCode = "";
     if (typeof window !== "undefined") {
@@ -47,7 +49,7 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
       building_name: "",
       flat_or_villa: "",
       street: "",
-      area: "Dubai",
+      area: zoneName,
       district: "",
       landmark: "",
       city: "",
@@ -124,7 +126,7 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
         body: JSON.stringify({
           services: bookingData.services.map(service => String(service.id)),
           date,
-          area: "Dubai",
+          area: zoneName,
           zone_id: getSelectedZoneId() || undefined,
         })
       })
@@ -311,7 +313,7 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
     }
   }
 
-  const areaOptions = ["Dubai"] // You can expand this as needed
+  const areaOptions = [zoneName]
 
   const renderStepContent = () => {
     switch (currentStep) {

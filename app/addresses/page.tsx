@@ -242,6 +242,26 @@ export default function AddressesPage() {
                   <Input name="buildingName" value={form.buildingName} onChange={handleFormChange} required />
                 </div>
                 <div>
+                  <label className="block text-sm font-medium mb-1">Landmark</label>
+                  <Input name="landmark" value={form.landmark} onChange={handleFormChange} required />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Flat/Villa</label>
+                  <Input name="flatVilla" value={form.flatVilla} onChange={handleFormChange} required />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Street</label>
+                  <Input name="street" value={form.street} onChange={handleFormChange} required />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">City</label>
+                  <Input name="city" value={form.city} onChange={handleFormChange} required />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">District</label>
+                  <Input name="district" value={form.district} onChange={handleFormChange} />
+                </div>
+                <div>
                   <label className="block text-sm font-medium mb-1">Country</label>
                   <Select
                     options={countryOptions}
@@ -270,26 +290,6 @@ export default function AddressesPage() {
                     noOptionsMessage={() => "No zones found"}
                     classNamePrefix="react-select"
                   />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Landmark</label>
-                  <Input name="landmark" value={form.landmark} onChange={handleFormChange} required />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Flat/Villa</label>
-                  <Input name="flatVilla" value={form.flatVilla} onChange={handleFormChange} required />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Street</label>
-                  <Input name="street" value={form.street} onChange={handleFormChange} required />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">City</label>
-                  <Input name="city" value={form.city} onChange={handleFormChange} required />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">District</label>
-                  <Input name="district" value={form.district} onChange={handleFormChange} />
                 </div>
                 {formError && <div className="text-red-600 text-sm">{formError}</div>}
                 <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700" disabled={formLoading}>
