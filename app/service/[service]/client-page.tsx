@@ -4,7 +4,7 @@ import React, { use, useEffect, useState } from "react"
 import { notFound } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
-import { Star, Clock, MapPin, ChevronRight, Info } from "lucide-react"
+import { Star, Clock, MapPin, ChevronRight, Info, SlidersHorizontal} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -264,12 +264,43 @@ export default function ClientPage({ params }: ServiceDetailPageProps) {
       <section className="py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Tabs defaultValue="details">
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="details">Details</TabsTrigger>
-              <TabsTrigger value="staff">Staff</TabsTrigger>
-              <TabsTrigger value="reviews">Reviews</TabsTrigger>
-              <TabsTrigger value="faq">FAQ</TabsTrigger>
-            </TabsList>
+              <TabsList
+                className="w-full flex overflow-x-auto gap-2 scrollbar-hide px-1 justify-start md:grid md:grid-cols-5 md:gap-0 md:overflow-x-visible"
+                style={{ WebkitOverflowScrolling: 'touch' }}
+              >
+                <TabsTrigger value="details" className="min-w-[120px] whitespace-nowrap">Details</TabsTrigger>
+                <TabsTrigger value="specifications" className="min-w-[120px] whitespace-nowrap">Specifications</TabsTrigger>
+                <TabsTrigger value="staff" className="min-w-[120px] whitespace-nowrap">Staff</TabsTrigger>
+                <TabsTrigger value="reviews" className="min-w-[120px] whitespace-nowrap">Reviews</TabsTrigger>
+                <TabsTrigger value="faq" className="min-w-[120px] whitespace-nowrap">FAQ</TabsTrigger>
+              </TabsList>
+              {/* Mobile scroll indicator */}
+              <div className="md:hidden flex justify-center mt-2 relative">
+                <div className="flex items-center gap-1 animate-scroll-x">
+                  <span className="inline-block w-6 h-6 text-gray-400 animate-bounce-x">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-full h-full">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h8m-4-4l4 4-4 4" />
+                    </svg>
+                  </span>
+                  <span className="text-xs text-gray-400">Swipe to see more</span>
+                </div>
+                <style jsx>{`
+                  @keyframes bounce-x {
+                    0%, 100% { transform: translateX(0); }
+                    50% { transform: translateX(12px); }
+                  }
+                  .animate-bounce-x {
+                    animation: bounce-x 1.2s infinite;
+                  }
+                  @keyframes scroll-x {
+                    0%, 100% { opacity: 0.7; }
+                    50% { opacity: 1; }
+                  }
+                  .animate-scroll-x {
+                    animation: scroll-x 2s infinite;
+                  }
+                `}</style>
+              </div>
 
             <TabsContent value="details" className="mt-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -534,6 +565,26 @@ export default function ClientPage({ params }: ServiceDetailPageProps) {
                   </div>)}
                 </div>
               </div>
+            </TabsContent>
+            <TabsContent value="specifications" className="mt-6">
+              <h2 className="text-2xl font-semibold mb-4">Attributes / Specifications</h2>
+              {serviceData.specification && serviceData.specification.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                  {serviceData.specification.map((spec: any) => (
+                    <div key={spec.id} className="flex items-center bg-white border border-rose-100 rounded-xl p-5 shadow hover:shadow-lg transition-all">
+                      <div className="flex items-center justify-center w-12 h-12 rounded-full bg-rose-50 mr-4">
+                        <SlidersHorizontal className="w-7 h-7 text-rose-500" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="font-semibold text-gray-900 text-lg mb-1">{spec.title}</div>
+                        <div className="text-rose-600 text-base font-bold">{spec.value}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-gray-400 italic">No specifications available.</div>
+              )}
             </TabsContent>
 
             <TabsContent value="staff" className="mt-6">
