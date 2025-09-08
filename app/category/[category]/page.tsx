@@ -1,3 +1,4 @@
+import { shouldUseCache } from "@/utils/cacheUtils"
 // app/category/[category]/page.tsx
 import { Metadata } from "next"
 import ClientPage from "./client-page"
@@ -10,17 +11,23 @@ export async function generateMetadata({ params }: { params: { category: string 
     zoneId = localStorage.getItem('selected_zone_id') || ''
   }
   try {
-    const jsonFileName = zoneId ? `${params.category}_${zoneId}.json` : `${params.category}.json`
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const dayTimestamp = today.getTime();
-    const localRes = await fetch(`https://partner.lipslay.com/jsonCache/categories/${jsonFileName}?ts=${dayTimestamp}`)
-    if (!localRes.ok) throw new Error('Not found')
-    categoryData = await localRes.json()
+    if (shouldUseCache() == true) {
+      const jsonFileName = zoneId ? `${params.category}_${zoneId}.json` : `${params.category}.json`
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const dayTimestamp = today.getTime();
+      const localRes = await fetch(`https://partner.lipslay.com/jsonCache/categories/${jsonFileName}?ts=${dayTimestamp}`)
+      if (localRes.ok) {
+        categoryData = await localRes.json()
+      }
+    }
+    if (!categoryData) {
+      const apiRes = await fetch(`${API_BASE_URL}/api/category?category=${encodeURIComponent(params.category)}${zoneId ? `&zoneId=${encodeURIComponent(zoneId)}` : ''}`)
+      if (!apiRes.ok) return {}
+      categoryData = await apiRes.json()
+    }
   } catch {
-    const apiRes = await fetch(`${API_BASE_URL}/api/category?category=${encodeURIComponent(params.category)}${zoneId ? `&zoneId=${encodeURIComponent(zoneId)}` : ''}`)
-    if (!apiRes.ok) return {}
-    categoryData = await apiRes.json()
+    return {};
   }
   if (!categoryData) return {}
   return {

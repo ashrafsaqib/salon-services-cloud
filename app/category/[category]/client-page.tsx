@@ -8,6 +8,7 @@ import { CategoryCard } from "@/components/ui/category-card"
 import { ServiceCard } from "@/components/common/service-card"
 import type { CategoryData, Category, Service } from "@/types"
 import Loading from "@/app/loading"
+import { shouldUseCache } from "@/utils/cacheUtils"
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
@@ -33,15 +34,20 @@ export default function ClientPage({ params }: ServicePageProps) {
           zoneId = localStorage.getItem('selected_zone_id') || '';
         }
         let data = null;
-        try {
-          const jsonFileName = zoneId ? `${category}_${zoneId}.json` : `${category}.json`
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
-          const dayTimestamp = today.getTime();
-          const localRes = await fetch(`https://partner.lipslay.com/jsonCache/categories/${jsonFileName}?ts=${dayTimestamp}`)
-          if (!localRes.ok) throw new Error('Not found')
-          data = await localRes.json()
-        } catch {
+        if (shouldUseCache() == true) {
+          try {
+            const jsonFileName = zoneId ? `${category}_${zoneId}.json` : `${category}.json`
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const dayTimestamp = today.getTime();
+            const localRes = await fetch(`https://partner.lipslay.com/jsonCache/categories/${jsonFileName}?ts=${dayTimestamp}`)
+            if (!localRes.ok) throw new Error('Not found')
+            data = await localRes.json()
+          } catch {
+            // fallback to API below
+          }
+        }
+        if (!data) {
           const apiRes = await fetch(
             `${API_BASE_URL}/api/category?category=${encodeURIComponent(category)}${zoneId ? `&zoneId=${encodeURIComponent(zoneId)}` : ''}`
           );

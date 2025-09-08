@@ -1,6 +1,7 @@
 // app/category/[category]/page.tsx
 import { Metadata } from "next"
 import ClientPage from "./client-page"
+import { shouldUseCache } from "@/utils/cacheUtils";
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
 export async function generateMetadata({ params }: { params: { service: string } }): Promise<Metadata> {
@@ -10,14 +11,17 @@ export async function generateMetadata({ params }: { params: { service: string }
     zoneId = localStorage.getItem('selected_zone_id') || ''
   }
   try {
-    const jsonFileName = zoneId ? `${params.service}_${zoneId}.json` : `${params.service}.json`
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const dayTimestamp = today.getTime();
-    const localRes = await fetch(`https://partner.lipslay.com/jsonCache/services/${jsonFileName}?ts=${dayTimestamp}`)
-    if (localRes.ok) {
-      serviceData = await localRes.json()
-    } else {
+    if (shouldUseCache() == true) {
+      const jsonFileName = zoneId ? `${params.service}_${zoneId}.json` : `${params.service}.json`
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const dayTimestamp = today.getTime();
+      const localRes = await fetch(`https://partner.lipslay.com/jsonCache/services/${jsonFileName}?ts=${dayTimestamp}`)
+      if (localRes.ok) {
+        serviceData = await localRes.json()
+      }
+    }
+    if (!serviceData) {
       const apiRes = await fetch(`${API_BASE_URL}/api/service?query=${encodeURIComponent(`${params.service}`)}${zoneId ? `&zoneId=${encodeURIComponent(zoneId)}` : ''}`)
       if (!apiRes.ok) return {}
       serviceData = await apiRes.json()

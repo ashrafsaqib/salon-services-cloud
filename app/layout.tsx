@@ -1,4 +1,5 @@
 import type React from "react"
+import CacheInit from "@/components/CacheInit"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
@@ -44,14 +45,16 @@ export default async function RootLayout({
         <CustomHead headTag={headTag} />
       </head>
       <body className={inter.className}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-        </ThemeProvider>
+        <CacheInit>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
+        </CacheInit>
 
         <Script
           src="https://code.jquery.com/jquery-3.6.0.min.js"

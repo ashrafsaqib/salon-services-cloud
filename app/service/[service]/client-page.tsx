@@ -16,6 +16,7 @@ import { QuoteRequestModal } from "@/components/quote/QuoteRequestModal"
 import Script from "next/script"
 import Loading from "@/app/loading"
 import ReviewAddModal from "@/components/review-add-modal"
+import { shouldUseCache } from "@/utils/cacheUtils"
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
 interface ServiceDetailPageProps {
@@ -79,15 +80,20 @@ export default function ClientPage({ params }: ServiceDetailPageProps) {
           zoneId = localStorage.getItem('selected_zone_id') || ''
         }
         let data = null
-        try {
-          const jsonFileName = zoneId ? `${service}_${zoneId}.json` : `${service}.json`
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
-          const dayTimestamp = today.getTime();
-          const localRes = await fetch(`https://partner.lipslay.com/jsonCache/services/${jsonFileName}?ts=${dayTimestamp}`)
-          if (!localRes.ok) throw new Error('Not found')
-          data = await localRes.json()
-        } catch {
+        if (shouldUseCache() == true) {
+          try {
+            const jsonFileName = zoneId ? `${service}_${zoneId}.json` : `${service}.json`
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const dayTimestamp = today.getTime();
+            const localRes = await fetch(`https://partner.lipslay.com/jsonCache/services/${jsonFileName}?ts=${dayTimestamp}`)
+            if (!localRes.ok) throw new Error('Not found')
+            data = await localRes.json()
+          } catch {
+            // fallback to API below
+          }
+        }
+        if (!data) {
           const apiRes = await fetch(
             `${API_BASE_URL}/api/service?query=${encodeURIComponent(`${service}`)}${zoneId ? `&zoneId=${encodeURIComponent(zoneId)}` : ''}`
           )

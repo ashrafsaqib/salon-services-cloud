@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { shouldUseCache } from "@/utils/cacheUtils";
 import { useParams, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { Youtube, Facebook, Instagram, Star } from "lucide-react";
@@ -113,15 +114,20 @@ export default function StaffDetailPage() {
     }
     const fetchStaff = async () => {
       let data = null;
-      try {
-        const jsonFileName = zoneId ? `${staffId}_${zoneId}.json` : `${staffId}.json`;
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const dayTimestamp = today.getTime();
-        const localRes = await fetch(`https://partner.lipslay.com/jsonCache/staff/${jsonFileName}?ts=${dayTimestamp}`);
-        if (!localRes.ok) throw new Error('Not found');
-        data = await localRes.json();
-      } catch {
+      if (shouldUseCache() == true) {
+        try {
+          const jsonFileName = zoneId ? `${staffId}_${zoneId}.json` : `${staffId}.json`;
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          const dayTimestamp = today.getTime();
+          const localRes = await fetch(`https://partner.lipslay.com/jsonCache/staff/${jsonFileName}?ts=${dayTimestamp}`);
+          if (!localRes.ok) throw new Error('Not found');
+          data = await localRes.json();
+        } catch {
+          // fallback to API below
+        }
+      }
+      if (!data) {
         const apiRes = await fetch(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/staff?staff=${staffId}${zoneId ? `&zoneId=${encodeURIComponent(zoneId)}` : ''}`
         );
