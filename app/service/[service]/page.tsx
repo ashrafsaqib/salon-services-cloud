@@ -11,7 +11,10 @@ export async function generateMetadata({ params }: { params: { service: string }
   }
   try {
     const jsonFileName = zoneId ? `${params.service}_${zoneId}.json` : `${params.service}.json`
-  const localRes = await fetch(`https://partner.lipslay.com/jsonCache/services/${jsonFileName}`)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const dayTimestamp = today.getTime();
+    const localRes = await fetch(`https://partner.lipslay.com/jsonCache/services/${jsonFileName}?ts=${dayTimestamp}`)
     if (localRes.ok) {
       serviceData = await localRes.json()
     } else {

@@ -35,7 +35,10 @@ export default function ClientPage({ params }: ServicePageProps) {
         let data = null;
         try {
           const jsonFileName = zoneId ? `${category}_${zoneId}.json` : `${category}.json`
-          const localRes = await fetch(`https://partner.lipslay.com/jsonCache/categories/${jsonFileName}`)
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          const dayTimestamp = today.getTime();
+          const localRes = await fetch(`https://partner.lipslay.com/jsonCache/categories/${jsonFileName}?ts=${dayTimestamp}`)
           if (!localRes.ok) throw new Error('Not found')
           data = await localRes.json()
         } catch {

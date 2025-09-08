@@ -115,7 +115,10 @@ export default function StaffDetailPage() {
       let data = null;
       try {
         const jsonFileName = zoneId ? `${staffId}_${zoneId}.json` : `${staffId}.json`;
-        const localRes = await fetch(`https://partner.lipslay.com/jsonCache/staff/${jsonFileName}`);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const dayTimestamp = today.getTime();
+        const localRes = await fetch(`https://partner.lipslay.com/jsonCache/staff/${jsonFileName}?ts=${dayTimestamp}`);
         if (!localRes.ok) throw new Error('Not found');
         data = await localRes.json();
       } catch {
