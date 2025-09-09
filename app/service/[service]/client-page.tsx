@@ -4,7 +4,7 @@ import React, { use, useEffect, useState } from "react"
 import { notFound } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
-import { Star, Clock, MapPin, ChevronRight, Info, SlidersHorizontal} from "lucide-react"
+import { Star, Clock, MapPin, ChevronRight, Info, SlidersHorizontal, Eye} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -38,12 +38,26 @@ export default function ClientPage({ params }: ServiceDetailPageProps) {
   const [additionalImage, setAdditionalImage] = useState<string | null>(null);
   const [hoveredImage, setHoveredImage] = useState<string | null>(null);
   const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout | null>(null);
-
+  const [viewed, setViewed] = useState<number | 0>(0);
+  
   useEffect(() => {
     if (typeof window !== 'undefined') {
       setIsLoggedIn(!!localStorage.getItem('token'))
     }
   }, [])
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/service/increment-viewed`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ slug: service }),
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (typeof data.viewed === "number") setViewed(data.viewed);
+      })
+      .catch(() => {});
+  }, [service]);
 
   const handleReviewSubmit = async (formData: FormData) => {
     try {
@@ -176,6 +190,11 @@ export default function ClientPage({ params }: ServiceDetailPageProps) {
                 <span className="ml-2 text-gray-600">
                   {serviceData.rating} ({serviceData.reviews.length} reviews)
                 </span>
+                <div className="flex-1" />
+                <div className="flex items-center bg-rose-100 text-rose-700 px-2 py-1 rounded-md text-sm">
+                  <Eye className="h-4 w-4 mr-1" />
+                  <span>{viewed > 0 && `${viewed} views`}</span>
+                </div>
               </div>
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{serviceData.name}</h1>
               <div className="text-lg text-gray-600 mb-6" dangerouslySetInnerHTML={{ __html: serviceData.description }} />
