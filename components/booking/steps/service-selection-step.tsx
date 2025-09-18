@@ -265,7 +265,7 @@ export function ServiceSelectionStep({ selectedServices = [], onServiceSelect, i
                 <Button
                   className="mt-2 w-full bg-rose-600 hover:bg-rose-700"
                   onClick={e => {
-                    if ((hasOptions || isQuote) && service.slug) {
+                    if (service.hasOptionsOrQuote && service.slug) {
                       router.push(`/service/${service.slug}`);
                       return;
                     }

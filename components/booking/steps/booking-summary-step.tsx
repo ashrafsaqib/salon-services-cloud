@@ -11,9 +11,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import type { Service, StaffMember, CustomerInfo, BookingData } from "@/types";
 
+// Extend CustomerInfo to include comment for this component
+type CustomerInfoWithComment = CustomerInfo & { comment?: string };
+
 interface BookingSummaryStepProps {
   bookingData: BookingData;
-  onCustomerInfoUpdate: (customerInfo: CustomerInfo) => void;
+  onCustomerInfoUpdate: (customerInfo: CustomerInfoWithComment) => void;
   onEditDetails: () => void;
   onConfirmBooking: () => void;
   isLoading: boolean;
@@ -32,17 +35,18 @@ export function BookingSummaryStep({
   selectedSlots = {},
   groups = [],
 }: BookingSummaryStepProps) {
-  const [customerInfo, setCustomerInfo] = useState<CustomerInfo>(
-    bookingData.customerInfo || {
+  const [customerInfo, setCustomerInfo] = useState<CustomerInfoWithComment>(
+    (bookingData.customerInfo as CustomerInfoWithComment) || {
       name: "",
       email: "",
       phone: "",
       address: "",
       notes: "",
+      comment: "",
     }
   );
 
-  const handleInputChange = (field: keyof CustomerInfo, value: string) => {
+  const handleInputChange = (field: keyof CustomerInfoWithComment, value: string) => {
     const updatedInfo = { ...customerInfo, [field]: value };
     setCustomerInfo(updatedInfo);
     onCustomerInfoUpdate(updatedInfo);
@@ -282,6 +286,31 @@ export function BookingSummaryStep({
                   </div>
                 </>
               )}
+            </div>
+            {/* Comment textarea - styled */}
+            <div className="mt-6">
+              <Label htmlFor="comment" className="block text-base font-semibold text-rose-700 mb-2 flex items-center gap-2">
+                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="text-rose-400"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.77 9.77 0 01-4-.8l-4.28 1.07a1 1 0 01-1.22-1.22l1.07-4.28A7.96 7.96 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
+                Add a Comment (optional)
+              </Label>
+              <div className="relative">
+                <Textarea
+                  id="comment"
+                  value={customerInfo.comment || ''}
+                  onChange={e => {
+                    const comment = e.target.value;
+                    setCustomerInfo(prev => ({ ...prev, comment }));
+                    onCustomerInfoUpdate({ ...customerInfo, comment });
+                  }}
+                  placeholder="Share any special requests, preferences, or notes for your booking..."
+                  rows={4}
+                  className="mt-1 rounded-xl border-2 border-rose-100 focus:border-rose-400 focus:ring-2 focus:ring-rose-200 bg-gradient-to-br from-white to-rose-50 shadow-inner text-gray-800 placeholder:text-rose-300 transition-all duration-200 resize-none p-3"
+                  maxLength={300}
+                />
+                <span className="absolute bottom-2 right-3 text-xs text-gray-400 select-none">
+                  {customerInfo.comment?.length || 0}/300
+                </span>
+              </div>
             </div>
           </CardContent>
         </Card>
