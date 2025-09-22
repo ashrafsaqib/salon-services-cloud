@@ -43,6 +43,7 @@ export function BookingSummaryStep({
       address: "",
       notes: "",
       comment: "",
+      driverComment: "",
     }
   );
 
@@ -305,10 +306,36 @@ export function BookingSummaryStep({
                   placeholder="Share any special requests, preferences, or notes for your booking..."
                   rows={4}
                   className="mt-1 rounded-xl border-2 border-rose-100 focus:border-rose-400 focus:ring-2 focus:ring-rose-200 bg-gradient-to-br from-white to-rose-50 shadow-inner text-gray-800 placeholder:text-rose-300 transition-all duration-200 resize-none p-3"
-                  maxLength={300}
+                  maxLength={200}
                 />
                 <span className="absolute bottom-2 right-3 text-xs text-gray-400 select-none">
-                  {customerInfo.comment?.length || 0}/300
+                  {customerInfo.comment?.length || 0}/200
+                </span>
+              </div>
+            </div>
+
+            {/* Driver Comment textarea - styled */}
+            <div className="mt-6">
+              <Label htmlFor="driver_comment" className="block text-base font-semibold text-blue-700 mb-2 flex items-center gap-2">
+                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="text-blue-400"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 20h9" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.77 9.77 0 01-4-.8l-4.28 1.07a1 1 0 01-1.22-1.22l1.07-4.28A7.96 7.96 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
+                Comment For Driver (optional)
+              </Label>
+              <div className="relative">
+                <Textarea
+                  id="driver_comment"
+                  value={customerInfo.driver_comment || ''}
+                  onChange={e => {
+                    const driver_comment = e.target.value;
+                    setCustomerInfo(prev => ({ ...prev, driver_comment }));
+                    onCustomerInfoUpdate({ ...customerInfo, driver_comment });
+                  }}
+                  placeholder="Add any notes or instructions for the driver (e.g., parking, gate code, directions)..."
+                  rows={3}
+                  className="mt-1 rounded-xl border-2 border-blue-100 focus:border-blue-400 focus:ring-2 focus:ring-blue-200 bg-gradient-to-br from-white to-blue-50 shadow-inner text-gray-800 placeholder:text-blue-300 transition-all duration-200 resize-none p-3"
+                  maxLength={200}
+                />
+                <span className="absolute bottom-2 right-3 text-xs text-gray-400 select-none">
+                  {customerInfo.driver_comment?.length || 0}/200
                 </span>
               </div>
             </div>

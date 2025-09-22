@@ -57,6 +57,7 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
       longitude: "",
       selected_address_id: null,
       comment: "",
+      driver_comment: "",
     };
   })
   // Change selectedSlot to selectedSlots (object: groupIdx -> {slot, staff})
@@ -291,6 +292,7 @@ export function BookingWizard({ initialServiceId, initialCategory, initialOption
         user_id: getUserIdFromStorage(),
         zone_id: getSelectedZoneId() || undefined,
         comment: customerDetails.comment || undefined,
+        driver_comment: customerDetails.driver_comment || undefined,
         bookingData: bookingDataArr
       }
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/order`, {

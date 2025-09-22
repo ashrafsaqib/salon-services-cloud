@@ -81,7 +81,9 @@ export interface CustomerInfo {
   landmark?: string
   city?: string
   latitude?: string
-  longitude?: string
+  longitude?: string,
+  comment?: string,
+  driver_comment?: string,
 }
 
 export interface BookingData {
