@@ -56,6 +56,7 @@ export default function DashboardPage() {
   const [complaintOrderId, setComplaintOrderId] = useState<number | null>(null)
   const [complaintTitle, setComplaintTitle] = useState("")
   const [complaintDescription, setComplaintDescription] = useState("")
+  const [complaintServiceId, setComplaintServiceId] = useState<number | "">("")
   const [complaintLoading, setComplaintLoading] = useState(false)
   const [complaintError, setComplaintError] = useState("")
   const [viewComplaintId, setViewComplaintId] = useState<number | null>(null)
@@ -153,6 +154,7 @@ export default function DashboardPage() {
     setComplaintOrderId(orderId)
     setComplaintTitle("")
     setComplaintDescription("")
+    setComplaintServiceId("")
     setComplaintError("")
     setShowComplaintModal(true)
   }
@@ -161,6 +163,7 @@ export default function DashboardPage() {
     setComplaintOrderId(null)
     setComplaintTitle("")
     setComplaintDescription("")
+    setComplaintServiceId("")
     setComplaintError("")
   }
   const handleComplaintSubmit = async (e: React.FormEvent) => {
@@ -181,7 +184,8 @@ export default function DashboardPage() {
         body: JSON.stringify({
           title: complaintTitle,
           description: complaintDescription,
-          order_id: complaintOrderId
+          order_id: complaintOrderId,
+          service_id: complaintServiceId ?? null
         })
       })
       if (res.status === 401 || res.status === 403) {
@@ -291,6 +295,27 @@ export default function DashboardPage() {
             </button>
             <h3 className="text-xl font-bold mb-4">Add Complaint</h3>
             <form onSubmit={handleComplaintSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Can you have issue with any specific service? Please select that so we can improve that
+                </label>
+                <select
+                  className="w-full border rounded px-3 py-2"
+                  value={complaintServiceId}
+                  onChange={e => setComplaintServiceId(e.target.value ? Number(e.target.value) : "")}
+                >
+                  <option value="">No, general issue</option>
+                  {(() => {
+                    const order = orders.find(o => o.id === complaintOrderId);
+                    if (order && Array.isArray((order as any).order_services)) {
+                      return (order as any).order_services.map((svc: any) => (
+                        <option key={svc.id} value={svc.id}>{svc.name}</option>
+                      ));
+                    }
+                    return null;
+                  })()}
+                </select>
+              </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Title</label>
                 <input

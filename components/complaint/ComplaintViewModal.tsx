@@ -13,6 +13,7 @@ interface Complaint {
   status: string
   user_id: number
   order_id: number
+  service_name: string
   created_at: string
   updated_at: string
 }
@@ -119,6 +120,9 @@ export const ComplaintViewModal: React.FC<ComplaintViewModalProps> = ({ complain
             <div className="mb-2 text-gray-700">{complaintDetail.description}</div>
             <div className="mb-2 text-xs text-gray-500">Status: {complaintDetail.status}</div>
             <div className="mb-2 text-xs text-gray-500">Order ID: {complaintDetail.order_id}</div>
+            {complaintDetail.service_name && (
+              <div className="mb-2 text-xs text-gray-500">Service: {complaintDetail.service_name}</div>
+            )}
             <div className="mb-4 text-xs text-gray-500">Created: {new Date(complaintDetail.created_at).toLocaleString()}</div>
             <hr className="my-4" />
             <h4 className="text-lg font-semibold mb-2">Complaints Conversation</h4>
